@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="common/common_head :: common_header(~{::title},~{::link})">
+  <meta charset="UTF-8">
+  <title>회원가입</title>
+  <link rel="stylesheet" type="text/css" th:href="@{/css/joinMember.css}">
+</head>
+<body>
+  <header>
+    <img th:src="@{/img/logo.svg}" class="login-header-logo">
+  </header>
+
+  <section>
+    <p class="join-text">회원가입</p>
+
+    <form>
+      <label class="join-label">이메일</label>
+      <div>
+        <input type="text" id="joinMail" class="join-email" placeholder="이메일">
+        <span class="join-separator"> @ </span>
+        <select class="join-email">
+          <option value="" selected disabled>선택해주세요.</option>
+          <option value="naver.com">naver.com</option>
+          <option value="hanmail.net">hanmail.net</option>
+          <option value="daum.net">daum.net</option>
+          <option value="gmail.com">gmail.com</option>
+          <option value="outlook.com">outlook.com</option>
+          <option value="_self">직접입력</option>
+        </select>
+      </div>
+      <label class="join-explication" style="margin-bottom: 20px;">아이디로 사용할 이메일을 입력해주세요.</label>
+      <button type="button" class="common-btn join-btn-disabled" style="margin-bottom: 40px;">이메일 인증</button>
+
+      <label class="join-label">비밀번호</label>
+      <input type="password" id="joinPassword" class="join-input" placeholder="비밀번호">
+      <label class="join-explication">영문, 숫자를 포함 8자 이상의 비밀번호를 입력해주세요.</label>
+
+      <label class="join-label">비밀번호 확인</label>
+      <input type="password" id="joinPasswordCheck" class="join-input" placeholder="비밀번호 확인">
+      <label class="join-explication">비밀번호를 한 번 더 입력해주세요.</label>
+
+      <label class="join-label">닉네임</label>
+      <input type="text" id="joinNickname" class="join-input" placeholder="닉네임">
+      <label class="join-explication">닉네임 입력해주세요.(2~15자)</label>
+
+      <p class="agree-to-terms-text">약관동의</p>
+      <label class="join-explication" style="margin-bottom: 21px;">필수 동의 항목은 전문보기에서 상세 내용 확인 후 동의해주시길 바랍니다.</label>
+
+      <div class="all-agree-box">
+        <input type="checkbox" id="allCheck" name="allCheck" class="form-check-input">
+        <label for="allCheck" class="all-check-label">
+          <span>전체동의</span>
+        </label>
+      </div>
+
+      <div class="join-check-box">
+        <input type="checkbox" id="termsUse" name="termsUse" class="form-check-input">
+        <label for="termsUse" class="join-check-label">
+          <span>이용약관</span>
+          <span class="required-check">(필수)</span>
+          <span class="terms-read">전문보기</span>
+        </label>
+      </div>
+
+      <div class="join-check-box">
+        <input type="checkbox" id="privacyUse" name="privacyUse" class="form-check-input">
+        <label for="privacyUse" class="join-check-label">
+          <span>개인정보수집 및 이용동의</span>
+          <span class="required-check">(필수)</span>
+          <span class="terms-read">전문보기</span>
+        </label>
+      </div>
+
+      <div class="join-check-box">
+        <input type="checkbox" id="marketingUse" name="marketingUse" class="form-check-input">
+        <label for="marketingUse" class="join-check-label">
+          <span>개인정보 마케팅 활용 동의</span>
+          <span class="non-required-check">(선택)</span>
+          <span class="terms-read">전문보기</span>
+        </label>
+      </div>
+
+      <button type="button" class="common-btn join-btn-disabled" style="margin-top: 27px; margin-bottom: 20px;">회원 가입</button>
+      <div style="margin-bottom: 160px;">
+        <span class="join-already-txt">이미 아이디가 있으신가요?</span> <a id="gotoLogin" th:href="@{/login}">로그인 바로가기</a>
+      </div>
+    </form>
+  </section>
+</body>
+</html>
