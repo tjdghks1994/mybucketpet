@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="common/common_head :: common_header(~{::title},~{::link})">
+    <meta charset="UTF-8">
+    <title>로그인 페이지</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/login.css}">
+</head>
+<body>
+
+    <img th:src="@{/img/logo.svg}" id="logo_img">
+
+    <form>
+        <div>
+            <input type="text" id="loginId" class="form-input login-input" placeholder="아이디">
+        </div>
+        <div>
+            <input type="password" id="loginPw" class="form-input login-input" placeholder="패스워드">
+        </div>
+
+        <button class="common-btn login-btn" type="submit">로그인</button>
+
+        <li class="link-list">
+            <a class="login-links" th:href="@{/}">아이디찾기</a>
+            <a class="login-links" th:href="@{/}">비밀번호 재설정</a>
+            <a class="login-links" th:href="@{/}">회원가입</a>
+        </li>
+
+        <li class="sns-btn-list">
+            <div class="login-sns-btn" id="login-naver">
+                <img th:src="@{/img/ic_sns_naver.svg}">
+            </div>
+            <div class="login-sns-btn" id="login-kakao">
+                <img th:src="@{/img/ic_sns_kakao.svg}">
+            </div>
+            <div class="login-sns-btn" id="login-google">
+                <img th:src="@{/img/ic_sns_google.svg}">
+            </div>
+        </li>
+    </form>
+</body>
+</html>
