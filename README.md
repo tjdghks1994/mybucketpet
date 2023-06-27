@@ -12,7 +12,7 @@
 ⚙️ 개발 환경
 > IDE : IntelliJ
 
-> Front : tymeleaf, css, js
+> Front : thymeleaf, css, js
 
 > Back : spring boot, mybatis, h2 database
 
