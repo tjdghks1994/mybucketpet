@@ -1,6 +1,8 @@
 package com.mybucketpet;
 
-import com.mybucketpet.config.MyBatisConfig;
+import com.mybucketpet.config.AppConfig;
+import com.mybucketpet.config.JasyptConfig;
+import com.mybucketpet.config.MailConfig;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Import;
@@ -10,10 +12,9 @@ import org.springframework.context.annotation.Import;
  * Service와 Repository 관련 빈들은 별도의 Config 파일을 통해 등록 후 Import 하도록 설정
  */
 
-@Import(MyBatisConfig.class)
+@Import({JasyptConfig.class, MailConfig.class, AppConfig.class })
 @SpringBootApplication(scanBasePackages = "com.mybucketpet.controller")
 public class MybucketpetApplication {
-
 	public static void main(String[] args) {
 		SpringApplication.run(MybucketpetApplication.class, args);
 	}
