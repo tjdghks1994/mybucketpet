@@ -16,10 +16,17 @@ section             {margin: 60px auto auto auto; width: 360px;}
 .join-email:last-child::-ms-expand { display: none; }
 .join-separator     {color: #495057; font-size: 14px; letter-spacing: -0.14px; margin-left: 2px; margin-right: 2px;
                      width: 13px; height: 17px;}
+.joinMailSelfWrapper { position: relative; display: inline-block;}
+.email-clear-btn    {position: absolute; top: 0; right: 0; width: 30px; height: 40px; border: none; outline: none; cursor: pointer;
+                     background: url('../img/ic_cross-circle.svg') center center no-repeat; background-size: 50%; }
+#email-fail         {color: #E82168;}
+.email-disabled     {border: 1px solid #DEE2E5 !important; background: #F1F3F5 !important; color: #ADB5BD !important;}
 .join-explication   {color:#858E96; font-size: 11px; font-weight: 500; letter-spacing: -0.11px;
                      display: inline-block; width: 366px; text-align: left; margin-bottom: 24px;}
 .join-btn-disabled  {width: 360px; height: 46px; border-radius: 4px; background: #E8ECEF; color:#ADB5BD;
                      font-size: 16px; font-weight: 500; letter-spacing: -0.16px; cursor: default; opacity: 100% !important;}
+.join-btn-active    {width: 360px; height: 46px; border-radius: 4px; border: 1px solid #486FFA; background: #FFF;
+                     color:#3D63E7;font-size: 16px; font-weight: 500; letter-spacing: -0.16px; }
 .join-input         {width: 360px; height: 40px; border-radius: 4px; border: 1px solid #DEE2E5; background:#FFF;
                      padding-left: 16px;}
 .join-input::placeholder {color: #ADB5BD; font-size: 14px; letter-spacing: -0.14px;}
@@ -54,5 +61,13 @@ section             {margin: 60px auto auto auto; width: 360px;}
 .join-already-txt   {color: #858E96; font-size: 12px; font-weight: 500; letter-spacing: -0.12px;}
 #gotoLogin          {color: #495057; font-size: 12px; font-weight: 500; letter-spacing: -0.12px;
                      text-decoration-line: underline; cursor: pointer;}
-
-
+#mail-auth-wrapper  {text-align: left; position: relative;}
+#join-auth-btn      {position: absolute; top: 30px; right: 7px; border-radius: 4px; background: #E8ECEF; width: 50px; height: 26px;
+                     color: #ADB5BD; text-align: center; font-size: 12px; font-weight: 500; letter-spacing: -0.12px;}
+.active-btn         {background: #486FFA !important; color: #FFF !important; cursor: pointer;}
+.resend-auth-code    {color: #495057; font-size: 11px; font-weight: 500; letter-spacing: -0.11px;
+                     text-decoration-line: underline; cursor: pointer;}
+.mail-auth-txt      {color: #858E96; font-size: 12px; font-weight: 500; letter-spacing: -0.12px;}
+#auth-non-same      {color: #E82168 !important; margin-bottom: 4px !important;}
+.auth-fail          { border-radius: 4px; border: 1px solid #E82168; background: #FFF; }
+#email-success      {color: #00C2B7;}
