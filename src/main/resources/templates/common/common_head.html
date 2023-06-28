@@ -1,9 +1,12 @@
 <html xmlns:th="http://www.thymeleaf.org">
-<head th:fragment="common_header(title,links)">
+<head th:fragment="common_header(title,links,scripts)">
   <title th:replace="${title}">타이틀 영역</title>
   <!-- 공통으로 사용할 css, js 영역 -->
   <link rel="stylesheet" type="text/css" media="all" th:href="@{/css/common.css}">
   <link rel="shortcut icon" th:href="@{/img/favicon.ico}">
+  <script th:src="@{/webjars/jquery/3.6.4/jquery.min.js}"></script>
   <!-- 각 페이지에서 매개변수로 전달 받아 추가할 link 태그들 -->
   <th:block th:replace="${links}" />
+  <!-- 각 페이지에서 매개변수로 전달 받아 추가할 script 태그들 -->
+  <th:block th:replace="${scripts}" />
 </head>
