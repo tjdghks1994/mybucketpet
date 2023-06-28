@@ -73,3 +73,5 @@ resources
   - 1대1 문의
   - 공지사항
 
+***
+[프로젝트 개발 일지 작성 진행 (Notion)](https://polite-handball-c55.notion.site/37b7cd789a0f4a6a8427fd2bd7144fab?pvs=4)
