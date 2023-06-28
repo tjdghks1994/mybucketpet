@@ -7,7 +7,7 @@ import java.util.Optional;
 public interface MemberRepository {
 
     // 회원 가입
-    void save(Member member);
+    Member save(Member member);
 
     // 회원 조회
     Optional<Member> findById(String memberId);
