@@ -31,6 +31,8 @@ dependencies {
 	implementation group: 'com.github.ulisesbocchio', name: 'jasypt-spring-boot-starter', version: '3.0.5'
 	// 비밀번호 암호화 구현을 위해 스프링 시큐리티 추가
 	implementation 'org.springframework.boot:spring-boot-starter-security'
+	// Bean Validation을 사용하기 위한 추가
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
 	compileOnly 'org.projectlombok:lombok'
 	runtimeOnly 'com.h2database:h2'
 	annotationProcessor 'org.projectlombok:lombok'
