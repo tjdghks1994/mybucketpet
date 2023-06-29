@@ -1,11 +1,13 @@
 /**
- * 이메일 접두사 input box focus 이벤트
+ * 이메일 접두사 input box oninput 이벤트
  */
 function emailPrefixEvent() {
-    // css 색상 변경처리
-    $('.join-email').css('color', '#343A40');
-    // 이메일 형식 검증
-    emailValidator();
+    $('#joinEmailPrefix').on('input', function () {
+        // css 색상 변경처리
+        $('.join-email').css('color', '#343A40');
+        // 이메일 형식 검증
+        emailValidator();
+    });
 }
 /**
  * 이메일 select box 변경 이벤트
@@ -20,8 +22,8 @@ function emailOptionSelectEvent(selOpt) {
     // 직접 입력을 선택한 경우, 입력을 input box 보이도록 설정 및 기존 select box 숨김 처리
     if (selOptVal == '_self') {
         $('.joinMailSelfWrapper').show();
-        $('#joinMailSelf').focus();
-        $('#joinMailSelect').hide();
+        $('#joinEmailSuffixSelf').focus();
+        $('#joinEmailSuffix').hide();
     }
 }
 /**
@@ -40,15 +42,15 @@ function showClearBtn() {
 function clickClearBtnEvent() {
     $('.email-clear-btn').hide();
     $('.joinMailSelfWrapper').hide();
-    $('#joinMailSelect').show();
+    $('#joinEmailSuffix').show();
 }
 
 /**
  * 이메일 형식 검증기
  */
 function emailValidator() {
-    let emailPrefixVal = $('#joinMail').val();
-    let emailSuffixVal = $('#joinMailSelect').val();
+    let emailPrefixVal = $('#joinEmailPrefix').val();
+    let emailSuffixVal = $('#joinEmailSuffix').val();
     let regex = /^[0-9a-zA-Z]([-_\.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_\.]?[0-9a-zA-Z])*\.[a-zA-Z]{2,3}$/i;
     let emailAuthOK = false;
 
@@ -56,7 +58,7 @@ function emailValidator() {
     if(!!emailSuffixVal?.trim()) {
         // email 접미사가 직접입력을 선택했을 시 올바른 이메일 형식인지 검증
         if (emailSuffixVal == '_self') {
-            let selfMailVal = $('#joinMailSelf').val();
+            let selfMailVal = $('#joinEmailSuffixSelf').val();
             let concatSelfMailVal = emailPrefixVal + '@' + selfMailVal;
             // 올바른 이메일 형식인 경우 이메일 인증 버튼 활성화
             if (regex.test(concatSelfMailVal)) {
@@ -75,9 +77,9 @@ function emailValidator() {
             document.getElementById('email-auth-btn').disabled = false;
             document.getElementById('email-auth-btn').classList.remove('join-btn-disabled');
             document.getElementById('email-auth-btn').classList.add('join-btn-active');
-            document.getElementById('joinMail').classList.remove('auth-fail');
-            document.getElementById('joinMailSelf').classList.remove('auth-fail');
-            document.getElementById('joinMailSelect').classList.remove('auth-fail');
+            document.getElementById('joinEmailPrefix').classList.remove('auth-fail');
+            document.getElementById('joinEmailSuffixSelf').classList.remove('auth-fail');
+            document.getElementById('joinEmailSuffix').classList.remove('auth-fail');
 
             $('#email-fail').hide();
             $('#email-exp').show();
@@ -93,9 +95,9 @@ function emailValidator() {
     document.getElementById('email-auth-btn').disabled = true;
     document.getElementById('email-auth-btn').classList.remove('join-btn-active');
     document.getElementById('email-auth-btn').classList.add('join-btn-disabled');
-    document.getElementById('joinMail').classList.add('auth-fail');
-    document.getElementById('joinMailSelf').classList.add('auth-fail');
-    document.getElementById('joinMailSelect').classList.add('auth-fail');
+    document.getElementById('joinEmailPrefix').classList.add('auth-fail');
+    document.getElementById('joinEmailSuffixSelf').classList.add('auth-fail');
+    document.getElementById('joinEmailSuffix').classList.add('auth-fail');
 }
 
 /**
@@ -103,10 +105,10 @@ function emailValidator() {
  */
 async function authMailSend() {
     try {
-        let emailStr = $('#joinMail').val();
-        const emailSuffixVal = $('#joinMailSelect').val();
+        let emailStr = $('#joinEmailPrefix').val();
+        const emailSuffixVal = $('#joinEmailSuffix').val();
         if (emailSuffixVal == '_self') {
-            let selfMailVal = $('#joinMailSelf').val();
+            let selfMailVal = $('#joinEmailSuffixSelf').val();
             emailStr += '@';
             emailStr += selfMailVal;
         } else {
@@ -114,7 +116,7 @@ async function authMailSend() {
             emailStr += emailSuffixVal;
         }
 
-        const response = await fetch(contextPath+"/login/join/mailAuth", {
+        const response = await fetch(contextPath+"/join/mailAuth", {
             method: "POST",
             headers: {
                 "Content-Type": "text/plain",
@@ -179,11 +181,16 @@ function checkAuthCode() {
     // 기존 문구 숨김 처리
     $('#email-exp').hide();
     // 이메일 입력 input 비활성화
-    document.getElementById('joinMail').disabled = true;
-    document.getElementById('joinMail').classList.add('email-disabled');
+    document.getElementById('joinEmailPrefix').disabled = true;
+    document.getElementById('joinEmailPrefix').classList.add('email-disabled');
     // 이메일 선택 비활성화
-    document.getElementById('joinMailSelect').disabled = true;
-    document.getElementById('joinMailSelect').classList.add('email-disabled');
+    document.getElementById('joinEmailSuffix').disabled = true;
+    document.getElementById('joinEmailSuffixSelf').disabled = true;
+    document.getElementById('joinEmailSuffix').classList.add('email-disabled');
+    // 회원가입 버튼 활성화
+    document.getElementById('join-exec-btn').classList.remove('join-btn-disabled');
+    document.getElementById('join-exec-btn').classList.add('join-btn-active');
+    document.getElementById('join-exec-btn').disabled = false;
     // 비밀번호 입력 input 포커스
     $('#joinPassword').focus();
 }
@@ -200,6 +207,74 @@ function initStyle() {
     document.getElementById('join-auth-btn').classList.add('active-btn');
 }
 
-window.onload = function () {
+/**
+ * 약관동의 - 전체동의 버튼 클릭
+ */
+function allCheckTerms() {
+    $('#allCheck').on('change', function () {
+        let allCheckProp = $(this).prop('checked');
+        // 전체동의 버튼의 checked 값과 동일하게 변경 처리
+        $.each($('.join-check-box .form-check-input'), function () {
+            $(this).prop('checked', allCheckProp);
+        });
+    });
+}
 
+/**
+ * 전체 동의 버튼 상태 체크
+ */
+function allCheckStatus() {
+    $('.join-check-box .form-check-input').on('change', function () {
+        let inputLength = $('.join-check-box .form-check-input').length;
+        let checkCount = 0;
+
+        $.each($('.join-check-box .form-check-input'), function () {
+            if ($(this).prop('checked')) {
+                checkCount++;
+            }
+        });
+
+        if (inputLength == checkCount) {
+            $('#allCheck').prop('checked', true);
+        } else {
+            $('#allCheck').prop('checked', false);
+        }
+    });
+}
+
+/**
+ * th:object와 th:field 기능을 사용하던 중
+ * disabled 속성의 값이 true인 태그의 경우 값이 전달되지 않는 문제를 발견하여
+ * form 전송 전에 전달되어져야 하는 값을 가진 태그의 disabled 속성 값을 false로 변경 처리
+ */
+function disabledChange() {
+    // th:field를 사용해서 폼 전송 시 disabled 속성 값이 true로 설정되어있으면 값이 전달되지 않는 현상 발견..
+    document.getElementById('joinEmailPrefix').disabled = false;
+    document.getElementById('joinEmailSuffix').disabled = false;
+    document.getElementById('joinEmailSuffixSelf').disabled = false;
+}
+
+/**
+ * 이메일 인증 처리가 완료되었는지 체크
+ * ( 서버에서 검증 후 올바르지 않은 경우 joinMemberForm.html 로 재진입 )
+ * 완료된 상태라면 회원가입 버튼 활성화 처리
+ */
+function checkMailAuthOK() {
+    if ($('#mail-auth-wrapper').css('display') == 'none') {
+        let authVal = $('#mail-auth-input').val();
+        // 메일 인증 Wrapper가 보이지 않는 상태인데 인증 코드 값이 존재한다
+        if (!!authVal?.trim()) {
+            // 회원가입 버튼 활성화
+            document.getElementById('join-exec-btn').classList.remove('join-btn-disabled');
+            document.getElementById('join-exec-btn').classList.add('join-btn-active');
+            document.getElementById('join-exec-btn').disabled = false;
+        }
+    }
+}
+
+window.onload = function () {
+    allCheckTerms();
+    allCheckStatus();
+    emailPrefixEvent();
+    checkMailAuthOK();
 };
