@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="common/common_head :: common_header(~{::title},~{::link})">
+<head th:replace="common/common_head :: common_header(~{::title},~{::link},~{::script})">
     <meta charset="UTF-8">
     <title>로그인 페이지</title>
     <link rel="stylesheet" type="text/css" th:href="@{/css/login.css}">
+    <script type="text/javascript" th:src="@{/js/login.js}"></script>
 </head>
 <body>
 
@@ -22,7 +23,7 @@
         <li class="link-list">
             <a class="login-links" th:href="@{/}">아이디찾기</a>
             <a class="login-links" th:href="@{/}">비밀번호 재설정</a>
-            <a class="login-links" th:href="@{/login/join}">회원가입</a>
+            <a class="login-links" th:href="@{/join}">회원가입</a>
         </li>
 
         <li class="sns-btn-list">
