@@ -22,11 +22,9 @@ public class JoinForm {
     private String joinEmailSuffixSelf; // 회원 아이디(이메일) 접미사 (직접입력)
     @NotBlank
     private String authCode;        // 메일 인증 코드
-    @Size(min = 8, max = 20)
     @Pattern(regexp = "^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d~!@#$%^&*()-_+|=]{8,20}$")
     @NotBlank
     private String joinPassword;      // 회원 비밀번호
-    @Size(min = 8, max = 20)
     @Pattern(regexp = "^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d~!@#$%^&*()-_+|=]{8,20}$")
     @NotBlank
     private String joinPasswordCheck; // 회원 비밀번호 확인
