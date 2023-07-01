@@ -8,8 +8,8 @@ public interface MemberRepository {
 
     // 회원 가입
     Member save(Member member);
-
     // 회원 조회
     Optional<Member> findById(String memberId);
-
+    // 닉네임 조회
+    Optional<String> findByNickname(String nickname);
 }

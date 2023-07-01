@@ -14,4 +14,10 @@
           from mbp_member
          where member_Id = #{memberId}
     </select>
+
+    <select id="findByNickname" resultType="String">
+        select member_nickname
+        from mbp_member
+        where member_nickname = #{nickname}
+    </select>
 </mapper>
