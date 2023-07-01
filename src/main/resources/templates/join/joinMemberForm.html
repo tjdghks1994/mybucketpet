@@ -5,6 +5,13 @@
   <title th:text="${#messages.msg('join.label')}">회원가입</title>
   <link rel="stylesheet" type="text/css" th:href="@{/css/joinMember.css}">
   <script type="text/javascript" th:src="@{/js/join.js}"></script>
+  <script th:inline="javascript">
+    // 외부 js파일인 join.js에서 spring messagesource를 활용하기 위해 선언
+    const passwordErrorMsg = [[#{Pattern.joinForm.joinPassword}]];
+    const passwordNotSameErrorMsg = [[#{NotSame.joinForm.joinPasswordCheck}]];
+    const nicknameErrorMsg = [[#{Size.joinForm.joinNickname}]];
+    const nicknameSameErrorMsg = [[#{alreadyExist.joinForm.joinNickname}]];
+  </script>
 </head>
 <body>
 <header>
@@ -58,22 +65,36 @@
     </div>
 
     <label class="join-label" th:text="${#messages.msg('password.label')}">비밀번호</label>
-    <input type="password" th:field="*{joinPassword}" class="join-input" placeholder="비밀번호">
+    <p class="field-error" id="password-msg" th:errors="*{joinPassword}">비밀번호 오류</p>
+    <p class="field-error" id="js-password-msg" style="display: none;">비밀번호 검증메시지 표시</p>
+    <input type="password" th:errorclass="field-input-error" th:field="*{joinPassword}"
+           class="join-input" placeholder="비밀번호" onchange="passwordValidator()">
     <p class="join-explication" th:text="${#messages.msg('password.write')}">
       영문, 숫자를 포함한 8자 이상, 20자 이하의 비밀번호를 입력해주세요.</p>
 
     <label class="join-label" th:text="${#messages.msg('password.check.label')}">비밀번호 확인</label>
-    <input type="password" th:field="*{joinPasswordCheck}" class="join-input" placeholder="비밀번호 확인">
+    <div th:if="${#fields.hasGlobalErrors()}">
+      <p class="field-error" id="password-check-msg" th:each="err: ${#fields.globalErrors()}"
+         th:text="${err}">비밀번호 확인 오류메시지 표시</p>
+    </div>
+    <p class="field-error" id="js-password-check-msg" style="display: none;">비밀번호 확인 검증메시지 표시</p>
+    <p class="field-error" id="password-check-pattern-msg" th:errors="*{joinPasswordCheck}">비밀번호확인 패턴 오류</p>
+    <input type="password" th:errorclass="field-input-error" th:field="*{joinPasswordCheck}"
+           class="join-input" onchange="passwordCheckValidator()" placeholder="비밀번호 확인">
     <p class="join-explication" th:text="${#messages.msg('password.check.write')}">비밀번호를 한 번 더 입력해주세요.</p>
 
     <label class="join-label" th:text="${#messages.msg('nickname.label')}">닉네임</label>
-    <input type="text" th:field="*{joinNickname}" class="join-input" placeholder="닉네임">
+    <p class="field-error" id="nickname-msg" th:errors="*{joinNickname}">닉네임 오류</p>
+    <p class="field-error" id="js-nickname-msg" style="display: none;">닉네임 검증메시지 표시</p>
+    <input type="text" th:errorclass="field-input-error" th:field="*{joinNickname}"
+           class="join-input" onchange="nicknameValidator()" placeholder="닉네임">
     <p class="join-explication" th:text="${#messages.msg('nickname.write')}">닉네임 입력해주세요.(2~15자)</p>
 
     <p class="agree-to-terms-text" th:text="${#messages.msg('agree.terms.label')}">약관동의</p>
+    <div class="field-error" th:errors="*{termsUse}">이용약관 오류</div>
+    <div class="field-error" th:errors="*{privacyUse}">개인정보수집 오류</div>
     <p class="join-explication" style="margin-bottom: 21px;"
        th:text="${#messages.msg('agree.terms.write')}">필수 동의 항목은 전문보기에서 상세 내용 확인 후 동의해주시길 바랍니다.</p>
-
     <div class="all-agree-box">
       <input type="checkbox" id="allCheck" name="allCheck" class="form-check-input">
       <label for="allCheck" class="all-check-label">
@@ -82,7 +103,7 @@
     </div>
 
     <div class="join-check-box">
-      <input type="checkbox" th:field="*{termsUse}" id="termsUse" class="form-check-input">
+      <input type="checkbox" th:field="*{termsUse}" id="termsUse" class="form-check-input" onchange="allCheckStatus()">
       <label for="termsUse" class="join-check-label" >
         <span th:text="${#messages.msg('use.terms.label')}">이용약관</span>
         <span class="required-check" th:text="${#messages.msg('required')}">(필수)</span>
@@ -91,7 +112,7 @@
     </div>
 
     <div class="join-check-box">
-      <input type="checkbox" th:field="*{privacyUse}" id="privacyUse" class="form-check-input">
+      <input type="checkbox" th:field="*{privacyUse}" id="privacyUse" class="form-check-input" onchange="allCheckStatus()">
       <label for="privacyUse" class="join-check-label">
         <span th:text="${#messages.msg('agree.privacy.label')}">개인정보수집 및 이용동의</span>
         <span class="required-check" th:text="${#messages.msg('required')}">(필수)</span>
@@ -100,7 +121,7 @@
     </div>
 
     <div class="join-check-box">
-      <input type="checkbox" th:field="*{marketingUse}" id="marketingUse" class="form-check-input">
+      <input type="checkbox" th:field="*{marketingUse}" id="marketingUse" class="form-check-input" onchange="allCheckStatus()">
       <label for="marketingUse" class="join-check-label">
         <span th:text="${#messages.msg('agree.marketing.label')}">개인정보 마케팅 활용 동의</span>
         <span class="non-required-check" th:text="${#messages.msg('non.required')}">(선택)</span>
@@ -115,7 +136,7 @@
             th:text="${#messages.msg('join.btn')}">회원 가입</button>
     <div style="margin-bottom: 160px;">
       <span class="join-already-txt" th:text="${#messages.msg('already.id.question')}">이미 아이디가 있으신가요?</span>
-      <a id="gotoLogin" th:href="@{/templates/login}" th:text="${#messages.msg('goto.login')}">로그인 바로가기</a>
+      <a id="gotoLogin" th:href="@{/login}" th:text="${#messages.msg('goto.login')}">로그인 바로가기</a>
     </div>
   </form>
 </section>
