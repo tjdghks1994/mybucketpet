@@ -24,6 +24,7 @@ function emailOptionSelectEvent(selOpt) {
         $('.joinMailSelfWrapper').show();
         $('#joinEmailSuffixSelf').focus();
         $('#joinEmailSuffix').hide();
+        document.getElementById('joinEmailSuffixSelf').disabled = false;
     }
 }
 /**
@@ -73,17 +74,8 @@ function emailValidator() {
         }
 
         if (emailAuthOK) {
-            // 버튼 활성화 처리
-            document.getElementById('email-auth-btn').disabled = false;
-            document.getElementById('email-auth-btn').classList.remove('join-btn-disabled');
-            document.getElementById('email-auth-btn').classList.add('join-btn-active');
-            document.getElementById('joinEmailPrefix').classList.remove('auth-fail');
-            document.getElementById('joinEmailSuffixSelf').classList.remove('auth-fail');
-            document.getElementById('joinEmailSuffix').classList.remove('auth-fail');
-
-            $('#email-fail').hide();
-            $('#email-exp').show();
-
+            // 이메일 형식이 올바른 경우, 현재 가입된 이메일인지 아닌지 조회
+            emailSameCheck();
             return; // 검증 종료
         }
     }
@@ -92,12 +84,66 @@ function emailValidator() {
     // 이메일 형식이 올바르지 않습니다. 문구 출력
     $('#email-fail').show();
     $('#email-exp').hide();
+    $('#email-fail').text('이메일 형식이 올바르지 않습니다.');
     document.getElementById('email-auth-btn').disabled = true;
     document.getElementById('email-auth-btn').classList.remove('join-btn-active');
     document.getElementById('email-auth-btn').classList.add('join-btn-disabled');
     document.getElementById('joinEmailPrefix').classList.add('auth-fail');
     document.getElementById('joinEmailSuffixSelf').classList.add('auth-fail');
     document.getElementById('joinEmailSuffix').classList.add('auth-fail');
+}
+function emailSameCheck() {
+    let emailStr = $('#joinEmailPrefix').val();
+    const emailSuffixVal = $('#joinEmailSuffix').val();
+    if (emailSuffixVal == '_self') {
+        let selfMailVal = $('#joinEmailSuffixSelf').val();
+        emailStr += '@';
+        emailStr += selfMailVal;
+    } else {
+        emailStr += '@';
+        emailStr += emailSuffixVal;
+    }
+
+    $.ajax({
+        url: contextPath+"/join/mail/"+emailStr,
+        type: 'GET',
+        accept: 'application/json',
+        success: function onData (data) {
+            console.log(data);
+            // 이미 존재하는 이메일인 경우
+            if (!!data['memberId']?.trim()) {
+                $('#email-fail').show();
+                $('#email-exp').hide();
+                if (data['joinPath'] == 'EMAIL') {
+                    $('#email-fail').text('이미 가입한 이메일입니다. \'이메일 로그인\'으로 로그인해주세요.');
+                } else {
+                    $('#email-fail').text('이미 가입한 이메일입니다.');
+                }
+
+                document.getElementById('email-auth-btn').disabled = true;
+                document.getElementById('email-auth-btn').classList.remove('join-btn-active');
+                document.getElementById('email-auth-btn').classList.add('join-btn-disabled');
+                document.getElementById('joinEmailPrefix').classList.add('auth-fail');
+                document.getElementById('joinEmailSuffixSelf').classList.add('auth-fail');
+                document.getElementById('joinEmailSuffix').classList.add('auth-fail');
+            } else {
+                // 버튼 활성화 처리
+                document.getElementById('email-auth-btn').disabled = false;
+                document.getElementById('email-auth-btn').classList.remove('join-btn-disabled');
+                document.getElementById('email-auth-btn').classList.add('join-btn-active');
+                document.getElementById('joinEmailPrefix').classList.remove('auth-fail');
+                document.getElementById('joinEmailSuffixSelf').classList.remove('auth-fail');
+                document.getElementById('joinEmailSuffix').classList.remove('auth-fail');
+
+                $('#email-fail').hide();
+                $('#email-exp').show();
+            }
+        },
+        error: function onError (error) {
+            console.error(error);
+        }
+    });
+
 }
 
 /**
@@ -116,7 +162,7 @@ async function authMailSend() {
             emailStr += emailSuffixVal;
         }
 
-        const response = await fetch(contextPath+"/join/mailAuth", {
+        const response = await fetch(contextPath+"/join/mail/auth", {
             method: "POST",
             headers: {
                 "Content-Type": "text/plain",
@@ -224,22 +270,20 @@ function allCheckTerms() {
  * 전체 동의 버튼 상태 체크
  */
 function allCheckStatus() {
-    $('.join-check-box .form-check-input').on('change', function () {
-        let inputLength = $('.join-check-box .form-check-input').length;
-        let checkCount = 0;
+    let inputLength = $('.join-check-box .form-check-input').length;
+    let checkCount = 0;
 
-        $.each($('.join-check-box .form-check-input'), function () {
-            if ($(this).prop('checked')) {
-                checkCount++;
-            }
-        });
-
-        if (inputLength == checkCount) {
-            $('#allCheck').prop('checked', true);
-        } else {
-            $('#allCheck').prop('checked', false);
+    $.each($('.join-check-box .form-check-input'), function () {
+        if ($(this).prop('checked')) {
+            checkCount++;
         }
     });
+
+    if (inputLength == checkCount) {
+        $('#allCheck').prop('checked', true);
+    } else {
+        $('#allCheck').prop('checked', false);
+    }
 }
 
 /**
@@ -268,7 +312,123 @@ function checkMailAuthOK() {
             document.getElementById('join-exec-btn').classList.remove('join-btn-disabled');
             document.getElementById('join-exec-btn').classList.add('join-btn-active');
             document.getElementById('join-exec-btn').disabled = false;
+            // 이메일 인증 관련 태그 비활성화
+            document.getElementById('joinEmailPrefix').disabled = true;
+            document.getElementById('joinEmailSuffix').disabled = true;
+            document.getElementById('joinEmailSuffixSelf').disabled = true;
         }
+    }
+
+    // 이메일 직접입력을 한 상태에서 검증오류 발생하여 현재 페이지로 다시 접근했을 때
+    // 직접입력한 값이 아니라 select box의 직접입력을 보여주는 문제가 발생하여 수정처리
+    let emailSelfVal = $('#joinEmailSuffixSelf').val();
+    let selectVal = $('#joinEmailSuffix').val();
+    if (!!emailSelfVal?.trim() && selectVal == '_self') {
+        $('.joinMailSelfWrapper').show();
+        $('#joinEmailSuffix').hide();
+    }
+}
+
+/**
+ * 비밀번호 검증기
+ */
+function passwordValidator() {
+    let passwordVal = $('#joinPassword').val();
+    let regex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d~!@#$%^&*()-_+|=]{8,20}$/;
+    let errorMsg = passwordErrorMsg;
+
+    // 비밀번호 검증에 성공한 경우
+    if (regex.test(passwordVal)) {
+        // 서버 검증기를 통한 에러 메시지 표시가 이미 존재한 경우
+        if ($('#password-msg').length > 0) {
+            $('#password-msg').hide();
+            document.getElementById('joinPassword').classList.remove('field-input-error');
+        } else {
+            $('#js-password-msg').hide();
+            document.getElementById('joinPassword').classList.remove('field-input-error');
+        }
+    } else {
+        // 서버 검증기를 통한 에러 메시지 표시가 이미 존재한 경우
+        if ($('#password-msg').length > 0) {
+            $('#password-msg').hide();
+        }
+        $('#js-password-msg').show();
+        $('#js-password-msg').text(errorMsg);
+        document.getElementById('joinPassword').classList.add('field-input-error');
+    }
+}
+
+/**
+ * 비밀번호 확인 검증기
+ */
+function passwordCheckValidator() {
+    let passwordVal = $('#joinPassword').val();
+    let passwordCheckVal = $('#joinPasswordCheck').val();
+    let errorMsg = passwordNotSameErrorMsg;
+    // 비밀번호와 비밀번호 확인의 값이 동일하다면
+    if (passwordVal == passwordCheckVal) {
+        // 서버 검증기를 통한 에러 메시지 표시가 이미 존재한 경우
+        if($('#password-check-pattern-msg').length > 0) {
+            $('#password-check-pattern-msg').hide();
+        }
+
+        $('#js-password-check-msg').hide();
+        document.getElementById('joinPasswordCheck').classList.remove('field-input-error');
+
+    } else {
+        // 서버 검증기를 통한 에러 메시지 표시가 이미 존재한 경우
+        if ($('#password-check-pattern-msg').length > 0) {
+            $('#password-check-pattern-msg').hide();
+        }
+        $('#js-password-check-msg').show();
+        $('#js-password-check-msg').text(errorMsg);
+        document.getElementById('joinPasswordCheck').classList.add('field-input-error');
+    }
+}
+
+/**
+ * 닉네임 검증기
+ */
+function nicknameValidator() {
+    let nicknameVal = $('#joinNickname').val();
+    let errorMsg = nicknameErrorMsg;
+
+    // 입력된 닉네임이 2~15자가 맞는 경우
+    if (nicknameVal.length < 16 && nicknameVal.length > 1) {
+        // 서버 검증기를 통한 에러 메시지표시가 이미 존재한 경우
+        if ($('#nickname-msg').length > 0) {    // 서버 검증기 에러 메시지 숨기기
+            $('#nickname-msg').hide();
+        }
+
+        // 닉네임이 이미 존재하는지 체크
+        $.ajax({
+            url: contextPath+"/join/"+nicknameVal,
+            method: 'GET',
+            accept: 'text/plain',
+            success: function (data) {
+                // 이미 존재하는 닉네임이라면 문구 출력
+                if (!!data?.trim()) {
+                    $('#js-nickname-msg').show();
+                    $('#js-nickname-msg').text(nicknameSameErrorMsg);
+                    document.getElementById('joinNickname').classList.add('field-input-error');
+                } else {
+                    $('#js-nickname-msg').hide();
+                    document.getElementById('joinNickname').classList.remove('field-input-error');
+                }
+            },
+            error: function (error) {
+                console.log(error);
+            }
+        });
+
+    } else {
+        // 서버 검증기를 통한 에러 메시지표시가 이미 존재한 경우
+        if ($('#nickname-msg').length > 0) {    // 서버 검증기 에러 메시지 숨기기
+            $('#nickname-msg').hide();
+        }
+        $('#js-nickname-msg').show();
+        $('#js-nickname-msg').text(errorMsg);
+        document.getElementById('joinNickname').classList.add('field-input-error');
     }
 }
 
