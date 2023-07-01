@@ -10,6 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.NoSuchElementException;
+import java.util.Optional;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 @Slf4j
@@ -31,5 +34,20 @@ class MyBatisMemberRepositoryTest {
         Assertions.assertThat(findMember).isEqualTo(saveMember);
     }
 
-
+    @Test
+    @DisplayName("닉네임 조회 테스트")
+    void findByNickname() {
+        // given
+        String nickname = "testttt";
+        String nickname2 = "test2";
+        Member member = new Member("test@gmail.com", "testttttt",
+                "test2", "Y", "N", JoinType.EMAIL);
+        memberRepository.save(member);
+        // when
+        Optional<String> findNickname = memberRepository.findByNickname(nickname);
+        Optional<String> findNickname2 = memberRepository.findByNickname(nickname2);
+        // then
+        Assertions.assertThatThrownBy(() -> findNickname.get().equals(nickname)).isInstanceOf(NoSuchElementException.class);
+        Assertions.assertThat(findNickname2.get()).isEqualTo(nickname2);
+    }
 }
