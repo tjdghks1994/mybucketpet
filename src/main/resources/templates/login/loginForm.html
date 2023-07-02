@@ -10,12 +10,17 @@
 
     <img th:src="@{/img/logo.svg}" id="logo_img">
 
-    <form>
+    <form th:action th:object="${loginForm}" method="post">
         <div>
-            <input type="text" id="loginId" class="form-input login-input" placeholder="아이디">
+            <input type="text" th:field="*{loginId}" class="form-input login-input" placeholder="아이디">
         </div>
         <div>
-            <input type="password" id="loginPw" class="form-input login-input" placeholder="패스워드">
+            <input type="password" th:field="*{loginPw}" class="form-input login-input" placeholder="패스워드">
+        </div>
+
+        <div th:if="${#fields.hasGlobalErrors()}">
+            <p class="field-error" style="text-align: center !important; margin-bottom: 20px; font-size: 13px !important;"
+               th:each="err : ${#fields.globalErrors()}" th:text="${err}">오류 메시지 출력</p>
         </div>
 
         <button class="common-btn login-btn" type="submit">로그인</button>
