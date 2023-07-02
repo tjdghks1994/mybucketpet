@@ -8,10 +8,11 @@ import java.util.Optional;
 public interface MemberService {
     // 회원 가입
     Member save(JoinForm member);
-    // 회원 조회
-    Optional<Member> findById(String memberId);
-    // 이미 존재하는 회원인지 체크 후, 필요한 정보만 전달
-    Member findBySameId(String memberId);
+    // 회원 조회, 필요한 정보만 전달
+    Member findById(String memberId);
     // 닉네임 조회
     String findByNickname(String nickName);
+
+    // 회원 로그인 가능 여부 체크
+    Member findByLoginAvailability(String memberId, String memberPw);
 }

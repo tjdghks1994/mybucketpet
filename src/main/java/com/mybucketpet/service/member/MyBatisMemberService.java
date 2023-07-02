@@ -39,22 +39,13 @@ public class MyBatisMemberService implements MemberService {
     }
 
     @Override
-    public Optional<Member> findById(String memberId) {
-        return memberRepository.findById(memberId);
-    }
-
-    @Override
-    public Member findBySameId(String memberId) {
+    public Member findById(String memberId) {
         Optional<Member> findMember = memberRepository.findById(memberId);
         // 이미 존재하는 회원
         if (findMember.isPresent()) {
-            // 필요한 정보만 남기고 나머지는 삭제처리
-            // 필요 정보 - ID, JoinType
+            // 중요 정보인 pw는 삭제 처리
             Member member = findMember.get();
             member.setMemberPw("");
-            member.setMemberNickname("");
-            member.setMarketingYN("");
-            member.setSuspendYN("");
 
             return member;
         }
@@ -70,6 +61,25 @@ public class MyBatisMemberService implements MemberService {
             return nickName;
         }
         return "";
+    }
+
+    @Override
+    public Member findByLoginAvailability(String loginId, String loginPw) {
+        Optional<Member> findLoginMember = memberRepository.findById(loginId);
+
+        // 입력된 Id 멤버가 조회 되는 경우
+        if (findLoginMember.isPresent()) {
+            Member member = findLoginMember.get();
+            // passwordEncoder를 활용해서 평문과 저장되어있는 암호문이랑 비교
+            boolean matches = passwordEncoder.matches(loginPw, member.getMemberPw());
+            // 2개의 값이 동일하다고 판단되는 경우 조회한 Member 객체 반환
+            if (matches) {
+                return member;
+            }
+        }
+        // 조회된 멤버가 없다면 로그인 실패
+        // 빈 객체 멤버 반환
+        return new Member();
     }
 
 }
