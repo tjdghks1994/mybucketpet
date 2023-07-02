@@ -432,6 +432,10 @@ function nicknameValidator() {
     }
 }
 
+function goLoginPage() {
+    window.location.href=contextPath + "/login";
+}
+
 window.onload = function () {
     allCheckTerms();
     allCheckStatus();
