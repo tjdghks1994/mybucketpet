@@ -12,6 +12,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.Optional;
 
@@ -31,7 +32,8 @@ public class JoinController {
     }
 
     @PostMapping()
-    public String join(@Validated @ModelAttribute JoinForm joinForm, BindingResult bindingResult) {
+    public String join(@Validated @ModelAttribute JoinForm joinForm, BindingResult bindingResult,
+                       RedirectAttributes rs) {
         log.info("joinForm = {}", joinForm);
 
         // 비밀번호와 비밀번호 확인의 값이 서로 다른 경우
@@ -52,9 +54,10 @@ public class JoinController {
         }
 
         Member saveMember = memberService.save(joinForm);
+        rs.addFlashAttribute("member", saveMember);
         log.info("saveMember = {}", saveMember);
 
-        return "login/loginForm";
+        return "redirect:login";
     }
 
     @ResponseBody
@@ -73,7 +76,7 @@ public class JoinController {
     public Member mailCheck(@PathVariable String email) {
         log.info("mailCheck Start EMAIL = {}", email);
         // 전달받은 이메일이 존재하는지 조회
-        return memberService.findBySameId(email);
+        return memberService.findById(email);
     }
 
     @ResponseBody
