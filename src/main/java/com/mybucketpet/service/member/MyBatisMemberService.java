@@ -1,6 +1,7 @@
 package com.mybucketpet.service.member;
 
 import com.mybucketpet.controller.join.JoinForm;
+import com.mybucketpet.controller.login.PasswordChangeForm;
 import com.mybucketpet.domain.member.Member;
 import com.mybucketpet.repository.member.MemberRepository;
 import lombok.RequiredArgsConstructor;
@@ -80,6 +81,21 @@ public class MyBatisMemberService implements MemberService {
         // 조회된 멤버가 없다면 로그인 실패
         // 빈 객체 멤버 반환
         return new Member();
+    }
+
+    @Override
+    public void update(PasswordChangeForm passwordChangeForm) {
+        // 평문을 암호화
+        String encPassword = passwordEncoder.encode(passwordChangeForm.getChangePassword());
+        String memberId = "";
+        // 이메일 접미사를 직접 입력한 경우
+        if (StringUtils.hasText(passwordChangeForm.getJoinEmailSuffixSelf())) {
+            memberId = passwordChangeForm.getJoinEmailPrefix() + "@" + passwordChangeForm.getJoinEmailSuffix();
+        } else {
+            memberId = passwordChangeForm.getJoinEmailPrefix() + "@" + passwordChangeForm.getJoinEmailSuffix();
+        }
+        // 암호화한 패스워드로 수정
+        memberRepository.update(encPassword, memberId);
     }
 
 }

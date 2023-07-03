@@ -30,4 +30,9 @@ public class MyBatisMemberRepository implements MemberRepository {
     public Optional<String> findByNickname(String nickname) {
         return memberMapper.findByNickname(nickname);
     }
+
+    @Override
+    public void update(String memberPw, String memberId) {
+        memberMapper.update(memberPw, memberId);
+    }
 }

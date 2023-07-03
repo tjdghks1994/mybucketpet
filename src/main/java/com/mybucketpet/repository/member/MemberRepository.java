@@ -12,4 +12,7 @@ public interface MemberRepository {
     Optional<Member> findById(String memberId);
     // 닉네임 조회
     Optional<String> findByNickname(String nickname);
+
+    // 회원 비밀번호 재설정
+    void update(String memberPw, String memberId);
 }
