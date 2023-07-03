@@ -18,13 +18,21 @@ import java.util.Map;
 
 @Slf4j
 @Controller
-@RequestMapping("/login")
+@RequestMapping("/members")
 @RequiredArgsConstructor
 public class LoginController {
+    /**
+     * HTTP URI 설계
+     * === HTTP Form 사용 (컨트롤 URI 사용) ===
+     * 회원 로그인 폼 :   /members/login GET
+     * 회원 로그인 처리 : /members/login  POST
+     * 회원 비밀번호 재설정 폼 : /members/password    GET
+     * 회원 비밀번호 재설정 처리 : /members/password   POST
+     */
 
     private final MemberService memberService;
 
-    @GetMapping
+    @GetMapping("/login")
     public String loginForm(HttpServletRequest request, Model model) {
         Map<String, ?> inputFlashMap = RequestContextUtils.getInputFlashMap(request);
         // 회원가입 완료 후 loginForm으로 오게 된 경우 바로 로그인 처리 후 메인 페이지로 이동 처리
@@ -43,7 +51,7 @@ public class LoginController {
         return "login/loginForm";
     }
 
-    @PostMapping
+    @PostMapping("/login")
     public String login(@ModelAttribute LoginForm loginForm, BindingResult bindingResult) {
         String loginId = loginForm.getLoginId();
         String loginPw = loginForm.getLoginPw();
