@@ -28,8 +28,8 @@
       <span class="join-separator"> @ </span>
       <div class="joinMailSelfWrapper" style="display: none;">
         <input type="text" th:field="*{joinEmailSuffixSelf}" class="join-email" placeholder="입력해주세요."
-               oninput="showClearBtn()">
-        <button class="email-clear-btn" style="display: none;" onclick="clickClearBtnEvent()"></button>
+               oninput="checkEmail()">
+        <button type="button" class="email-clear-btn" style="display: none;" onclick="clickClearBtnEvent()"></button>
       </div>
       <select class="join-email" th:field="*{joinEmailSuffix}" onchange="emailOptionSelectEvent(this)">
         <option value="" th:text="${#messages.msg('select')}">선택해주세요.</option>
@@ -136,7 +136,7 @@
             th:text="${#messages.msg('join.btn')}">회원 가입</button>
     <div style="margin-bottom: 160px;">
       <span class="join-already-txt" th:text="${#messages.msg('already.id.question')}">이미 아이디가 있으신가요?</span>
-      <a id="gotoLogin" th:href="@{/login}" th:text="${#messages.msg('goto.login')}">로그인 바로가기</a>
+      <a id="gotoLogin" th:href="@{/members/login}" th:text="${#messages.msg('goto.login')}">로그인 바로가기</a>
     </div>
   </form>
 </section>
