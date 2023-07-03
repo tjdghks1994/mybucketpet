@@ -37,6 +37,28 @@ button { border-width: 0px; }
     border: 1px solid #E82168 !important;
     background: #FFF !important;
 }
+.blue-active-btn {
+    width: 360px;
+    height: 46px;
+    border-radius: 4px;
+    background: #486FFA;
+    color: #FFF;
+    text-align: center;
+    font-size: 16px;
+    letter-spacing: -0.16px;
+}
+.btn-disabled {
+    width: 360px;
+    height: 46px;
+    border-radius: 4px;
+    background: #E8ECEF;
+    color: #ADB5BD;
+    font-size: 16px;
+    font-weight: 500;
+    letter-spacing: -0.16px;
+    cursor: default;
+    opacity: 100% !important;
+}
 @font-face {
     font-family: 'Pretendard-Regular';
     src: url('https://cdn.jsdelivr.net/gh/Project-Noonnu/noonfonts_2107@1.1/Pretendard-Regular.woff') format('woff');
