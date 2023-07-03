@@ -4,8 +4,12 @@ import com.mybucketpet.domain.member.JoinType;
 import com.mybucketpet.domain.member.Member;
 import com.mybucketpet.service.login.EmailService;
 import com.mybucketpet.service.member.MemberService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
@@ -18,20 +22,31 @@ import java.util.Optional;
 
 @Slf4j
 @Controller
-@RequestMapping("/join")
+@RequestMapping("/members")
 @RequiredArgsConstructor
 public class JoinController {
+    /**
+     * HTTP URI 설계
+     * === HTML Form 사용 (컨트롤 URI 사용) ===
+     * 회원 가입 폼 :    /members/join GET
+     * 회원 가입 처리 :   /members/join POST
+     * === HTTP API 사용 ===
+     * 회원 메일 조회 :   /members/mail/{email}   GET
+     * 회원 메일 인증번호 생성 :  /members/mail/{email}/auth POST
+     * 회원 메일 인증번호 확인 :  /members/mail/{email}/auth/{authCode}   GET
+     * 회원 닉네임 조회 : /members/nickname/{nickname} GET
+     * */
 
     private final EmailService emailService;
     private final MemberService memberService;
 
-    @GetMapping()
+    @GetMapping("/join")
     public String joinForm(Model model) {
         model.addAttribute("joinForm", new JoinForm(JoinType.EMAIL));
         return "join/joinMemberForm";
     }
 
-    @PostMapping()
+    @PostMapping("/join")
     public String join(@Validated @ModelAttribute JoinForm joinForm, BindingResult bindingResult,
                        RedirectAttributes rs) {
         log.info("joinForm = {}", joinForm);
@@ -61,14 +76,36 @@ public class JoinController {
     }
 
     @ResponseBody
-    @PostMapping("/mail/auth")
-    public String mailAuthCheck(@RequestBody String email) {
-        log.info("mailAuthCheck Start EMAIL = {}", email);
+    @PostMapping("/mail/{email}/auth")
+    public ResponseEntity<String> mailAuth(@PathVariable String email, HttpServletRequest request) {
+        log.info("mailAuth CreateToSend Start EMAIL = {}", email);
         // 인증번호 생성 후 메일 전송 - 반환값은 생성한 인증번호
         String authCode = emailService.sendAuthCode(email);
         log.info("LoginController authCode = {}", authCode);
+        HttpSession session = request.getSession();
+        // 서버 세션에 key-이메일, value-인증번호로 저장 -> 추후에 인증번호 확인에 사용
+        session.setAttribute(email, authCode);
 
-        return authCode;
+        return new ResponseEntity<>("authCodeOk", HttpStatus.CREATED);
+    }
+
+    @GetMapping("/mail/{email}/auth/{authCode}")
+    @ResponseBody
+    public String mailAuthCheck(@PathVariable String email, @PathVariable String authCode, HttpServletRequest request) {
+        log.info("mailAuthCheck Start EMAIL = {}, AUTH_CODE = {}", email, authCode);
+        HttpSession session = request.getSession();
+        // 이메일을 key로 서버 세션에 저장되어 있는 인증번호 값을 꺼냄
+        String saveAuthCode = (String) session.getAttribute(email);
+        boolean sameAuthCode = false;
+        if (StringUtils.hasText(saveAuthCode)) {    // 서버 세션에 인증번호가 존재한 경우 인증번호 확인
+            sameAuthCode = saveAuthCode.equals(authCode);
+        }
+        // 입력된 인증번호와 서버 세션에 보관되어있는 인증번호랑 동일하면 성공
+        if (sameAuthCode) {
+            return "ok";
+        } else {
+            return "fail";
+        }
     }
 
     @ResponseBody
@@ -80,7 +117,7 @@ public class JoinController {
     }
 
     @ResponseBody
-    @GetMapping("/{nickname}")
+    @GetMapping("/nickname/{nickname}")
     public String nicknameCheck(@PathVariable String nickname) {
         log.info("nicknameCheck Start nickname = {}", nickname);
         // 전달받은 닉네임이 존재하는지 조회
