@@ -257,7 +257,7 @@ function checkAuthCode() {
                 document.getElementById('joinEmailSuffix').classList.add('email-disabled');
                 // 회원가입 버튼 활성화
                 document.getElementById('join-exec-btn').classList.remove('join-btn-disabled');
-                document.getElementById('join-exec-btn').classList.add('join-btn-active');
+                document.getElementById('join-exec-btn').classList.add('blue-active-btn');
                 document.getElementById('join-exec-btn').disabled = false;
                 // 비밀번호 입력 input 포커스
                 $('#joinPassword').focus();
@@ -347,7 +347,7 @@ function checkMailAuthOK() {
         if (!!authVal?.trim()) {
             // 회원가입 버튼 활성화
             document.getElementById('join-exec-btn').classList.remove('join-btn-disabled');
-            document.getElementById('join-exec-btn').classList.add('join-btn-active');
+            document.getElementById('join-exec-btn').classList.add('blue-active-btn');
             document.getElementById('join-exec-btn').disabled = false;
             // 이메일 인증 관련 태그 비활성화
             document.getElementById('joinEmailPrefix').disabled = true;
