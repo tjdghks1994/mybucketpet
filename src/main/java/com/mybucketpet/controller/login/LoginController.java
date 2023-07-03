@@ -11,6 +11,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.RequestContextUtils;
 
@@ -67,5 +68,35 @@ public class LoginController {
         bindingResult.reject("loginFail", "이메일 주소나 비밀번호가 틀립니다.");
 
         return "login/loginForm";
+    }
+
+    @GetMapping("/password")
+    public String passwordForm(Model model) {
+        model.addAttribute(new PasswordChangeForm());
+        return "login/passwordForm";
+    }
+
+    @PostMapping("/password")
+    public String passwordChange(@Validated @ModelAttribute PasswordChangeForm passwordChangeForm, BindingResult bindingResult) {
+        log.info("passwordChange Start passwordChangeForm = {}", passwordChangeForm);
+        // 비밀번호와 비밀번호 확인의 값이 서로 다른 경우
+        if (!passwordChangeForm.getChangePassword().equals(passwordChangeForm.getChangePasswordCheck())) {
+            bindingResult.rejectValue("changePasswordCheck", "NotSame");
+        }
+
+        // 검증 오류가 존재한다면
+        if (bindingResult.hasErrors()) {
+            log.info("bindingResult = {}", bindingResult);
+            return "login/passwordForm";
+        }
+
+        memberService.update(passwordChangeForm);
+
+        return "redirect:password/success";
+    }
+
+    @GetMapping("/password/success")
+    public String passwordSuccessForm() {
+        return "login/passwordSuccessForm";
     }
 }
