@@ -28,9 +28,10 @@ function emailOptionSelectEvent(selOpt) {
     }
 }
 /**
- * 이메일 직접 입력선택 후 x버튼 활성화
+ * 이메일 검증
  * */
-function showClearBtn() {
+function checkEmail() {
+    // x 버튼이 안보이는 경우 x 버튼 표시
     if ($('.email-clear-btn').css('display') == 'none') {
         $('.email-clear-btn').show();
     }
@@ -42,8 +43,21 @@ function showClearBtn() {
  */
 function clickClearBtnEvent() {
     $('.email-clear-btn').hide();
+    // 직접 입력 input 값 초기화
+    $('#joinEmailSuffixSelf').val('');
     $('.joinMailSelfWrapper').hide();
     $('#joinEmailSuffix').show();
+    // 선택 박스 초기화
+    $("#joinEmailSuffix option:eq(0)").prop("selected", true);
+    // 인증번호 입력 영역이 노출된 경우
+    if ($('#mail-auth-wrapper').css('display') != 'none') {
+        $('#mail-auth-wrapper').hide();
+        $('#mail-auth-input').val('');  // 인증번호 입력 input 값 초기화
+    }
+    // 인증번호 오류 메시지가 노출된 경우
+    if ($('#auth-non-same').css('display') != 'none') {
+        $('#auth-non-same').hide();
+    }
 }
 
 /**
@@ -105,7 +119,7 @@ function emailSameCheck() {
     }
 
     $.ajax({
-        url: contextPath+"/join/mail/"+emailStr,
+        url: contextPath+"/members/mail/"+emailStr,
         type: 'GET',
         accept: 'application/json',
         success: function onData (data) {
@@ -162,19 +176,23 @@ async function authMailSend() {
             emailStr += emailSuffixVal;
         }
 
-        const response = await fetch(contextPath+"/join/mail/auth", {
+        const response = await fetch(contextPath+"/members/mail/"+emailStr+"/auth", {
             method: "POST",
             headers: {
                 "Content-Type": "text/plain",
-            },
-            body: emailStr,
+            }
         });
 
         // 인증코드
-        const result = await response.text();
-        sessionStorage.setItem("authCode", result);
-        // 인증코드를 입력받기 위한 input box show
-        showInputAuthCode();
+        const result = response.status;
+        if (result == 201) {    // 인증번호 생성 완료 및 인증번호 발송
+            // 인증코드를 입력받기 위한 input box show
+            showInputAuthCode();
+        } else { // 에러 발생
+            // 에러 문구 출력
+
+        }
+
     } catch (error) {
         console.error("실패:", error);
     }
@@ -204,41 +222,60 @@ function showInputAuthCode() {
  * 사용자 인증 코드가 올바른지 확인
  */
 function checkAuthCode() {
-    let userInputCode = $('#mail-auth-input').val();
-    let authCode = sessionStorage.getItem("authCode");
-
-    // 입력된 인증 코드가 메일로 전송된 코드랑 다르다면
-    if (userInputCode != authCode) {
-        // 인증코드가 잘못되었다는 문구 출력
-        $('#auth-non-same').show();
-        document.getElementById('mail-auth-input').classList.add('auth-fail');
-        // 인증 코드를 체크하기 위한 인증 버튼은 비활성화 처리
-        document.getElementById('join-auth-btn').disabled = true;
-        document.getElementById('join-auth-btn').classList.remove('active-btn');
-
-        return;
+    let emailStr = $('#joinEmailPrefix').val();
+    const emailSuffixVal = $('#joinEmailSuffix').val();
+    if (emailSuffixVal == '_self') {
+        let selfMailVal = $('#joinEmailSuffixSelf').val();
+        emailStr += '@';
+        emailStr += selfMailVal;
+    } else {
+        emailStr += '@';
+        emailStr += emailSuffixVal;
     }
+    let userInputCode = $('#mail-auth-input').val();
 
-    // 발송한 인증코드와 입력된 인증코드가 일치한 경우
-    // 인증 번호 입력 공간 숨김 처리
-    $('#mail-auth-wrapper').hide();
-    // 인증이 완료되었다고 문구 출력
-    $('#email-success').show();
-    // 기존 문구 숨김 처리
-    $('#email-exp').hide();
-    // 이메일 입력 input 비활성화
-    document.getElementById('joinEmailPrefix').disabled = true;
-    document.getElementById('joinEmailPrefix').classList.add('email-disabled');
-    // 이메일 선택 비활성화
-    document.getElementById('joinEmailSuffix').disabled = true;
-    document.getElementById('joinEmailSuffixSelf').disabled = true;
-    document.getElementById('joinEmailSuffix').classList.add('email-disabled');
-    // 회원가입 버튼 활성화
-    document.getElementById('join-exec-btn').classList.remove('join-btn-disabled');
-    document.getElementById('join-exec-btn').classList.add('join-btn-active');
-    document.getElementById('join-exec-btn').disabled = false;
-    // 비밀번호 입력 input 포커스
-    $('#joinPassword').focus();
+    $.ajax({
+        url:contextPath+"/members/mail/"+emailStr+"/auth/"+userInputCode,
+        method:"get",
+        success: function (data) {
+            // 발송한 인증코드와 입력된 인증코드가 일치한 경우 ok 문자열 반환
+            if (data == "ok") {
+                // 인증 번호 입력 공간 숨김 처리
+                $('#mail-auth-wrapper').hide();
+                // 인증이 완료되었다고 문구 출력
+                $('#email-success').show();
+                // 기존 문구 숨김 처리
+                $('#email-exp').hide();
+                // 이메일 입력 input 비활성화
+                document.getElementById('joinEmailPrefix').disabled = true;
+                document.getElementById('joinEmailPrefix').classList.add('email-disabled');
+                // 이메일 입력 input clear 버튼 숨김처리
+                $('.email-clear-btn').hide();
+                // 이메일 선택 비활성화
+                document.getElementById('joinEmailSuffix').disabled = true;
+                document.getElementById('joinEmailSuffixSelf').disabled = true;
+                document.getElementById('joinEmailSuffix').classList.add('email-disabled');
+                // 회원가입 버튼 활성화
+                document.getElementById('join-exec-btn').classList.remove('join-btn-disabled');
+                document.getElementById('join-exec-btn').classList.add('join-btn-active');
+                document.getElementById('join-exec-btn').disabled = false;
+                // 비밀번호 입력 input 포커스
+                $('#joinPassword').focus();
+            } else {
+                // 인증코드가 잘못되었다는 문구 출력
+                $('#auth-non-same').show();
+                document.getElementById('mail-auth-input').classList.add('auth-fail');
+                // 인증 코드를 체크하기 위한 인증 버튼은 비활성화 처리
+                document.getElementById('join-auth-btn').disabled = true;
+                document.getElementById('join-auth-btn').classList.remove('active-btn');
+            }
+
+        },
+        error: function (error) {
+            console.log(error);
+        }
+    });
+
 }
 
 /**
@@ -402,7 +439,7 @@ function nicknameValidator() {
 
         // 닉네임이 이미 존재하는지 체크
         $.ajax({
-            url: contextPath+"/join/"+nicknameVal,
+            url: contextPath+"/members/nickname/"+nicknameVal,
             method: 'GET',
             accept: 'text/plain',
             success: function (data) {
@@ -433,7 +470,7 @@ function nicknameValidator() {
 }
 
 function goLoginPage() {
-    window.location.href=contextPath + "/login";
+    window.location.href=contextPath + "/members/login";
 }
 
 window.onload = function () {
