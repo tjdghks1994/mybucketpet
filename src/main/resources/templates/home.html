@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{common/common_head :: common_header(~{::title},~{::link},~{::script})}">
+    <meta charset="UTF-8">
+    <title>메인 페이지</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/home.css}">
+    <script type="javascript" th:src="@{/js/home.js}"></script>
+</head>
+<body>
+    <!-- 상단 메뉴 바 -->
+    <div th:replace="~{common/common_header :: commonHeader}"></div>
+
+  <h2>Main</h2>
+</body>
+</html>

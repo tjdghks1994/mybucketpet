@@ -6,7 +6,137 @@
     Box-sizing:border-box;
     font-family: Pretendard;
 }
-button { border-width: 0px; }
+header {
+    width: 100%;
+    height: 65px;
+    background-color: #FFFFFF;
+    text-align: left;
+    border-bottom: 1px solid #DEE2E5;
+}
+button {
+    border-width: 0px;
+}
+.header-logo {
+    width: 100px;
+    height: 36px;
+    cursor: pointer;
+    position: absolute;
+    left: 80px;
+    top: 15px;
+}
+#menu_nav {
+    position: relative;
+    height: 100%;
+}
+#logo-wrapper {
+    width: 180px;
+    height: 100%;
+    display: inline-grid;
+    align-items: center;
+    justify-content: center;
+}
+#menu_nav ul {
+    display: inline-grid;
+    grid-auto-flow: column;
+    align-content: center;
+    list-style-type: none;
+    height: 100%;
+    position: absolute;
+    left: 230px;
+}
+#menu_nav ul li {
+    height: 100%;
+    margin-right: 40px;
+    cursor: pointer;
+    color: #343A40;
+    font-size: 16px;
+    font-weight: 500;
+    letter-spacing: -0.16px;
+}
+#menu_nav ul li:hover {
+    color: #486FFA !important;
+    font-weight: 700 !important;
+    border-bottom: 3px solid #486FFA;
+}
+.active-menu {
+    color: #486FFA !important;
+    font-weight: 700 !important;
+    border-bottom: 3px solid #486FFA;
+}
+#menu_nav ul li:last-child {
+    margin-right: 0px;
+}
+#search-wrapper {
+    height: 100%;
+    display: inline-grid;
+    align-items: center;
+    position: absolute;
+    left: 1100px;
+}
+#search-input {
+    width: 260px;
+    height: 36px;
+    border-radius: 100px;
+    border: 1px solid #DEE2E5;
+    background: #FFF;
+    padding-left: 50px;
+}
+#search-input + img {
+    position: absolute;
+    left: 20px;
+    top: 21px;
+    cursor: pointer;
+}
+#alarm-wrapper {
+    width: 55px;
+    height: 100%;
+    position: absolute;
+    left: 1390px;
+    display: inline-grid;
+    align-items: center;
+}
+#alarm-wrapper #alarmCount {
+    width: 23px;
+    height: 12px;
+    border-radius: 100px;
+    background: #486FFA;
+    color: #FFF;
+    font-size: 8px;
+    font-weight: 700;
+    letter-spacing: -0.08px;
+    position: absolute;
+    left: 8px;
+    top: 20px;
+    text-align: center;
+}
+#alarm-wrapper img {
+    cursor: pointer;
+}
+#profile-wrapper {
+    height: 100%;
+    display: inline-grid;
+    grid-auto-flow: column;
+    grid-column-gap: 10px;
+    align-items: center;
+    position: absolute;
+    left: 1450px;
+}
+#profile-wrapper img {
+    cursor: pointer;
+}
+#profile-img-area {
+    width: 36px;
+    height: 36px;
+    border-radius: 36px;
+    border: 1px solid #DEE2E5;
+    background: url('../img/ic_profile.png') lightgray 50% / cover no-repeat;
+}
+#profile-nickname {
+    color: #343A40;
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: -0.16px;
+}
 .form-input {
     border-radius: 4px;
     border: 1px solid #DEE2E5;
