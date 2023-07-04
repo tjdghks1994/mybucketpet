@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>상단 메뉴 영역</title>
+</head>
+<body>
+  <header th:fragment="commonHeader" style="box-sizing: initial !important;">
+    <nav id="menu_nav">
+      <div id="logo-wrapper">
+        <img th:src="@{/img/logo.svg}" onclick="goHome()" class="header-logo">
+      </div>
+
+      <ul>
+        <li class="active-menu">홈</li>
+        <li>펫 버킷리스트</li>
+        <li>버킷달성</li>
+        <li>마이펫일상</li>
+        <li>반려동물소식</li>
+        <li>고객센터</li>
+      </ul>
+
+      <div id="search-wrapper">
+        <input type="text" id="search-input" placeholder="검색어를 입력하세요">
+        <img th:src="@{/img/ic_search.svg}">
+      </div>
+
+      <div id="alarm-wrapper">
+        <span id="alarmCount">99+</span>
+        <img th:src="@{/img/ic_bell.svg}">
+      </div>
+
+      <div id="profile-wrapper">
+        <span id="profile-img-area"></span>
+        <span id="profile-nickname">양하디</span>
+        <img th:src="@{/img/ic_angle-small-down.svg}">
+      </div>
+    </nav>
+  </header>
+</body>
+</html>
