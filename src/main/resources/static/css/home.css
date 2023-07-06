@@ -1,0 +1,100 @@
+#main-highlight {
+    height: 460px;
+    border-radius: 4px;
+    background: #FFF0D6;
+    padding-top: 160px;
+    padding-left: 160px;
+}
+#main-highlight p {
+    color: #343A40;
+    font-size: 50px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    margin-bottom: 20px;
+}
+#main-highlight div span {
+    color: #495057;
+    font-size: 24px;
+    font-weight: 500;
+    letter-spacing: -0.24px;
+}
+#main-all-board-wrapper {
+    width: 100%;
+    background-color: #FFFFFF;
+    padding-top: 100px;
+    padding-left: 80px;
+    padding-right: 80px;
+}
+.main-board-header {
+    width: 100%;
+    margin-bottom: 24px;
+}
+.main-board-header span:first-child {
+    color: #343A40;
+    font-size: 24px;
+    font-weight: 700;
+    letter-spacing: -0.24px;
+}
+.main-board-header span:nth-child(2) {
+    color: #858E96;
+    font-size: 20px;
+    font-weight: 500;
+    letter-spacing: -0.2px;
+    float: right;
+}
+#recomnd-list-wrapper .main-board-body .board-row-wrapper {
+    display: inline-grid;
+    width: 100%;
+    grid-auto-flow: column;
+}
+.recomnd-big-list {
+    display: inline-block;
+    width: 740px;
+    height: 320px;
+    border-radius: 4px;
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0.00) 0%, rgba(0, 0, 0, 0.60) 100%),
+    url('../img/bucketlist_img1.png') lightgray 50% / cover no-repeat;
+    background-blend-mode: MULTIPLY, NORMAL, NORMAL;
+    padding-left: 25px;
+    color: #FFF;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: -0.2px;
+}
+.recomnd-normal-list {
+    display: inline-block;
+    width: 515px;
+    height: 320px;
+    border-radius: 4px;
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0.00) 0%, rgba(0, 0, 0, 0.60) 100%),
+    url('../img/bucketlist_img2.png') lightgray 50% / cover no-repeat;
+    padding-left: 25px;
+    color: #FFF;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: -0.2px;
+}
+.recomnd-text-wrapper {
+    position: relative;
+    top: 245px;
+}
+.recomnd-text-wrapper .small-txt {
+    color: #CED4DA;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: -0.12px;
+}
+.recomnd-text-wrapper .count-txt {
+    color: #FFF;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: -0.12px;
+}
