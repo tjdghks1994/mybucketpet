@@ -56,8 +56,8 @@ public class LoginController {
     public String login(@ModelAttribute LoginForm loginForm, BindingResult bindingResult) {
         String loginId = loginForm.getLoginId();
         String loginPw = loginForm.getLoginPw();
-        log.info("loginId = {}", loginId);
-        log.info("loginPw = {}", loginPw);
+        log.debug("loginId = {}", loginId);
+        log.debug("loginPw = {}", loginPw);
         Member loginMember = memberService.findByLoginAvailability(loginId, loginPw);
         // StringUtils.hasText() -> 값이 있을경우 true, null 이거나 공백인 경우 false 반환
         if (StringUtils.hasText(loginMember.getMemberId())) {
@@ -78,7 +78,7 @@ public class LoginController {
 
     @PostMapping("/password")
     public String passwordChange(@Validated @ModelAttribute PasswordChangeForm passwordChangeForm, BindingResult bindingResult) {
-        log.info("passwordChange Start passwordChangeForm = {}", passwordChangeForm);
+        log.debug("passwordChange Start passwordChangeForm = {}", passwordChangeForm);
         // 비밀번호와 비밀번호 확인의 값이 서로 다른 경우
         if (!passwordChangeForm.getChangePassword().equals(passwordChangeForm.getChangePasswordCheck())) {
             bindingResult.rejectValue("changePasswordCheck", "NotSame");
@@ -86,7 +86,7 @@ public class LoginController {
 
         // 검증 오류가 존재한다면
         if (bindingResult.hasErrors()) {
-            log.info("bindingResult = {}", bindingResult);
+            log.debug("bindingResult = {}", bindingResult);
             return "login/passwordForm";
         }
 

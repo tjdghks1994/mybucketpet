@@ -49,7 +49,7 @@ public class JoinController {
     @PostMapping("/join")
     public String join(@Validated @ModelAttribute JoinForm joinForm, BindingResult bindingResult,
                        RedirectAttributes rs) {
-        log.info("joinForm = {}", joinForm);
+        log.debug("joinForm = {}", joinForm);
 
         // 비밀번호와 비밀번호 확인의 값이 서로 다른 경우
         if (!joinForm.getJoinPassword().equals(joinForm.getJoinPasswordCheck())) {
@@ -64,13 +64,13 @@ public class JoinController {
 
         // 검증 오류가 존재한다면
         if (bindingResult.hasErrors()) {
-            log.info("bindingResult = {}", bindingResult);
+            log.debug("bindingResult = {}", bindingResult);
             return "join/joinMemberForm";
         }
 
         Member saveMember = memberService.save(joinForm);
         rs.addFlashAttribute("member", saveMember);
-        log.info("saveMember = {}", saveMember);
+        log.debug("saveMember = {}", saveMember);
 
         return "redirect:login";
     }
@@ -78,10 +78,10 @@ public class JoinController {
     @ResponseBody
     @PostMapping("/mail/{email}/auth")
     public ResponseEntity<String> mailAuth(@PathVariable String email, HttpServletRequest request) {
-        log.info("mailAuth CreateToSend Start EMAIL = {}", email);
+        log.debug("mailAuth CreateToSend Start EMAIL = {}", email);
         // 인증번호 생성 후 메일 전송 - 반환값은 생성한 인증번호
         String authCode = emailService.sendAuthCode(email);
-        log.info("LoginController authCode = {}", authCode);
+        log.debug("LoginController authCode = {}", authCode);
         HttpSession session = request.getSession();
         // 서버 세션에 key-이메일, value-인증번호로 저장 -> 추후에 인증번호 확인에 사용
         session.setAttribute(email, authCode);
@@ -92,7 +92,7 @@ public class JoinController {
     @GetMapping("/mail/{email}/auth/{authCode}")
     @ResponseBody
     public String mailAuthCheck(@PathVariable String email, @PathVariable String authCode, HttpServletRequest request) {
-        log.info("mailAuthCheck Start EMAIL = {}, AUTH_CODE = {}", email, authCode);
+        log.debug("mailAuthCheck Start EMAIL = {}, AUTH_CODE = {}", email, authCode);
         HttpSession session = request.getSession();
         // 이메일을 key로 서버 세션에 저장되어 있는 인증번호 값을 꺼냄
         String saveAuthCode = (String) session.getAttribute(email);
@@ -111,7 +111,7 @@ public class JoinController {
     @ResponseBody
     @GetMapping("/mail/{email}")
     public Member mailCheck(@PathVariable String email) {
-        log.info("mailCheck Start EMAIL = {}", email);
+        log.debug("mailCheck Start EMAIL = {}", email);
         // 전달받은 이메일이 존재하는지 조회
         return memberService.findById(email);
     }
@@ -119,7 +119,7 @@ public class JoinController {
     @ResponseBody
     @GetMapping("/nickname/{nickname}")
     public String nicknameCheck(@PathVariable String nickname) {
-        log.info("nicknameCheck Start nickname = {}", nickname);
+        log.debug("nicknameCheck Start nickname = {}", nickname);
         // 전달받은 닉네임이 존재하는지 조회
         return memberService.findByNickname(nickname);
     }

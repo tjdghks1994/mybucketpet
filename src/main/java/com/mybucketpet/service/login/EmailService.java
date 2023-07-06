@@ -35,8 +35,8 @@ public class EmailService {
     }
 
     private MimeMessage createMessage(String to, String authCode) {
-        log.info("보내는 대상 = {}", to);
-        log.info("인증 번호 = {}", authCode);
+        log.debug("보내는 대상 = {}", to);
+        log.debug("인증 번호 = {}", authCode);
         MimeMessage message = javaMailSender.createMimeMessage();
 
         try {
