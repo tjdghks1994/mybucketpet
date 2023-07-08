@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>관리자 사이드 메뉴</title>
+</head>
+<body>
+  <nav th:fragment="adminSideMenu" class="admin-nav">
+    <ul class="admin-side-menu">
+        <li id="dashboard-menu">
+            <img th:src="@{/img/ic_bell.svg}"> <span>대시보드</span>
+        </li>
+
+        <li id="member-manage-menu">
+            <img th:src="@{/img/ic_bell.svg}">
+            <span>회원관리</span>
+            <img th:src="@{/img/ic_angle-small-down.svg}" class="open-menu-btn">
+        </li>
+
+            <ul for="member-manage-menu" class="admin-side-menu-sub">
+                <li>테스트</li>
+                <li>테스트</li>
+                <li>테스트</li>
+            </ul>
+
+        <li id="bucket-manage-menu" class="active">
+            <img th:src="@{/img/ic_bell.svg}">
+            <span>버킷관리</span>
+            <img th:src="@{/img/ic_angle-small-down.svg}" class="open-menu-btn">
+        </li>
+
+            <ul for="bucket-manage-menu" class="admin-side-menu-sub">
+                <li>메인배너 관리</li>
+                <li class="active">버킷 관리</li>
+                <li>카테고리 관리</li>
+            </ul>
+
+        <li id="auth-manage-menu">
+            <img th:src="@{/img/ic_bell.svg}">
+            <span>인증관리</span>
+            <img th:src="@{/img/ic_angle-small-down.svg}" class="open-menu-btn">
+        </li>
+
+            <ul for="auth-manage-menu" class="admin-side-menu-sub">
+                <li>테스트</li>
+                <li>테스트</li>
+                <li>테스트</li>
+            </ul>
+
+        <li id="daily-manage-menu">
+            <img th:src="@{/img/ic_bell.svg}">
+            <span>일상관리</span>
+            <img th:src="@{/img/ic_angle-small-down.svg}" class="open-menu-btn">
+        </li>
+
+            <ul for="daily-manage-menu" class="admin-side-menu-sub">
+                <li>테스트</li>
+                <li>테스트</li>
+                <li>테스트</li>
+            </ul>
+
+        <li id="default-setting-menu">
+            <img th:src="@{/img/ic_bell.svg}">
+            <span>기본설정</span>
+            <img th:src="@{/img/ic_angle-small-down.svg}" class="open-menu-btn">
+        </li>
+    </ul>
+  </nav>
+
+</body>
+</html>

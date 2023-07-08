@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>관리자 헤더</title>
+</head>
+<body>
+    <header th:fragment="adminHeader">
+        <div class="admin-logo-wrapper">
+            <img th:src="@{/img/logo.svg}" onclick="adminHome()" class="header-logo">
+        </div>
+        <div class="admin-header-wrapper">
+            <span>선택한 메뉴 제목</span>
+        </div>
+    </header>
+</body>
+</html>

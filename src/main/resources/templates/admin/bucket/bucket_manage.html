@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{common/common_head :: common_header(~{::title},~{::link},~{::script})}">
+    <meta charset="UTF-8">
+    <title>버킷 관리</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/bucketManage.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/adminHeaderSideBar.css}">
+    <script type="text/javascript" th:src="@{/js/admin/bucketManage.js}"></script>
+    <script type="text/javascript" th:src="@{/js/admin/adminMenu.js}"></script>
+</head>
+<body>
+  <!-- 관리자 헤더 및 사이드 메뉴 -->
+  <div th:replace="~{admin/admin_header :: adminHeader}"></div>
+  <div th:replace="~{admin/admin_sidemenu :: adminSideMenu}"></div>
+
+</body>
+</html>
