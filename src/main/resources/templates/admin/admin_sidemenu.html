@@ -23,7 +23,7 @@
                 <li>테스트</li>
             </ul>
 
-        <li id="bucket-manage-menu" class="active">
+        <li id="bucket-manage-menu">
             <img th:src="@{/img/ic_bell.svg}">
             <span>버킷관리</span>
             <img th:src="@{/img/ic_angle-small-down.svg}" class="open-menu-btn">
@@ -31,7 +31,7 @@
 
             <ul for="bucket-manage-menu" class="admin-side-menu-sub">
                 <li>메인배너 관리</li>
-                <li class="active">버킷 관리</li>
+                <li execurl="/admin/bucket" id="bucket-manage-sub-menu">버킷 관리</li>
                 <li>카테고리 관리</li>
             </ul>
 
