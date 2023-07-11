@@ -14,4 +14,9 @@ public class AdminBucketController {
     public String bucketManageForm() {
         return "admin/bucket/bucket_manage";
     }
+
+    @GetMapping("/add")
+    public String bucketManageAddForm() {
+        return "admin/bucket/bucket_manage_addForm";
+    }
 }
