@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{common/common_head :: common_header(~{::title},~{::link},~{::script})}">
+    <meta charset="UTF-8">
+    <title>버킷 추가</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/adminHeaderSideBar.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/bucketManageAddForm.css}">
+    <link th:href="@{/summernote/summernote-lite.css}" rel="stylesheet">
+    <script th:src="@{/summernote/summernote-lite.js}"></script>
+    <script type="text/javascript" th:src="@{/js/admin/adminMenu.js}"></script>
+    <script type="text/javascript" th:src="@{/js/admin/adminBucketAdd.js}"></script>
+</head>
+<body>
+  <!-- 관리자 헤더 및 사이드 메뉴 -->
+  <div th:replace="~{admin/admin_header :: adminHeader}"></div>
+  <div th:replace="~{admin/admin_sidemenu :: adminSideMenu}"></div>
+
+  <section>
+    <article id="bucket-add-wrapper">
+      <table>
+        <colgroup>
+          <col style="width: 160px;">
+          <col>
+        </colgroup>
+        <tr>
+          <td>
+            <span class="bucket-content-txt" id="content-title">제목</span>
+          </td>
+          <td>
+            <input type="text" placeholder="제목 입력" id="bucketName">
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <span class="bucket-content-txt">태그</span>
+          </td>
+          <td>
+            <div class="content-inner-wrapper">
+              <select id="bucketTag">
+                <option>태그 선택</option>
+                <option>강아지</option>
+                <option>고양이</option>
+                <option>여행</option>
+                <option>음식</option>
+              </select>
+            </div>
+            <span id="select-tag-title">선택 태그</span>
+            <span id="select-tag-content">강아지, 여행</span>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <span class="bucket-content-txt">공개</span>
+          </td>
+          <td>
+            <button type="button" value="y" class="condition-small-btn">공개</button>
+            <button type="button" value="n" class="condition-normal-btn">비공개</button>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <span class="bucket-content-txt">추천</span>
+          </td>
+          <td>
+            <button type="button" value="y" class="condition-small-btn">추천</button>
+            <button type="button" value="n" class="condition-normal-btn">비추천</button>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <span class="bucket-content-txt">썸네일</span>
+          </td>
+          <td>
+            <button type="button" id="file-append-wrapper" onclick="clickFileBtn()">파일첨부</button>
+            <input type="file" style="display: none;" id="bucketImageFile" onchange="uploadImageFile(this)">
+            <span id="file-append-name"></span>
+          </td>
+        </tr>
+      </table>
+    </article>
+
+    <article id="bucket-editor-wrapper">
+      <div id="summernote"></div>
+    </article>
+
+    <div class="btn-wrapper">
+      <button type="button" value="y" class="bucket-cancel-btn">취소</button>
+      <button type="button" value="n" class="bucket-add-btn">등록</button>
+    </div>
+  </section>
+</body>
+</html>

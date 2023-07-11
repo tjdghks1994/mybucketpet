@@ -1,0 +1,145 @@
+section {
+    display: inline-block;
+    width: 1280px;
+    position: absolute;
+    left: 50%;
+    margin-left: -540px;
+}
+article {
+    background: #FFF;
+    margin: 30px 0px;
+}
+table {
+    width: 100%;
+    border-collapse: collapse;
+    border: 1px solid #DEE2E5;
+    color: #495057;
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: -0.14px;
+}
+table td {
+    border: 1px solid #DEE2E5;
+    padding : 10px 0px 10px 19px
+}
+table td button {
+    width: 50px;
+    height: 30px;
+    margin-right: 8px;
+    border-radius: 4px;
+    border: 1px solid #DEE2E5;
+    background: #F8F9FA;
+    color: #ADB5BD;
+    text-align: center;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: -0.12px;
+    cursor: pointer;
+}
+table td button:hover {
+    border-radius: 4px;
+    border: 1px solid #486FFA;
+    background: #FFF;
+    color: #486FFA;
+}
+table td button.active {
+    border-radius: 4px;
+    border: 1px solid #486FFA;
+    background: #FFF;
+    color: #486FFA;
+}
+.content-inner-wrapper {
+    display: block;
+    width: 100%;
+    margin-bottom: 10px;
+}
+#bucketName {
+    width: 95%;
+    height: 36px;
+    padding-left: 16px;
+    border-radius: 4px;
+    border: 1px solid #DEE2E5;
+    background: #FFF;
+}
+#bucketName::placeholder {
+    color: #ADB5BD;
+    font-size: 14px;
+    letter-spacing: -0.14px;
+}
+#bucketTag {
+    width: 200px;
+    height: 36px;
+    padding-left: 14px;
+    border-radius: 4px;
+    border: 1px solid #DEE2E5;
+    background: #FFF;
+    color: #ADB5BD;
+    font-size: 14px;
+    letter-spacing: -0.14px;
+}
+#select-tag-title {
+    color: #495057;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: -0.12px;
+    margin-right: 10px;
+}
+#select-tag-content {
+    color: #486FFA;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: -0.12px;
+}
+#file-append-wrapper {
+    display: grid;
+    width: 175px;
+    height: 115px;
+    margin-bottom: 14px;
+    align-items: center;
+    text-align: center;
+    border-radius: 4px;
+    border: 1px solid #DEE2E5;
+    background: #F8F9FA;
+    color: #858E96;
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: -0.14px;
+    cursor: pointer;
+}
+#file-append-wrapper:hover {
+    border-radius: 4px;
+    border: 1px solid #486FFA;
+    background: #FFF;
+    color: #486FFA;
+}
+#file-append-name {
+    display: block;
+    color: #495057;
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: -0.14px;
+    margin-bottom: 18px;
+}
+.bucket-add-btn, .bucket-cancel-btn {
+    width: 94px;
+    height: 35px;
+    border-radius: 4px;
+    text-align: center;
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: -0.14px;
+    cursor: pointer;
+}
+.bucket-cancel-btn {
+    border: 1px solid #DEE2E5;
+    background: #FFF;
+    color: #495057;
+    margin-right: 10px;
+}
+.bucket-add-btn {
+    background: #486FFA;
+    color: #FFF;
+}
+.btn-wrapper {
+    text-align: right;
+}

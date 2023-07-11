@@ -13,5 +13,117 @@
   <div th:replace="~{admin/admin_header :: adminHeader}"></div>
   <div th:replace="~{admin/admin_sidemenu :: adminSideMenu}"></div>
 
+    <section>
+        <article id="bucket-condition">
+            <div id="bucket-condition-wrapper">
+                <div class="condition-wrapper">
+                    <p>공개여부</p>
+                    <button type="button" value="" class="condition-small-btn active">전체</button>
+                    <button type="button" value="y" class="condition-small-btn">공개</button>
+                    <button type="button" value="n" class="condition-normal-btn">비공개</button>
+                </div>
+                <div class="condition-wrapper">
+                    <p>추천여부</p>
+                    <button type="button" value="" class="condition-small-btn active">전체</button>
+                    <button type="button" value="y" class="condition-small-btn">추천</button>
+                    <button type="button" value="n" class="condition-normal-btn">비추천</button>
+                </div>
+                <div class="condition-wrapper">
+                    <p>태그검색</p>
+                    <select id="condition-tag">
+                        <option>태그 선택</option>
+                        <option>강아지</option>
+                        <option>고양이</option>
+                        <option>여행</option>
+                        <option>음식</option>
+                    </select>
+                </div>
+                <div class="condition-wrapper" style="grid-column: span 3;">
+                    <p>키워드 검색</p>
+                    <select id="condition-keyword">
+                        <option>전체</option>
+                        <option>제목</option>
+                    </select>
+                    <input type="text" placeholder="검색어 입력">
+                </div>
+            </div><!-- bucket-condition-wrapper end -->
+            <div id="bucket-condition-btn-wrapper">
+                <button type="button" id="reset-btn">초기화</button>
+                <button type="button" id="search-btn">조회</button>
+            </div>
+        </article> <!-- bucket-condition end-->
+
+        <article id="bucket-list">
+            <div id="bucket-list-wrapper">
+                <div id="bucket-list-btn-wrapper">
+                    <button type="button" id="delete-btn">삭제</button>
+                    <button type="button" id="recomnd-add-btn">추천버킷으로 등록</button>
+                    <button type="button" id="add-btn" onclick="goBucketAddForm()">버킷 등록</button>
+                </div>
+                <table id="bucket-list-tbl">
+                    <colgroup>
+                        <col style="width: 5%;">
+                        <col style="width: 5%;">
+                        <col>
+                        <col style="width: 10%">
+                        <col style="width: 10%">
+                        <col style="width: 10%">
+                        <col style="width: 15%">
+                        <col style="width: 10%">
+                        <col style="width: 10%">
+                    </colgroup>
+                     <tr>
+                         <th><input type="checkbox" id="check-all"></th>
+                         <th>번호</th>
+                         <th>제목</th>
+                         <th>버킷인증</th>
+                         <th>스크랩</th>
+                         <th>조회수</th>
+                         <th>수정일</th>
+                         <th>공개</th>
+                         <th>추천</th>
+                     </tr>
+                     <tr>
+                        <td><input type="checkbox" checked></td>
+                        <td>20</td>
+                        <td>버킷리스트 제목</td>
+                        <td>300</td>
+                        <td>123</td>
+                        <td>1,200</td>
+                        <td>2023.07.09</td>
+                        <td>공개</td>
+                        <td><button type="button">추천</button></td>
+                     </tr>
+                     <tr>
+                        <td><input type="checkbox"></td>
+                        <td>19</td>
+                        <td>버킷리스트 제목</td>
+                        <td>300</td>
+                        <td>123</td>
+                        <td>1,200</td>
+                        <td>2023.07.09</td>
+                        <td>비공개</td>
+                        <td><button type="button" class="active">추천</button></td>
+                     </tr>
+                     <tr id="empty-list"></tr>
+                </table>
+
+                <div id="paging-wrapper">
+                    <ul>
+                        <li class="pagination-btn"> <a><<</a> </li>
+                        <li class="pagination-btn"> <a><</a> </li>
+                        <li class="pagination-btn"> <a class="active">1</a> </li>
+                        <li class="pagination-btn"> <a>2</a> </li>
+                        <li class="pagination-btn"> <a>3</a> </li>
+                        <li class="pagination-btn"> <a>4</a> </li>
+                        <li class="pagination-btn"> <a>5</a> </li>
+                        <li class="pagination-btn"> <a>></a> </li>
+                        <li class="pagination-btn"> <a>>></a></li>
+                    </ul>
+                </div>
+            </div>
+        </article> <!-- bucket-list -->
+    </section>
+
 </body>
 </html>
