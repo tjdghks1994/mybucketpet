@@ -1,5 +1,6 @@
 html, body {
-    height: 100%;
+    height: 1410px !important;
+    background-color: #F8F9FA;
 }
 header {
     height: 49px !important;
@@ -37,6 +38,7 @@ header {
     font-size: 14px;
     font-weight: 500;
     letter-spacing: -0.14px;
+    background-color: #FFF;
 }
 .admin-side-menu li {
     height: 40px;
@@ -82,4 +84,8 @@ header {
 }
 .admin-side-menu-sub li:hover {
     color: #486FFA;
+}
+#bucket-editor-wrapper ul,
+#bucket-editor-wrapper ol {
+    padding-left: 40px;
 }
