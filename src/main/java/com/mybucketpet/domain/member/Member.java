@@ -21,6 +21,7 @@ public class Member {
     private LocalDate joinDate;         // 가입일자
     private LocalDate lastAccessDate;   // 최근접속일자
     private JoinType joinPath;          // 가입경로
+    private String profileSavePath;     // 프로필 이미지 저장 경로
 
     public Member() { }
 
