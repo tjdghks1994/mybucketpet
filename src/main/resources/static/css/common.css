@@ -1,8 +1,6 @@
 *{
     Margin:0px;
     Padding:0px;
-    List-style:none;
-    Text-decoration:none;
     Box-sizing:border-box;
     font-family: Pretendard;
 }
@@ -11,6 +9,9 @@ html {
 }
 body {
     width: 100%;
+}
+a {
+    Text-decoration:none;
 }
 header {
     width: 100%;
@@ -26,8 +27,8 @@ footer {
 button {
     border-width: 0px;
 }
-ul {
-    list-style-type: none;
+button:hover {
+    opacity: 90%;
 }
 .header-logo {
     width: 100px;
@@ -199,9 +200,6 @@ font-size: 14px;
 }
 .common-btn {
 cursor: pointer;
-}
-.common-btn:hover {
-opacity: 90%;
 }
 .field-error {
 color: #E82168 !important;
