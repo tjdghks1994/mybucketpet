@@ -1,15 +1,67 @@
-body            {text-align: center; background: #F8F9FA;}
-#logo_img       {margin-top: 150px; margin-bottom: 60px;}
-#loginId        {margin-bottom: 10px;}
-.login-input    {width: 320px; height: 40px; font-size: 14px; letter-spacing: -0.14px; }
-#loginPw        {margin-bottom: 20px;}
-.login-btn      {width: 320px; height: 46px; border-radius: 4px; background: #486FFA;
-                color: #FFF; text-align: center; font-size: 16px; letter-spacing: -0.16px;}
-.link-list      {margin: 30px 15px 60px; }
-.login-links    {color: #858E96; font-size: 14px; letter-spacing: -0.14px; margin: 0px 15px;}
-.login-sns-btn  {width: 50px; height: 50px; border-radius: 50px; display: inline-block; position: relative;
-                margin: 0px 15px; cursor: pointer;}
-#login-naver    {background: #03C75A;}
-#login-kakao    {background: #FFDC00;}
-#login-google   {border: 1px solid #DEE2E5; background: #FFF;}
-.sns-btn-list img  {position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);}
+body {
+    text-align: center;
+    background: #F8F9FA;
+}
+ul,li {
+    list-style-type: none;
+}
+#logo_img {
+    margin-top: 150px;
+    margin-bottom: 60px;
+}
+#loginId {
+    margin-bottom: 10px;
+}
+.login-input {
+    width: 320px;
+    height: 40px;
+    font-size: 14px;
+    letter-spacing: -0.14px;
+}
+#loginPw {
+    margin-bottom: 20px;
+}
+.login-btn {
+    width: 320px;
+    height: 46px;
+    border-radius: 4px;
+    background: #486FFA;
+    color: #FFF;
+    text-align: center;
+    font-size: 16px;
+    letter-spacing: -0.16px;
+}
+.link-list {
+    margin: 30px 15px 60px;
+}
+.login-links {
+    color: #858E96;
+    font-size: 14px;
+    letter-spacing: -0.14px;
+    margin: 0px 15px;
+}
+.login-sns-btn {
+    width: 50px;
+    height: 50px;
+    border-radius: 50px;
+    display: inline-block;
+    position: relative;
+    margin: 0px 15px;
+    cursor: pointer;
+}
+#login-naver {
+    background: #03C75A;
+}
+#login-kakao {
+    background: #FFDC00;
+}
+#login-google {
+    border: 1px solid #DEE2E5;
+    background: #FFF;
+}
+.sns-btn-list img {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
