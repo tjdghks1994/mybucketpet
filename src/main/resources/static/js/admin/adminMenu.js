@@ -1,4 +1,14 @@
 /**
+ * side 메뉴의 하위 메뉴 실행 함수 (페이지 이동)
+ */
+function execMenu() {
+    $('.admin-side-menu-sub li').on('click', function () {
+        let execUrl = $(this).attr('execurl');
+        window.location = contextPath + execUrl;
+    });
+}
+
+/**
  * side 메뉴의 하위 메뉴 열기/접기 함수
  * parameter : parent   클릭된 side 메뉴
  *           : obj      클릭된 side 메뉴의 하위 ul 태그
@@ -11,6 +21,16 @@ function subMenuOpenClose(parent, obj, active) {
         $(parent).removeClass('active');
         $(obj).hide();
     } else {
+        $.each($('.admin-side-menu-sub'), function () {
+            // 클릭된 side 메뉴의 하위 메뉴 제외 모두 닫기
+            if ($(this).css('display') != 'none') {
+                $(this).css('display', 'none');
+            }
+            if ($(this).prev('li').attr('class') == 'active') {
+                $(this).prev('li').removeClass('active');
+            }
+        });
+
         $(parent).addClass('active');
         $(obj).show();
     }
@@ -42,4 +62,5 @@ function clickSideMenu() {
 
 window.onload = function () {
     clickSideMenu();
+    execMenu();
 };
