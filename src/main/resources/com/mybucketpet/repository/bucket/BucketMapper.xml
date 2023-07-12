@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mybucketpet.repository.bucket.BucketMapper">
+    <insert id="saveBucket" useGeneratedKeys="true" keyProperty="bucketId">
+        insert into mbp_bucket(bucket_title, bucket_contents, open_yn, recommend_yn)
+             values (#{bucketTitle}, #{bucketContents}, #{openYn}, #{recommendYn})
+    </insert>
+
+    <insert id="saveThumbnail" useGeneratedKeys="true" keyProperty="thumbnail.thumbnailId">
+        insert into mbp_thumbnail(thumbnail_filename, thumbnail_savename, bucket_id)
+             values (#{thumbnail.thumbnailFilename}, #{thumbnail.thumbnailSavename}, #{bucketId})
+    </insert>
+
+    <insert id="saveTag">
+        insert into mbp_tag(tag_id, bucket_id)
+             values
+                <foreach collection="tag" item="tag" separator=",">
+                (#{tag.tagId}, #{bucketId})
+                </foreach>
+    </insert>
+
+    <select id="findBucketById" resultType="Bucket">
+        select bucket_id, bucket_title, bucket_contents, open_yn, recommend_yn, certi_cnt, scrap_cnt, lookup_cnt, modify_date
+          from mbp_bucket
+         where bucket_id = #{bucketId}
+    </select>
+
+    <select id="findThumbnailByBucketId" resultType="Thumbnail">
+        select thumbnail_id, thumbnail_filename, thumbnail_savename, bucket_id
+          from mbp_thumbnail
+         where bucket_id = #{bucketId}
+    </select>
+
+    <select id="findTagByBucketId" resultType="Tag">
+        select tag_id, bucket_id
+          from mbp_tag
+         where bucket_id = #{bucketId}
+    </select>
+
+    <select id="findTagNameById" resultType="Tag">
+        select tag_id, tag_name
+          from mbp_tagmanage
+         where tag_id = #{tagId}
+    </select>
+</mapper>
