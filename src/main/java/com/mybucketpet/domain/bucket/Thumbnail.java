@@ -14,8 +14,7 @@ public class Thumbnail {
 
     public Thumbnail() { }
 
-    public Thumbnail(Long thumbnailId, String thumbnailFilename, String thumbnailSavename) {
-        this.thumbnailId = thumbnailId;
+    public Thumbnail(String thumbnailFilename, String thumbnailSavename) {
         this.thumbnailFilename = thumbnailFilename;
         this.thumbnailSavename = thumbnailSavename;
     }
