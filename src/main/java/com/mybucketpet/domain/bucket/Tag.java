@@ -9,8 +9,11 @@ import lombok.ToString;
 @ToString
 public class Tag {
     private Long tagId; // 태그 ID
-    private Long bucketId;  // 버킷 ID
+    private String tagName; // 태그 명
 
     public Tag() { }
 
+    public Tag(Long tagId) {
+        this.tagId = tagId;
+    }
 }
