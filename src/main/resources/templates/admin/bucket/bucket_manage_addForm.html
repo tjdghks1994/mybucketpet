@@ -36,16 +36,16 @@
           </td>
           <td>
             <div class="content-inner-wrapper">
-              <select id="bucketTag">
-                <option>태그 선택</option>
-                <option>강아지</option>
-                <option>고양이</option>
-                <option>여행</option>
-                <option>음식</option>
-              </select>
+              <div id="bucketTag">
+                <div id="bucketTag-box">
+                  <p>태그 선택</p> <img th:src="@{/img/ic_angle-small-down.svg}">
+                </div>
+                <ul id="bucketTag-listUL">
+                </ul>
+              </div>
             </div>
             <span id="select-tag-title">선택 태그</span>
-            <span id="select-tag-content">강아지, 여행</span>
+            <span id="select-tag-content"></span>
           </td>
         </tr>
         <tr>
@@ -53,8 +53,8 @@
             <span class="bucket-content-txt">공개</span>
           </td>
           <td>
-            <button type="button" value="y" class="condition-small-btn">공개</button>
-            <button type="button" value="n" class="condition-normal-btn">비공개</button>
+            <button type="button" value="y" class="openYn bucket-manage-btn" onclick="activeSelectButton(this)">공개</button>
+            <button type="button" value="n" class="openYn bucket-manage-btn" onclick="activeSelectButton(this)">비공개</button>
           </td>
         </tr>
         <tr>
@@ -62,8 +62,8 @@
             <span class="bucket-content-txt">추천</span>
           </td>
           <td>
-            <button type="button" value="y" class="condition-small-btn">추천</button>
-            <button type="button" value="n" class="condition-normal-btn">비추천</button>
+            <button type="button" value="y" class="recommendYn bucket-manage-btn" onclick="activeSelectButton(this)">추천</button>
+            <button type="button" value="n" class="recommendYn bucket-manage-btn" onclick="activeSelectButton(this)">비추천</button>
           </td>
         </tr>
         <tr>
@@ -73,7 +73,9 @@
           <td>
             <button type="button" id="file-append-wrapper" onclick="clickFileBtn()">파일첨부</button>
             <input type="file" style="display: none;" id="bucketImageFile" onchange="uploadImageFile(this)">
-            <span id="file-append-name"></span>
+            <div class="file-append-name-wrapper">
+              <span id="file-append-name"></span>
+            </div>
           </td>
         </tr>
       </table>
@@ -85,7 +87,7 @@
 
     <div class="btn-wrapper">
       <button type="button" value="y" class="bucket-cancel-btn">취소</button>
-      <button type="button" value="n" class="bucket-add-btn">등록</button>
+      <button type="button" value="n" class="bucket-add-btn" onclick="addBucket();">등록</button>
     </div>
   </section>
 </body>
