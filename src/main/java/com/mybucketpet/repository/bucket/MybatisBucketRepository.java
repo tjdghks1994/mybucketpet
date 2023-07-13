@@ -58,4 +58,9 @@ public class MybatisBucketRepository implements BucketRepository {
     public Tag findTagNameById(Tag tag) {
         return bucketMapper.findTagNameById(tag);
     }
+
+    @Override
+    public List<Tag> findAllTag() {
+        return bucketMapper.findAllTag();
+    }
 }

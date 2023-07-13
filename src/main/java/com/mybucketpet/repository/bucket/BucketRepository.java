@@ -15,4 +15,5 @@ public interface BucketRepository {
     Optional<Thumbnail> findThumbnailByBucketId(Bucket bucket);
     List<Tag> findTagByBucketId(Bucket bucket);
     Tag findTagNameById(Tag tag);
+    List<Tag> findAllTag();
 }
