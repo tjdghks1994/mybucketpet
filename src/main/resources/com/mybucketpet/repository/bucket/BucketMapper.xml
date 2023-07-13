@@ -44,4 +44,9 @@
           from mbp_tagmanage
          where tag_id = #{tagId}
     </select>
+
+    <select id="findAllTag" resultType="Tag">
+        select tag_id, tag_name
+          from mbp_tagmanage
+    </select>
 </mapper>

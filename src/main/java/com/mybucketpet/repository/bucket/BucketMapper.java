@@ -25,4 +25,6 @@ public interface BucketMapper {
     List<Tag> findTagByBucketId(Bucket bucket);
     // 태그명 조회
     Tag findTagNameById(Tag tag);
+    // 모든 태그 목록 조회
+    List<Tag> findAllTag();
 }
