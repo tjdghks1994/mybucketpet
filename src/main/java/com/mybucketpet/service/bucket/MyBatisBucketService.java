@@ -10,33 +10,39 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Slf4j
 @Service
 public class MyBatisBucketService implements BucketService {
-    private final BucketRepository repository;
+    private final BucketRepository bucketRepository;
     @Autowired
-    public MyBatisBucketService(BucketRepository repository) {
-        this.repository = repository;
+    public MyBatisBucketService(BucketRepository bucketRepository) {
+        this.bucketRepository = bucketRepository;
     }
 
     @Override
     @Transactional
-    public Long save(BucketAdd bucketAdd) {
-        log.info("BucketAdd = {}", bucketAdd);
+    public Long save(BucketAdd bucketAdd, MultipartFile file) {
+        String thumbnailOriginalName = file.getOriginalFilename();
+        String thumbnailSaveFileName = UUID.randomUUID().toString() + file.getSize();
+        // 파일 저장 처리
+        saveThumbnailFile(thumbnailSaveFileName, file);
+
         // 버킷 등록
         Bucket bucket = new Bucket(bucketAdd.getBucketTitle(), bucketAdd.getBucketContents(),
                 bucketAdd.getOpenYn(), bucketAdd.getRecommendYn());
-        Bucket saveBucket = repository.saveBucket(bucket);
+        Bucket saveBucket = bucketRepository.saveBucket(bucket);
         // 썸네일 등록
-        Thumbnail thumbnail = new Thumbnail(bucketAdd.getThumbnailFilename(), bucketAdd.getThumbnailSavename());
-        repository.saveThumbnail(thumbnail, saveBucket.getBucketId());
+        Thumbnail thumbnail = new Thumbnail(thumbnailOriginalName, thumbnailSaveFileName);
+        bucketRepository.saveThumbnail(thumbnail, saveBucket.getBucketId());
         // 태그 등록
-        repository.saveTag(bucketAdd.getTagList(), saveBucket.getBucketId());
+        bucketRepository.saveTag(bucketAdd.getTagList(), saveBucket.getBucketId());
 
         return saveBucket.getBucketId();
     }
@@ -44,15 +50,15 @@ public class MyBatisBucketService implements BucketService {
     @Override
     public BucketInfo findById(Long bucketId) {
         // 버킷 조회 - 조회시 에러 발생하면 삭제된 버킷이라고 메시지를 담아 RuntimeException 발생
-        Bucket findBucket = repository.findBucketById(bucketId).orElseThrow(() -> new RuntimeException("DeleteBucket"));
+        Bucket findBucket = bucketRepository.findBucketById(bucketId).orElseThrow(() -> new RuntimeException("DeleteBucket"));
         // 썸네일 조회
-        Thumbnail findThumbnail = repository.findThumbnailByBucketId(findBucket).get();
+        Thumbnail findThumbnail = bucketRepository.findThumbnailByBucketId(findBucket).get();
         // 태그 조회 - 태그 Id 값만 보유
-        List<Tag> findTagList = repository.findTagByBucketId(findBucket);
+        List<Tag> findTagList = bucketRepository.findTagByBucketId(findBucket);
         // 태그 목록 - 태그 Id와 태그 명을 모두 보유
         List<Tag> tagList = new ArrayList<>();
         for (Tag tag : findTagList) {
-            Tag findTag = repository.findTagNameById(tag);
+            Tag findTag = bucketRepository.findTagNameById(tag);
             tagList.add(findTag);
         }
 
@@ -66,4 +72,12 @@ public class MyBatisBucketService implements BucketService {
         return bucketInfo;
     }
 
+    @Override
+    public List<Tag> findAllTag() {
+        return bucketRepository.findAllTag();
+    }
+
+    private void saveThumbnailFile(String saveFileName, MultipartFile file) {
+
+    }
 }
