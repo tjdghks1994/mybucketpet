@@ -6,12 +6,15 @@ import com.mybucketpet.domain.bucket.Bucket;
 import com.mybucketpet.domain.bucket.Tag;
 import com.mybucketpet.domain.bucket.Thumbnail;
 import com.mybucketpet.repository.bucket.BucketRepository;
+import com.mybucketpet.service.file.FileSaveService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -20,20 +23,23 @@ import java.util.UUID;
 @Slf4j
 @Service
 public class MyBatisBucketService implements BucketService {
+
     private final BucketRepository bucketRepository;
+    private final FileSaveService fileSaveService;
     @Autowired
-    public MyBatisBucketService(BucketRepository bucketRepository) {
+    public MyBatisBucketService(BucketRepository bucketRepository, FileSaveService fileSaveService) {
         this.bucketRepository = bucketRepository;
+        this.fileSaveService = fileSaveService;
     }
 
     @Override
     @Transactional
-    public Long save(BucketAdd bucketAdd, MultipartFile file) {
+    public Long save(BucketAdd bucketAdd, MultipartFile file) throws IOException {
         String thumbnailOriginalName = file.getOriginalFilename();
-        String thumbnailSaveFileName = UUID.randomUUID().toString() + file.getSize();
         // 파일 저장 처리
-        saveThumbnailFile(thumbnailSaveFileName, file);
-
+        String thumbnailSaveFileName = fileSaveService.saveFile(file);
+        log.debug("thumbnailOriginalName = {}", thumbnailOriginalName);
+        log.debug("thumbnailSaveFileName = {}", thumbnailSaveFileName);
         // 버킷 등록
         Bucket bucket = new Bucket(bucketAdd.getBucketTitle(), bucketAdd.getBucketContents(),
                 bucketAdd.getOpenYn(), bucketAdd.getRecommendYn());
@@ -77,7 +83,4 @@ public class MyBatisBucketService implements BucketService {
         return bucketRepository.findAllTag();
     }
 
-    private void saveThumbnailFile(String saveFileName, MultipartFile file) {
-
-    }
 }
