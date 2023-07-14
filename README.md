@@ -14,7 +14,7 @@
 
 > Front : thymeleaf, css, js
 
-> Back : spring boot, mybatis, h2 database
+> Back : spring boot, mybatis, Amazon RDS(MySQL)
 
 
 ***
@@ -35,6 +35,7 @@ java/com/mybucketpet
   - service : 비즈니스 로직을 수행할 클래스 모음
   
 resources
+  - com/mybucketpet/repository : Mapper인터페이스와 매핑되는 xml 파일
   
   - static : 정적 리소스 (css, js, img)
   
@@ -71,6 +72,17 @@ resources
   - 자주묻는질문
   - 1대1 문의
   - 공지사항
+* 관리자페이지
+  - 대시보드
+  - 회원관리
+  - 버킷관리
+    + 메인배너 관리
+    + 버킷 관리 (개발 진행 중)
+    + 카테고리 관리
+  - 인증관리
+  - 일상관리
+  - 기본설정
+
 
 ***
 📌 [프로젝트 개발 일지 작성 진행 (Notion)](https://polite-handball-c55.notion.site/37b7cd789a0f4a6a8427fd2bd7144fab?pvs=4)
