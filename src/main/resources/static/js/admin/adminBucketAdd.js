@@ -8,6 +8,34 @@ let openYnValue = "";
 let recommendYnValue = "";
 
 /**
+ * 버킷 등록 전 검증
+ * @param thumbnailFile : 썸네일이미지파일
+ * @param bucketAdd : 버킷등록에필요한입력정보들이담겨있는객체
+ */
+function bucketValidator(thumbnailFile, bucketAdd) {
+    if (thumbnailFile == undefined || thumbnailFile == null) {
+        return false;
+    }
+    if (bucketAdd['bucketTitle'] == '' || bucketAdd['bucketTitle'] == undefined || bucketAdd['bucketTitle'] == null) {
+        return false;
+    }
+    if (bucketAdd['bucketContents'] == '' || bucketAdd['bucketContents'] == undefined || bucketAdd['bucketContents'] == null) {
+        return false;
+    }
+    if (bucketAdd['openYn'] == '' || bucketAdd['openYn'] == undefined || bucketAdd['openYn'] == null) {
+        return false;
+    }
+    if (bucketAdd['recommendYn'] == '' || bucketAdd['recommendYn'] == undefined || bucketAdd['recommendYn'] == null) {
+        return false;
+    }
+    if (bucketAdd['tagList'].length == 0) {
+        return false;
+    }
+
+    return true;
+}
+
+/**
  * 버킷 등록
  */
 function addBucket() {
@@ -32,25 +60,38 @@ function addBucket() {
       recommendYn : recommendYn,
       tagList : tagList
     };
-    // file은 multipart/form-data, 그 외의 데이터는 application/json 형식으로 따로 보내기 위해 Blob을 사용
-    let formData = new FormData();
-    formData.append('thumbnailImageFile', thumbnailFile);
-    formData.append('bucketAdd', new Blob([JSON.stringify(bucketAdd)], {type: "application/json"}));
 
-    $.ajax({
-        url: contextPath+"/admin/bucket/add",
-        method: "post",
-        contentType: false,
-        processData: false,
-        data : formData,
-        cache : false,
-        success: function (result){
-            console.log(result);
-        },
-        fail: function (error) {
-            alert('버킷 등록에 실패하였습니다. 관리자에게 문의하세요.');
-        }
-    });
+    if (bucketValidator(thumbnailFile, bucketAdd)) {
+        // file은 content-type을 multipart/form-data, 그 외의 데이터는 content-type을 application/json 형식으로 따로 보내기 위해 Blob을 사용
+        let formData = new FormData();
+        formData.append('thumbnailImageFile', thumbnailFile);
+        formData.append('bucketAdd', new Blob([JSON.stringify(bucketAdd)], {type: "application/json"}));
+
+        // contentType : false 로 선언 시 content-type 헤더가 multipart/form-data로 전송되게 함일
+        // processData : false로 선언 시 formData를 string으로 변환하지 않음
+        $.ajax({
+            url: contextPath + "/admin/bucket/add",
+            method: "post",
+            contentType: false,
+            processData: false,
+            enctype: "multipart/form-data",
+            data: formData,
+            cache: false,
+            success: function (result, statusText, jqXHR) {
+                if (result == 'addBucketOK' && jqXHR.status == 201) {
+                    alert('버킷 등록에 성공하였습니다.');
+                    window.location.href = contextPath + "/admin/bucket";
+                } else {
+                    alert('버킷 등록에 실패하였습니다. 관리자에게 문의하세요.');
+                }
+            },
+            fail: function (jqXHR, textStatus, errorThrown) {
+                alert('버킷 등록에 실패하였습니다. 관리자에게 문의하세요.');
+            }
+        });
+    } else {
+        alert('모든 필드를 입력 및 선택해야 합니다.');
+    }
 }
 
 /**
@@ -193,10 +234,17 @@ function initEditor() {
  */
 function uploadImageFile(file) {
     let uploadImg = file.files[0];
-    $('#file-append-name').text(uploadImg['name']);
-    if ($('.file-remove-btn').length == 0) {
-        $('.file-append-name-wrapper').append('<img class="file-remove-btn" onclick="initFileInput();"' +
-            ' src="'+ contextPath +'/img/ic_close.svg"/>' );
+    let fileExtension = uploadImg.name.substring(uploadImg.name.lastIndexOf('.')+1);
+    if (fileExtension == 'jpeg' || fileExtension == 'jpg' || fileExtension == 'png' || fileExtension == 'gif') {
+        $('#file-append-name').text(uploadImg['name']);
+        if ($('.file-remove-btn').length == 0) {
+            $('.file-append-name-wrapper').append('<img class="file-remove-btn" onclick="initFileInput();"' +
+                ' src="' + contextPath + '/img/ic_close.svg"/>');
+        }
+    } else {
+        // input file 태그 값 초기화
+        $('#bucketImageFile').val('');
+        alert('이미지 파일만 업로드 가능합니다 (파일 확장자 : jpeg, jpg, png, gif)');
     }
 }
 
