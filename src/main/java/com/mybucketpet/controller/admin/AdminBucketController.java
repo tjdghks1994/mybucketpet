@@ -11,6 +11,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 @Slf4j
@@ -45,8 +46,13 @@ public class AdminBucketController {
     @PostMapping(value = "/add")
     public ResponseEntity<String> bucketAdd(@RequestPart("bucketAdd") BucketAdd bucketAdd,
                                             @RequestPart("thumbnailImageFile") MultipartFile thumbnailImgFile) {
-        log.info("bucketAdd = {}", bucketAdd);
-        log.info("thumbnailImgFile = {}", thumbnailImgFile.getOriginalFilename());
+        try {
+            // 버킷 저장
+            bucketService.save(bucketAdd, thumbnailImgFile);
+        } catch (IOException e) {
+            log.error("File Save Error!!", e);
+            return new ResponseEntity<>("addBucketFail", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
 
         return new ResponseEntity<>("addBucketOK", HttpStatus.CREATED);
     }
