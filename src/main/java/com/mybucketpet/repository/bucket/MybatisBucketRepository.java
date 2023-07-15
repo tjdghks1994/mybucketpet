@@ -1,5 +1,8 @@
 package com.mybucketpet.repository.bucket;
 
+import com.mybucketpet.controller.admin.BucketSearch;
+import com.mybucketpet.controller.admin.BucketSearchResult;
+import com.mybucketpet.controller.paging.PageMakeVO;
 import com.mybucketpet.domain.bucket.Bucket;
 import com.mybucketpet.domain.bucket.Tag;
 import com.mybucketpet.domain.bucket.Thumbnail;
@@ -62,5 +65,15 @@ public class MybatisBucketRepository implements BucketRepository {
     @Override
     public List<Tag> findAllTag() {
         return bucketMapper.findAllTag();
+    }
+
+    @Override
+    public int getTotalBucketCount() {
+        return bucketMapper.getTotalBucketCount();
+    }
+
+    @Override
+    public List<BucketSearchResult> findAllBucket(BucketSearch bucketSearch, PageMakeVO pageMakeVO) {
+        return bucketMapper.findAllBucket(bucketSearch, pageMakeVO);
     }
 }

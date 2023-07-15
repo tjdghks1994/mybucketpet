@@ -2,6 +2,9 @@ package com.mybucketpet.service.bucket;
 
 import com.mybucketpet.controller.admin.BucketAdd;
 import com.mybucketpet.controller.admin.BucketInfo;
+import com.mybucketpet.controller.admin.BucketSearch;
+import com.mybucketpet.controller.admin.BucketSearchResult;
+import com.mybucketpet.controller.paging.PageMakeVO;
 import com.mybucketpet.domain.bucket.Bucket;
 import com.mybucketpet.domain.bucket.Tag;
 import com.mybucketpet.domain.bucket.Thumbnail;
@@ -81,6 +84,15 @@ public class MyBatisBucketService implements BucketService {
     @Override
     public List<Tag> findAllTag() {
         return bucketRepository.findAllTag();
+    }
+
+    @Override
+    public int getTotalBucketCount() {
+        return bucketRepository.getTotalBucketCount();
+    }
+    @Override
+    public List<BucketSearchResult> findAllBucket(BucketSearch bucketSearch, PageMakeVO pageMakeVO) {
+        return bucketRepository.findAllBucket(bucketSearch, pageMakeVO);
     }
 
 }

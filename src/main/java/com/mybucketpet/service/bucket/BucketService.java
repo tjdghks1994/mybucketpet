@@ -2,7 +2,11 @@ package com.mybucketpet.service.bucket;
 
 import com.mybucketpet.controller.admin.BucketAdd;
 import com.mybucketpet.controller.admin.BucketInfo;
+import com.mybucketpet.controller.admin.BucketSearch;
+import com.mybucketpet.controller.admin.BucketSearchResult;
+import com.mybucketpet.controller.paging.PageMakeVO;
 import com.mybucketpet.domain.bucket.Tag;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -16,4 +20,7 @@ public interface BucketService {
     BucketInfo findById(Long bucketId);
     // 모든 태크 목록 조회
     List<Tag> findAllTag();
+    // 모든 버킷 수
+    int getTotalBucketCount();
+    List<BucketSearchResult> findAllBucket(@Param("bs") BucketSearch bucketSearch, @Param("page") PageMakeVO pageMakeVO);
 }

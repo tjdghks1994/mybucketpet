@@ -1,8 +1,12 @@
 package com.mybucketpet.repository.bucket;
 
+import com.mybucketpet.controller.admin.BucketSearch;
+import com.mybucketpet.controller.admin.BucketSearchResult;
+import com.mybucketpet.controller.paging.PageMakeVO;
 import com.mybucketpet.domain.bucket.Bucket;
 import com.mybucketpet.domain.bucket.Tag;
 import com.mybucketpet.domain.bucket.Thumbnail;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 import java.util.Optional;
@@ -16,4 +20,6 @@ public interface BucketRepository {
     List<Tag> findTagByBucketId(Bucket bucket);
     Tag findTagNameById(Tag tag);
     List<Tag> findAllTag();
+    int getTotalBucketCount();
+    List<BucketSearchResult> findAllBucket(BucketSearch bucketSearch, PageMakeVO pageMakeVO);
 }
