@@ -218,12 +218,14 @@ section {
     font-weight: 500;
     letter-spacing: -0.12px;
     cursor: pointer;
+    margin: 0px 3px;
 }
 #paging-wrapper .pagination-btn a {
     display: inline-block;
     width: 28px;
     height: 28px;
-    padding: 6px 10px;
+    padding: 6px 0px;
+    text-align: center;
 }
 #paging-wrapper .pagination-btn a.active,
 #paging-wrapper .pagination-btn a:hover {
