@@ -83,42 +83,40 @@
                          <th>공개</th>
                          <th>추천</th>
                      </tr>
-                     <tr>
-                        <td><input type="checkbox" checked></td>
-                        <td>20</td>
-                        <td>버킷리스트 제목</td>
-                        <td>300</td>
-                        <td>123</td>
-                        <td>1,200</td>
-                        <td>2023.07.09</td>
-                        <td>공개</td>
-                        <td><button type="button">추천</button></td>
-                     </tr>
-                     <tr>
-                        <td><input type="checkbox"></td>
-                        <td>19</td>
-                        <td>버킷리스트 제목</td>
-                        <td>300</td>
-                        <td>123</td>
-                        <td>1,200</td>
-                        <td>2023.07.09</td>
-                        <td>비공개</td>
-                        <td><button type="button" class="active">추천</button></td>
+                     <tr th:each="bucket : ${bucketList}">
+                         <td><input type="checkbox"></td>
+                         <td th:text="${bucket.rnum}"></td>
+                         <td th:text="${bucket.bucketTitle}"></td>
+                         <td th:text="${bucket.certiCnt}"></td>
+                         <td th:text="${bucket.scrapCnt}"></td>
+                         <td th:text="${bucket.lookupCnt}"></td>
+                         <td th:text="${bucket.modifyDate}"></td>
+                         <td th:text="공개" th:if="${bucket.openYn eq 'y'}"></td>
+                         <td th:text="비공개" th:if="${bucket.openYn eq 'n'}"></td>
+                         <td th:if="${bucket.recommendYn eq 'y'}">
+                             <button type="button" class="active" style="cursor: default;">추천</button>
+                         </td>
+                         <td th:if="${bucket.recommendYn eq 'n'}">
+                             <button type="button" style="cursor: default;">추천</button>
+                         </td>
                      </tr>
                      <tr id="empty-list"></tr>
                 </table>
 
                 <div id="paging-wrapper">
                     <ul>
-                        <li class="pagination-btn"> <a><<</a> </li>
-                        <li class="pagination-btn"> <a><</a> </li>
-                        <li class="pagination-btn"> <a class="active">1</a> </li>
-                        <li class="pagination-btn"> <a>2</a> </li>
-                        <li class="pagination-btn"> <a>3</a> </li>
-                        <li class="pagination-btn"> <a>4</a> </li>
-                        <li class="pagination-btn"> <a>5</a> </li>
-                        <li class="pagination-btn"> <a>></a> </li>
-                        <li class="pagination-btn"> <a>>></a></li>
+                        <li class="pagination-btn"> <a th:value="${pageMaker.firstPage}"><<</a> </li>
+                        <li class="pagination-btn"> <a th:value="${pageMaker.prevPage}"><</a> </li>
+                        <th:block th:with="start = ${pageMaker.startPage}, end = ${pageMaker.endPage}">
+                            <li class="pagination-btn"
+                                th:with="start = ${pageMaker.startPage}, end = ${pageMaker.endPage}"
+                                th:each="pageButton : ${#numbers.sequence(start, end)}">
+                                <a th:classappend="${pageButton == pageMaker.pageCriteria.pageNum} ? 'active' : ''"
+                                   th:text="${pageButton}" th:value="${pageButton}"></a>
+                            </li>
+                        </th:block>
+                        <li class="pagination-btn"> <a th:value="${pageMaker.nextPage}">></a> </li>
+                        <li class="pagination-btn"> <a th:value="${pageMaker.lastPage}">>></a></li>
                     </ul>
                 </div>
             </div>
