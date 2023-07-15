@@ -1,5 +1,7 @@
 package com.mybucketpet.controller.admin;
 
+import com.mybucketpet.controller.paging.PageCriteria;
+import com.mybucketpet.controller.paging.PageMakeVO;
 import com.mybucketpet.domain.bucket.Tag;
 import com.mybucketpet.service.bucket.BucketService;
 import lombok.extern.slf4j.Slf4j;
@@ -8,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -25,16 +28,34 @@ public class AdminBucketController {
     }
     /**
      * HTTP URI 설계
-     * 버킷 관리 페이지 : /admin/bucket    GET
+     * 버킷 관리 페이지 (페이지 목록 조회) : /admin/bucket    GET, POST
      * 버킷 등록 페이지 : /admin/bucket/add    GET
      * === HTTP API 사용 ===
      * 버킷 등록 : /admin/bucket/add    POST
      * 버킷 단일 조회 : /admin/bucket/{bucketId}  GET
-     * 버킷 다중 조회(목록) : /admin/bucket/list    GET
      * 태그 조회(목록) : /admin/bucket/tag    GET
      */
-    @GetMapping
-    public String bucketManageForm() {
+    @RequestMapping
+    public String bucketManageForm(@RequestBody(required = false) BucketSearch bucketSearch,
+                                   @RequestBody(required = false) PageCriteria pageCriteria, Model model) {
+        log.debug("bucketSearch = {}, pageCriteria = {}", bucketSearch, pageCriteria);
+        // 첫 페이지 진입 시에는 null
+        if (pageCriteria == null) {
+            pageCriteria = new PageCriteria();
+        }
+        if (bucketSearch == null) {
+            bucketSearch = new BucketSearch();
+        }
+
+        int totalCnt = bucketService.getTotalBucketCount();
+        PageMakeVO pageMakeVO = new PageMakeVO(pageCriteria, totalCnt);
+        List<BucketSearchResult> bucketList = bucketService.findAllBucket(bucketSearch, pageMakeVO);
+        log.debug("bucketList = {}", bucketList);
+        log.debug("pageMakeVO = {}", pageMakeVO);
+
+        model.addAttribute("bucketList", bucketList);
+        model.addAttribute("pageMaker", pageMakeVO);
+
         return "admin/bucket/bucket_manage";
     }
 
