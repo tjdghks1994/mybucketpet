@@ -1,5 +1,8 @@
 package com.mybucketpet.repository.bucket;
 
+import com.mybucketpet.controller.admin.BucketSearch;
+import com.mybucketpet.controller.admin.BucketSearchResult;
+import com.mybucketpet.controller.paging.PageMakeVO;
 import com.mybucketpet.domain.bucket.Bucket;
 import com.mybucketpet.domain.bucket.Tag;
 import com.mybucketpet.domain.bucket.Thumbnail;
@@ -27,4 +30,8 @@ public interface BucketMapper {
     Tag findTagNameById(Tag tag);
     // 모든 태그 목록 조회
     List<Tag> findAllTag();
+    // 전체 버킷 수
+    int getTotalBucketCount();
+    // 버킷 목록 조회
+    List<BucketSearchResult> findAllBucket(@Param("bs") BucketSearch bucketSearch, @Param("page") PageMakeVO pageMakeVO);
 }

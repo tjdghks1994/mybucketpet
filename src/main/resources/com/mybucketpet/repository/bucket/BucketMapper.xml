@@ -49,4 +49,45 @@
         select tag_id, tag_name
           from mbp_tagmanage
     </select>
+
+    <select id="getTotalBucketCount" resultType="int">
+        select count(*)
+          from mbp_bucket
+    </select>
+
+    <select id="findAllBucket" resultType="com.mybucketpet.controller.admin.BucketSearchResult">
+        SELECT rnum, bucket_id, bucket_title, certi_cnt, scrap_cnt, lookup_cnt, modify_date, open_yn, recommend_yn
+          FROM (
+            SELECT @rownum:=@rownum+1 rnum, bk.*
+              FROM (
+                SELECT bk.bucket_id, bk.bucket_title, bk.certi_cnt, bk.scrap_cnt, bk.lookup_cnt,
+                       bk.modify_date, bk.open_yn, bk.recommend_yn, t.tag_id
+                  FROM mbp_bucket bk
+                  JOIN mbp_tag t
+                    ON bk.bucket_id = t.bucket_id
+              <where>
+                  <if test="bs.openYn != null and bs.openYn != ''">
+                      and bk.open_yn = #{bs.openYn}
+                  </if>
+                  <if test="bs.recommendYn != null and bs.recommendYn != ''">
+                      and bk.recommend_yn = #{bs.recommendYn}
+                  </if>
+                  <if test="bs.keywordType != null and bs.keywordType != '' and bs.keywordType.equalsIgnoreCase('T')">
+                      and bk.bucket_title like concat('%',#{bs.keywordText},'%')
+                  </if>
+                  <if test="bs.tagList != null and bs.tagList.size != 0">
+                    and t.tag_id IN
+                    <foreach collection="bs.tagList" item="tag" separator="," open="(" close=")">
+                        #{tag.tagId}
+                    </foreach>
+                  </if>
+              </where>
+                   GROUP BY bk.bucket_id
+                   ORDER BY bk.modify_date desc
+                ) bk, (SELECT @ROWNUM := 0) R
+            ) list
+        WHERE RNUM &gt; (#{page.pageCriteria.pageNum}-1) * #{page.pageCriteria.amount}
+          AND RNUM &lt;= #{page.pageCriteria.pageNum} * #{page.pageCriteria.amount}
+          ORDER BY RNUM DESC;
+    </select>
 </mapper>
