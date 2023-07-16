@@ -83,11 +83,26 @@
                   </if>
               </where>
                    GROUP BY bk.bucket_id
-                   ORDER BY bk.modify_date desc
+                   ORDER BY bk.modify_date
                 ) bk, (SELECT @ROWNUM := 0) R
             ) list
         WHERE RNUM &gt; (#{page.pageCriteria.pageNum}-1) * #{page.pageCriteria.amount}
           AND RNUM &lt;= #{page.pageCriteria.pageNum} * #{page.pageCriteria.amount}
           ORDER BY RNUM DESC;
     </select>
+
+    <delete id="deleteBucket">
+        DELETE FROM mbp_bucket
+              WHERE bucket_id = #{bucket_id}
+    </delete>
+
+    <delete id="deleteThumbnail">
+        DELETE FROM mbp_thumbnail
+              WHERE bucket_id = #{bucket_id}
+    </delete>
+
+    <delete id="deleteTag">
+        DELETE FROM mbp_tag
+              WHERE bucket_id = #{bucket_id}
+    </delete>
 </mapper>
