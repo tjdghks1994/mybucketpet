@@ -34,4 +34,10 @@ public interface BucketMapper {
     int getTotalBucketCount();
     // 버킷 목록 조회
     List<BucketSearchResult> findAllBucket(@Param("bs") BucketSearch bucketSearch, @Param("page") PageMakeVO pageMakeVO);
+    // 버킷 삭제
+    void deleteBucket(Long bucketId);
+    // 썸네일 삭제 - 삭제된 버킷 ID를 가지고 있는 썸네일
+    void deleteThumbnail(Long bucketId);
+    // 태그 삭제 - 삭제된 버킷 ID를 가지고 있는 태그
+    void deleteTag(Long bucketId);
 }

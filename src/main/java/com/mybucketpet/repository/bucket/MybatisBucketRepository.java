@@ -76,4 +76,19 @@ public class MybatisBucketRepository implements BucketRepository {
     public List<BucketSearchResult> findAllBucket(BucketSearch bucketSearch, PageMakeVO pageMakeVO) {
         return bucketMapper.findAllBucket(bucketSearch, pageMakeVO);
     }
+
+    @Override
+    public void deleteBucket(Long bucketId) {
+        bucketMapper.deleteBucket(bucketId);
+    }
+
+    @Override
+    public void deleteThumbnail(Long bucketId) {
+        bucketMapper.deleteThumbnail(bucketId);
+    }
+
+    @Override
+    public void deleteTag(Long bucketId) {
+        bucketMapper.deleteTag(bucketId);
+    }
 }

@@ -22,4 +22,7 @@ public interface BucketRepository {
     List<Tag> findAllTag();
     int getTotalBucketCount();
     List<BucketSearchResult> findAllBucket(BucketSearch bucketSearch, PageMakeVO pageMakeVO);
+    void deleteBucket(Long bucketId);
+    void deleteThumbnail(Long bucketId);
+    void deleteTag(Long bucketId);
 }
