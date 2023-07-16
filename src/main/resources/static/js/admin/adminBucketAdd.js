@@ -4,8 +4,18 @@ let checkTagNameList = new Array();
 let checkTagValueList = new Array();
 // 공개 여부 값
 let openYnValue = "";
-// 추천 여부 값
+// 추천 여부 값용
 let recommendYnValue = "";
+
+/**
+ * 버킷 등록 취소
+ */
+function cancelAdd() {
+    let cancelYn = confirm('정말 등록을 취소하고 목록 화면으로 돌아가시겠습니까?');
+    if (cancelYn) {
+        window.location.replace(contextPath + '/admin/bucket');
+    }
+}
 
 /**
  * 버킷 등록 전 검증
@@ -192,13 +202,13 @@ function initTagRendering() {
         url : contextPath + "/admin/bucket/tag",
         method : "get",
         contentType: "application/json",
-        success: function (data) {
+        success: function (data, statusText, jqXHR) {
             $.each(data, function (idx, tagItem) {
                 $('#bucketTag ul').append('<li><input type="checkbox" onclick="checkTagList(this);" value=' + tagItem.tagId +
                     ' id='+tagItem.tagName+'> <label for="'+ tagItem.tagName+'">'+ tagItem.tagName+'</label></li>');
             });
         },
-        fail: function (error) {
+        fail: function (jqXHR, textStatus, errorThrown) {
             alert('태그 목록을 가져오는데 오류가 발생했습니다. 관리자에게 문의하세요');
         }
     });
