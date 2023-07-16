@@ -7,6 +7,9 @@
     <link rel="stylesheet" type="text/css" th:href="@{/css/adminHeaderSideBar.css}">
     <script type="text/javascript" th:src="@{/js/admin/bucketManage.js}"></script>
     <script type="text/javascript" th:src="@{/js/admin/adminMenu.js}"></script>
+    <script th:inline="javascript">
+        let searchTagList = [[${bucketSearch.tagList}]];
+    </script>
 </head>
 <body>
   <!-- 관리자 헤더 및 사이드 메뉴 -->
@@ -18,46 +21,62 @@
             <div id="bucket-condition-wrapper">
                 <div class="condition-wrapper">
                     <p>공개여부</p>
-                    <button type="button" value="" class="condition-small-btn active">전체</button>
-                    <button type="button" value="y" class="condition-small-btn">공개</button>
-                    <button type="button" value="n" class="condition-normal-btn">비공개</button>
+                    <button type="button" value="" class="condition-openYn condition-small-btn"
+                            th:classappend="${bucketSearch.openYn == null || bucketSearch.openYn == ''} ? 'active' : ''"
+                            onclick="clickOpenYn(this);">전체</button>
+                    <button type="button" value="y" class="condition-openYn condition-small-btn"
+                            th:classappend="${bucketSearch.openYn == 'y'} ? 'active' : ''"
+                            onclick="clickOpenYn(this);">공개</button>
+                    <button type="button" value="n" class=" condition-openYn condition-normal-btn"
+                            th:classappend="${bucketSearch.openYn == 'n'} ? 'active' : ''"
+                            onclick="clickOpenYn(this);">비공개</button>
                 </div>
                 <div class="condition-wrapper">
                     <p>추천여부</p>
-                    <button type="button" value="" class="condition-small-btn active">전체</button>
-                    <button type="button" value="y" class="condition-small-btn">추천</button>
-                    <button type="button" value="n" class="condition-normal-btn">비추천</button>
+                    <button type="button" value="" class="condition-recommend condition-small-btn"
+                            th:classappend="${bucketSearch.recommendYn == null || bucketSearch.recommendYn == ''} ? 'active' : ''"
+                            onclick="clickRecommendYn(this);">전체</button>
+                    <button type="button" value="y" class="condition-recommend condition-small-btn"
+                            th:classappend="${bucketSearch.recommendYn == 'y'} ? 'active' : ''"
+                            onclick="clickRecommendYn(this);">추천</button>
+                    <button type="button" value="n" class="condition-recommend condition-normal-btn"
+                            th:classappend="${bucketSearch.recommendYn == 'n'} ? 'active' : ''"
+                            onclick="clickRecommendYn(this);">비추천</button>
                 </div>
                 <div class="condition-wrapper">
                     <p>태그검색</p>
-                    <select id="condition-tag">
-                        <option>태그 선택</option>
-                        <option>강아지</option>
-                        <option>고양이</option>
-                        <option>여행</option>
-                        <option>음식</option>
-                    </select>
+                    <div class="condition-inner-wrapper">
+                        <div id="condition-tag">
+                            <div id="condition-tag-box">
+                                <p>태그 선택</p> <img th:src="@{/img/ic_angle-small-down.svg}">
+                            </div>
+                            <ul id="condition-tag-list">
+                            </ul>
+                        </div>
+                    </div>
+                    <span id="select-tag-title">선택 태그</span>
+                    <span id="select-tag-content"></span>
                 </div>
                 <div class="condition-wrapper" style="grid-column: span 3;">
                     <p>키워드 검색</p>
                     <select id="condition-keyword">
-                        <option>전체</option>
-                        <option>제목</option>
+                        <option value="T">제목</option>
                     </select>
-                    <input type="text" placeholder="검색어 입력">
+                    <input id="condition-keyword-text" type="text" placeholder="검색어 입력"
+                           th:value="${bucketSearch.keywordText != null ? bucketSearch.keywordText : ''}">
                 </div>
             </div><!-- bucket-condition-wrapper end -->
             <div id="bucket-condition-btn-wrapper">
-                <button type="button" id="reset-btn">초기화</button>
-                <button type="button" id="search-btn">조회</button>
+                <button type="button" id="reset-btn" onclick="resetCondition();">초기화</button>
+                <button type="button" id="search-btn" onclick="searchBucketList();">조회</button>
             </div>
         </article> <!-- bucket-condition end-->
 
         <article id="bucket-list">
             <div id="bucket-list-wrapper">
                 <div id="bucket-list-btn-wrapper">
-                    <button type="button" id="delete-btn">삭제</button>
-                    <button type="button" id="recomnd-add-btn">추천버킷으로 등록</button>
+                    <button type="button" id="delete-btn" onclick="removeBucketList();">삭제</button>
+                    <button type="button" id="recomnd-add-btn" onclick="modifyRecommendBucket();">추천버킷으로 등록</button>
                     <button type="button" id="add-btn" onclick="goBucketAddForm()">버킷 등록</button>
                 </div>
                 <table id="bucket-list-tbl">
@@ -73,7 +92,7 @@
                         <col style="width: 10%">
                     </colgroup>
                      <tr>
-                         <th><input type="checkbox" id="check-all"></th>
+                         <th><input type="checkbox" id="check-all" onclick="allCheckBucketList(this);"></th>
                          <th>번호</th>
                          <th>제목</th>
                          <th>버킷인증</th>
@@ -84,7 +103,7 @@
                          <th>추천</th>
                      </tr>
                      <tr th:each="bucket : ${bucketList}">
-                         <td><input type="checkbox"></td>
+                         <td><input type="checkbox" class="bucket-check-btn" th:value="${bucket.bucketId}"></td>
                          <td th:text="${bucket.rnum}"></td>
                          <td th:text="${bucket.bucketTitle}"></td>
                          <td th:text="${bucket.certiCnt}"></td>
@@ -105,23 +124,23 @@
 
                 <div id="paging-wrapper">
                     <ul>
-                        <li class="pagination-btn"> <a th:value="${pageMaker.firstPage}"><<</a> </li>
-                        <li class="pagination-btn"> <a th:value="${pageMaker.prevPage}"><</a> </li>
+                        <li class="pagination-btn"> <a th:value="${pageMaker.firstPage}" onclick="pageMove(this);"><<</a> </li>
+                        <li class="pagination-btn"> <a th:value="${pageMaker.prevPage}" onclick="pageMove(this);"><</a> </li>
                         <th:block th:with="start = ${pageMaker.startPage}, end = ${pageMaker.endPage}">
                             <li class="pagination-btn"
                                 th:with="start = ${pageMaker.startPage}, end = ${pageMaker.endPage}"
                                 th:each="pageButton : ${#numbers.sequence(start, end)}">
                                 <a th:classappend="${pageButton == pageMaker.pageCriteria.pageNum} ? 'active' : ''"
-                                   th:text="${pageButton}" th:value="${pageButton}"></a>
+                                   th:text="${pageButton}" th:value="${pageButton}" onclick="pageMove(this);"></a>
                             </li>
                         </th:block>
-                        <li class="pagination-btn"> <a th:value="${pageMaker.nextPage}">></a> </li>
-                        <li class="pagination-btn"> <a th:value="${pageMaker.lastPage}">>></a></li>
+                        <li class="pagination-btn"> <a th:value="${pageMaker.nextPage}" onclick="pageMove(this);">></a> </li>
+                        <li class="pagination-btn"> <a th:value="${pageMaker.lastPage}" onclick="pageMove(this);">>></a></li>
                     </ul>
                 </div>
             </div>
         </article> <!-- bucket-list -->
+        <form th:action method="post" id="bucket-search-form"></form>
     </section>
-
 </body>
 </html>
