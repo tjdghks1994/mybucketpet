@@ -23,6 +23,11 @@ section {
     margin-left: 20px;
     margin-bottom: 17px;
 }
+.condition-inner-wrapper {
+    display: block;
+    width: 100%;
+    margin-bottom: 10px;
+}
 .condition-small-btn {
     width: 51px;
 }
@@ -50,7 +55,87 @@ section {
     background: #FFF;
     color: #486FFA;
 }
-.condition-wrapper p {
+#condition-tag {
+    position: relative;
+    width: 200px;
+    height: 36px;
+    border-radius: 4px;
+    border: 1px solid #DEE2E5;
+    background: #FFF;
+    color: #ADB5BD;
+    font-size: 14px;
+    letter-spacing: -0.14px;
+}
+#condition-tag-box {
+    width: 100%;
+    height: 100%;
+    padding-left: 14px;
+    background: #FFF;
+    color: #ADB5BD;
+    font-size: 14px;
+    letter-spacing: -0.14px;
+    border-radius: 4px;
+}
+#condition-tag-box p {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    width: 145px;
+    position: absolute;
+    top: 9px;
+    color: #ADB5BD;
+    font-size: 12px;
+    letter-spacing: -0.12px;
+    cursor: pointer;
+}
+#condition-tag-box img {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    filter: brightness(0.5) invert(0.8);
+    cursor: pointer;
+}
+#condition-tag-list {
+    display: none;
+    position: absolute;
+    top: 34px;
+    left: 0px;
+    list-style-type: none;
+    width: 100%;
+    border: 1px solid #DEE2E5;
+    background-color: #FFFFFF;
+    font-size: 12px;
+}
+#condition-tag-list li {
+    margin: 8px 10px;
+    display: inline-grid;
+    grid-auto-flow: column;
+}
+#condition-tag-list li input[type=checkbox] {
+    border: 1px solid #CED4DA;
+    margin-right: 10px;
+    cursor: pointer;
+}
+#condition-tag-list li label {
+    cursor: pointer;
+    display: inline-block;
+    width: 145px;
+}
+#select-tag-title {
+    color: #495057;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: -0.12px;
+}
+#select-tag-content {
+    color: #486FFA;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: -0.12px;
+}
+.condition-wrapper > p {
     margin-bottom: 6px;
     color: #495057;
     font-size: 12px;
