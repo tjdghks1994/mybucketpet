@@ -22,5 +22,8 @@ public interface BucketService {
     List<Tag> findAllTag();
     // 모든 버킷 수
     int getTotalBucketCount();
+    // 조회 조건에 맞는 모든 버킷 목록 조회
     List<BucketSearchResult> findAllBucket(@Param("bs") BucketSearch bucketSearch, @Param("page") PageMakeVO pageMakeVO);
+    // 버킷 삭제
+    void deleteBucket(Long bucketId);
 }
