@@ -1,5 +1,6 @@
 package com.mybucketpet.service.file;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
@@ -9,7 +10,8 @@ import java.io.IOException;
 import java.util.UUID;
 
 @Component
-public class FileSaveService {
+@Slf4j
+public class FileService {
 
     @Value("${bucket.upload.file}")
     private String fileDir;
@@ -32,6 +34,19 @@ public class FileSaveService {
         file.transferTo(new File(getFullPath(saveFileName)));
         // 저장된 파일 명 반환
         return saveFileName;
+    }
+
+    public void deleteFile(String saveFileName) {
+        File file = new File(getFullPath(saveFileName));
+        if (file.exists()) {
+            if (file.delete()) {
+                log.info("파일이 정삭적으로 삭제되었습니다. FileName = {}", saveFileName);
+            } else {
+                log.error("파일 삭제에 실패하였습니다. FileName = {}", saveFileName);
+            }
+        } else {
+            log.error("이미 삭제된 썸네일 이미지 파일입니다. FileName = {}", saveFileName);
+        }
     }
 
     private void createSaveDirectory() {
