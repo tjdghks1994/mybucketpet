@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Slf4j
@@ -112,5 +113,18 @@ public class MyBatisBucketService implements BucketService {
         // 데이터가 전부 삭제된 후, 이미지 파일이 저장된 경로의 썸네일 이미지 파일 삭제 처리
         fileService.deleteFile(findThumbnail.getThumbnailSavename());
     }
+
+    @Override
+    public void updateBucketRecommend(Map<String, String> updateBucketList) {
+        log.debug("updateBucketList = {}", updateBucketList);
+
+        Long bucketId = Long.parseLong(updateBucketList.get("bucketId"));
+        String recommendYn = updateBucketList.get("recommendYn");
+        // 기존 추천 여부의 값을 반대로 변경
+        String changeRecommendValue = recommendYn.equalsIgnoreCase("y") ? "n" : "y";
+        // 버킷의 추천 여부 값 변경
+        bucketRepository.updateBucketRecommend(bucketId, changeRecommendValue);
+    }
+
 
 }

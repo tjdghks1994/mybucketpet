@@ -11,6 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 public interface BucketService {
@@ -26,4 +27,6 @@ public interface BucketService {
     List<BucketSearchResult> findAllBucket(@Param("bs") BucketSearch bucketSearch, @Param("page") PageMakeVO pageMakeVO);
     // 버킷 삭제
     void deleteBucket(Long bucketId);
+    // 버킷 추천 여부 변경
+    void updateBucketRecommend(Map<String, String> updateBucketList);
 }
