@@ -91,4 +91,9 @@ public class MybatisBucketRepository implements BucketRepository {
     public void deleteTag(Long bucketId) {
         bucketMapper.deleteTag(bucketId);
     }
+
+    @Override
+    public void updateBucketRecommend(Long bucketId, String recommendYn) {
+        bucketMapper.updateBucketRecommend(bucketId, recommendYn);
+    }
 }

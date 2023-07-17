@@ -25,4 +25,5 @@ public interface BucketRepository {
     void deleteBucket(Long bucketId);
     void deleteThumbnail(Long bucketId);
     void deleteTag(Long bucketId);
+    void updateBucketRecommend(Long bucketId, String recommendYn);
 }

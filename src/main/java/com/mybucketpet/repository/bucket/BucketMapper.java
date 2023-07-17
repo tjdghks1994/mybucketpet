@@ -40,4 +40,7 @@ public interface BucketMapper {
     void deleteThumbnail(Long bucketId);
     // 태그 삭제 - 삭제된 버킷 ID를 가지고 있는 태그
     void deleteTag(Long bucketId);
+
+    // 추천 버킷으로 변경/해제
+    void updateBucketRecommend(@Param("bucketId") Long bucketId, @Param("recommendYn") String recommendYn);
 }
