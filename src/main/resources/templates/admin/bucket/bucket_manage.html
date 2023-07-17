@@ -103,7 +103,8 @@
                          <th>추천</th>
                      </tr>
                      <tr th:each="bucket : ${bucketList}">
-                         <td><input type="checkbox" class="bucket-check-btn" th:value="${bucket.bucketId}"></td>
+                         <td><input type="checkbox" class="bucket-check-btn" th:value="${bucket.bucketId}"
+                                    th:attr="rcmd-data=${bucket.recommendYn}" onclick="allBucketCheckBtnOnOff();"></td>
                          <td th:text="${bucket.rnum}"></td>
                          <td th:text="${bucket.bucketTitle}"></td>
                          <td th:text="${bucket.certiCnt}"></td>
@@ -112,7 +113,7 @@
                          <td th:text="${bucket.modifyDate}"></td>
                          <td th:text="공개" th:if="${bucket.openYn eq 'y'}"></td>
                          <td th:text="비공개" th:if="${bucket.openYn eq 'n'}"></td>
-                         <td th:if="${bucket.recommendYn eq 'y'}">
+                         <td th:if="${bucket.recommendYn eq 'y'}" >
                              <button type="button" class="active" style="cursor: default;">추천</button>
                          </td>
                          <td th:if="${bucket.recommendYn eq 'n'}">
