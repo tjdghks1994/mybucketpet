@@ -4,9 +4,58 @@ let checkTagNameList = new Array();
 let checkTagValueList = new Array();
 
 /**
+ * 전체 버킷 체크 버튼 활성화, 비활성화 감지
+ */
+function allBucketCheckBtnOnOff() {
+    // 현재 페이지에서 보여지는 버킷 수 ( -2는 제목 행, empty list행 )
+    let currentBucketList = $('#bucket-list-tbl tr').length - 2;
+    // 현재 페이지에서 체크 된 버킷 수
+    let currentCheckList = $('.bucket-check-btn:checked').length;
+    // 두 값이 일치하다면 모든 버킷이 체크되었다는 의미
+    if (currentCheckList == currentBucketList) {
+        $('#check-all').prop('checked', true);
+    } else {
+        $('#check-all').prop('checked', false);
+    }
+}
+
+/**
  * 추천버킷으로 변경
  */
 function modifyRecommendBucket() {
+    let updateYn = confirm('선택한 버킷의 추천 여부를 변경하시겠습니까? (추천 -> 비추천, 비추천 -> 추천)');
+    if ($('.bucket-check-btn:checked').length > 0) {
+        if (updateYn) {
+            // 버킷 ID와 현재 추천 여부의 값을 가지고 있는 객체를 담고 있는 배열
+            let bucketList = new Array();
+
+            $.each($('.bucket-check-btn:checked'), function (idx, item) {
+                let updateBucketInfo = new Object();
+                updateBucketInfo.bucketId = $(item).val();
+                updateBucketInfo.recommendYn = $(item).attr('rcmd-data');
+
+                bucketList.push(updateBucketInfo);
+            });
+
+            $.ajax({
+                url: contextPath + "/admin/bucket/recommend",
+                method: "patch",
+                contentType: "application/json",
+                data: JSON.stringify(bucketList),
+                success: function (data, statusText, jqXHR) {
+                    if (data.length > 0) {
+                        alert('버킷의 추천 여부를 변경하는데 실패하였습니다. 관리자에게 문의하세요.');
+                    }
+                    window.location.replace(contextPath + "/admin/bucket");
+                },
+                fail: function (jqXHR, textStatus, errorThrown) {
+                    alert('버킷의 추천 여부를 변경하는데 실패하였습니다. 관리자에게 문의하세요.');
+                }
+            });
+        }
+    } else {
+        alert('선택한 버킷이 없습니다. 버킷을 선택 후 다시 시도해주세요.');
+    }
 
 }
 /**
@@ -14,29 +63,34 @@ function modifyRecommendBucket() {
  */
 function removeBucketList() {
     let removeYn = confirm('정말 버킷을 삭제하시겠습니까?');
-    if (removeYn) {
-        // 체크된 버킷 목록을 담고 있는 배열
-        let checkBucketList = new Array();
-        $.each($('.bucket-check-btn:checked'), function (idx, item) {
-            checkBucketList.push($(item).val());
-        });
+    if ($('.bucket-check-btn:checked').length > 0) {
+        if (removeYn) {
+            // 체크된 버킷 목록을 담고 있는 배열
+            let checkBucketList = new Array();
+            $.each($('.bucket-check-btn:checked'), function (idx, item) {
+                checkBucketList.push($(item).val());
+            });
 
-        $.ajax({
-            url: contextPath + "/admin/bucket",
-            method: "delete",
-            contentType: "application/json",
-            data: JSON.stringify(checkBucketList),
-            success: function (data, statusText, jqXHR) {
-                if (data.length > 0) {
+            $.ajax({
+                url: contextPath + "/admin/bucket",
+                method: "delete",
+                contentType: "application/json",
+                data: JSON.stringify(checkBucketList),
+                success: function (data, statusText, jqXHR) {
+                    if (data.length > 0) {
+                        alert('버킷을 삭제하는데 실패하였습니다. 관리자에게 문의하세요.');
+                    }
+                    window.location.replace(contextPath + "/admin/bucket");
+                },
+                fail: function (jqXHR, textStatus, errorThrown) {
                     alert('버킷을 삭제하는데 실패하였습니다. 관리자에게 문의하세요.');
                 }
-                window.location.replace(contextPath + "/admin/bucket");
-            },
-            fail: function (jqXHR, textStatus, errorThrown) {
-                alert('버킷을 삭제하는데 실패하였습니다. 관리자에게 문의하세요.');
-            }
-        });
+            });
+        }
+    } else {
+        alert('선택한 버킷이 없습니다. 버킷을 선택 후 다시 시도해주세요.');
     }
+
 }
 /**
  * 모든 버킷 체크 / 언체크 처리
@@ -209,6 +263,7 @@ function checkTagList(checkObj) {
             }
         }
     }
+
     // 선택된 태그 명 출력
     $('#condition-tag-box p').text(checkTagNameList.join());
     $('#select-tag-content').text(checkTagNameList.join(", "));
