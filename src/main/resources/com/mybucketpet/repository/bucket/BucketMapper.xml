@@ -93,16 +93,22 @@
 
     <delete id="deleteBucket">
         DELETE FROM mbp_bucket
-              WHERE bucket_id = #{bucket_id}
+              WHERE bucket_id = #{bucketId}
     </delete>
 
     <delete id="deleteThumbnail">
         DELETE FROM mbp_thumbnail
-              WHERE bucket_id = #{bucket_id}
+              WHERE bucket_id = #{bucketId}
     </delete>
 
     <delete id="deleteTag">
         DELETE FROM mbp_tag
-              WHERE bucket_id = #{bucket_id}
+              WHERE bucket_id = #{bucketId}
     </delete>
+
+    <update id="updateBucketRecommend">
+        UPDATE mbp_bucket
+           SET recommend_yn = #{recommendYn}
+         WHERE bucket_id = #{bucketId}
+    </update>
 </mapper>
