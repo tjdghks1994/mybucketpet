@@ -18,6 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @Controller
@@ -39,6 +40,7 @@ public class AdminBucketController {
      * 버킷 등록                    : /admin/bucket/add             POST - 컨트롤 URI 형태
      * 버킷 단일 조회                 : /admin/bucket/{bucketId}      GET
      * 태그 조회(목록)                : /admin/bucket/tag             GET
+     * 버킷 추천 여부 변경             : /admin/bucket/recommend       PATCH
      */
     @RequestMapping
     public String bucketManageList(@ModelAttribute BucketSearch bucketSearch,
@@ -105,6 +107,26 @@ public class AdminBucketController {
                 failBucketList.add(bucketId);
                 log.error("버킷 ID = {}", bucketId);
                 log.error("버킷을 삭제하는데 오류가 발생하였습니다.", e);
+            }
+        }
+
+        return failBucketList;
+    }
+
+    @PatchMapping("/recommend")
+    @ResponseBody
+    public List<Long> updateBucketRecommend(@RequestBody List<Map<String, String>> updateBucketRecommendInfoList) {
+        log.debug("updateBucketRecommendInfo = {}", updateBucketRecommendInfoList);
+        List<Long> failBucketList = new ArrayList<>();
+        for (Map updateBucket : updateBucketRecommendInfoList) {
+            try {
+                // 버킷 추천 값 변경
+                bucketService.updateBucketRecommend(updateBucket);
+            } catch (Exception e) {
+                Long bucketId = Long.parseLong((String) updateBucket.get("bucketId"));
+                failBucketList.add(bucketId);
+                log.error("버킷 ID = {}", bucketId);
+                log.error("버킷의 추천 값을 변경하는데 오류가 발생하였습니다.", e);
             }
         }
 
