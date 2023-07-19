@@ -35,12 +35,13 @@ public class AdminBucketController {
      * HTTP URI 설계
      * 버킷 관리 페이지 (페이지 목록 조회) : /admin/bucket                GET, POST
      * 버킷 등록 페이지                : /admin/bucket/add            GET - 컨트롤 URI 형태
+     * 버킷 수정 페이지                : /admin/bucket/{bucketId}     GET
      * === HTTP API 사용 ===
-     * 버킷 삭제                    : /admin/bucket                 DELETE
-     * 버킷 등록                    : /admin/bucket/add             POST - 컨트롤 URI 형태
-     * 버킷 단일 조회                 : /admin/bucket/{bucketId}      GET
+     * 버킷 삭제                     : /admin/bucket                 DELETE
+     * 버킷 등록                     : /admin/bucket/add             POST - 컨트롤 URI 형태
      * 태그 조회(목록)                : /admin/bucket/tag             GET
      * 버킷 추천 여부 변경             : /admin/bucket/recommend       PATCH
+     * 버킷 수정                    : /admin/bucket/{bucketId}      PATCH
      */
     @RequestMapping
     public String bucketManageList(@ModelAttribute BucketSearch bucketSearch,
@@ -131,5 +132,34 @@ public class AdminBucketController {
         }
 
         return failBucketList;
+    }
+
+    @GetMapping("/{bucketId}")
+    public String updateBucketForm(@PathVariable String bucketId, Model model) {
+        log.debug("bucketId = {}", bucketId);
+        BucketInfo bucketInfo = bucketService.findById(Long.parseLong(bucketId));
+        log.debug("bucketInfo = {}", bucketInfo);
+
+        model.addAttribute("bucketInfo", bucketInfo);
+
+        return "admin/bucket/bucket_manage_updateForm";
+    }
+
+    @PatchMapping("/{bucketId}")
+    public ResponseEntity<String> updateBucket(@PathVariable String bucketId,
+                               @RequestPart("bucketUpdate") BucketUpdate bucketUpdate,
+                               @RequestPart(value = "thumbnailImageFile", required = false) MultipartFile multipartFile) {
+        log.debug("update bucketId = {}", bucketId);
+        log.debug("bucketUpdate = {}", bucketUpdate);
+        log.debug("thumbnailImageFile = {}", multipartFile);
+        try {
+            // 버킷 수정
+            bucketService.updateBucket(Long.parseLong(bucketId), bucketUpdate, multipartFile);
+        } catch (IOException e) {
+            log.error("File Save Error!!", e);
+            return new ResponseEntity<>("updateBucketFail", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        return new ResponseEntity<>("updateBucketSuccess", HttpStatus.OK);
     }
 }
