@@ -1,9 +1,6 @@
 package com.mybucketpet.service.bucket;
 
-import com.mybucketpet.controller.admin.BucketAdd;
-import com.mybucketpet.controller.admin.BucketInfo;
-import com.mybucketpet.controller.admin.BucketSearch;
-import com.mybucketpet.controller.admin.BucketSearchResult;
+import com.mybucketpet.controller.admin.*;
 import com.mybucketpet.controller.paging.PageMakeVO;
 import com.mybucketpet.domain.bucket.Tag;
 import org.apache.ibatis.annotations.Param;
@@ -29,4 +26,6 @@ public interface BucketService {
     void deleteBucket(Long bucketId);
     // 버킷 추천 여부 변경
     void updateBucketRecommend(Map<String, String> updateBucketList);
+    // 버킷 수정
+    void updateBucket(Long bucketId, BucketUpdate bucketUpdate, MultipartFile multipartFile) throws IOException;
 }
