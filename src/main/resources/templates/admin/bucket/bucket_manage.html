@@ -102,11 +102,11 @@
                          <th>공개</th>
                          <th>추천</th>
                      </tr>
-                     <tr th:each="bucket : ${bucketList}">
+                     <tr th:each="bucket : ${bucketList}" th:attr="bid=${bucket.bucketId}">
                          <td><input type="checkbox" class="bucket-check-btn" th:value="${bucket.bucketId}"
                                     th:attr="rcmd-data=${bucket.recommendYn}" onclick="allBucketCheckBtnOnOff();"></td>
                          <td th:text="${bucket.rnum}"></td>
-                         <td th:text="${bucket.bucketTitle}"></td>
+                         <td th:text="${bucket.bucketTitle}" style="cursor: pointer;" onclick="goBucketUpdateForm(this);"></td>
                          <td th:text="${bucket.certiCnt}"></td>
                          <td th:text="${bucket.scrapCnt}"></td>
                          <td th:text="${bucket.lookupCnt}"></td>
