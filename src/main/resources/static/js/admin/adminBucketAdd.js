@@ -4,7 +4,7 @@ let checkTagNameList = new Array();
 let checkTagValueList = new Array();
 // 공개 여부 값
 let openYnValue = "";
-// 추천 여부 값용
+// 추천 여부 값
 let recommendYnValue = "";
 
 /**
@@ -89,7 +89,7 @@ function addBucket() {
             cache: false,
             success: function (result, statusText, jqXHR) {
                 if (result == 'addBucketOK' && jqXHR.status == 201) {
-                    alert('버킷 등록에 성공하였습니다.');
+                    alert('버킷 등록하였습니다.');
                     window.location.href = contextPath + "/admin/bucket";
                 } else {
                     alert('버킷 등록에 실패하였습니다. 관리자에게 문의하세요.');
@@ -177,7 +177,6 @@ function hideTagList() {
             $('#bucketTag-listUL').hide();
         }
     });
-
 }
 /**
  * 태그 select box 클릭 이벤트
