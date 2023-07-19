@@ -1,9 +1,6 @@
 package com.mybucketpet.service.bucket;
 
-import com.mybucketpet.controller.admin.BucketAdd;
-import com.mybucketpet.controller.admin.BucketInfo;
-import com.mybucketpet.controller.admin.BucketSearch;
-import com.mybucketpet.controller.admin.BucketSearchResult;
+import com.mybucketpet.controller.admin.*;
 import com.mybucketpet.controller.paging.PageMakeVO;
 import com.mybucketpet.domain.bucket.Bucket;
 import com.mybucketpet.domain.bucket.Tag;
@@ -16,21 +13,19 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 @Slf4j
 @Service
-public class MyBatisBucketService implements BucketService {
+public class BucketServiceImpl implements BucketService {
 
     private final BucketRepository bucketRepository;
     private final FileService fileService;
     @Autowired
-    public MyBatisBucketService(BucketRepository bucketRepository, FileService fileService) {
+    public BucketServiceImpl(BucketRepository bucketRepository, FileService fileService) {
         this.bucketRepository = bucketRepository;
         this.fileService = fileService;
     }
@@ -124,6 +119,42 @@ public class MyBatisBucketService implements BucketService {
         String changeRecommendValue = recommendYn.equalsIgnoreCase("y") ? "n" : "y";
         // 버킷의 추천 여부 값 변경
         bucketRepository.updateBucketRecommend(bucketId, changeRecommendValue);
+    }
+
+    @Override
+    @Transactional
+    public void updateBucket(Long bucketId, BucketUpdate bucketUpdate, MultipartFile file) throws IOException {
+        // 버킷 수정
+        bucketRepository.updateBucket(bucketId, bucketUpdate);
+        // 첨부파일 null 값 체크 -> null이면 첨부파일을 수정하지 않았으므로 첨부파일 수정 진행 x
+        // null이 아니라면 첨부파일 수정 진행 - 기존 첨부파일은 삭제 처리, 변경된 첨부파일을 저장
+        if (file != null) {
+            Bucket bucket = new Bucket();
+            bucket.setBucketId(bucketId);
+            // 기존 첨부파일 정보 조회
+            Thumbnail findThumbnail = bucketRepository.findThumbnailByBucketId(bucket).get();
+            // 변경된 파일 저장 처리
+            String thumbnailOriginalName = file.getOriginalFilename();
+            String thumbnailSaveFileName = fileService.saveFile(file);
+            // 기존 첨부파일은 삭제 처리
+            String thumbnailDeleteFileName = findThumbnail.getThumbnailSavename();
+            fileService.deleteFile(thumbnailDeleteFileName);
+            // 첨부파일 수정
+            Thumbnail updateThumbnail = new Thumbnail(thumbnailOriginalName, thumbnailSaveFileName);
+            bucketRepository.updateThumbnail(bucketId, updateThumbnail);
+        }
+        // 태그 수정의 경우 2가지 케이스
+        // 1. 새롭게 추가된 태그 목록이 존재하는 경우 태그 추가 진행
+        // 2. 삭제된 태그 목록이 존재하는 경우 태그 삭제 진행
+        List<Tag> insertTagList = bucketUpdate.getInsertTagList();
+        if (insertTagList.size() > 0) {
+            bucketRepository.saveTag(insertTagList, bucketId);
+        }
+        List<Tag> deleteTagList = bucketUpdate.getDeleteTagList();
+        if (deleteTagList.size() > 0) {
+            bucketRepository.deleteTagList(deleteTagList, bucketId);
+        }
+
     }
 
 

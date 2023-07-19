@@ -19,11 +19,11 @@ import static org.junit.jupiter.api.Assertions.*;
 @Slf4j
 @SpringBootTest
 @Transactional
-class MyBatisBucketServiceTest {
+class BucketServiceImplTest {
 
     private final BucketService service;
     @Autowired
-    public MyBatisBucketServiceTest(BucketService service) {
+    public BucketServiceImplTest(BucketService service) {
         this.service = service;
     }
     @Test

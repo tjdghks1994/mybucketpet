@@ -15,11 +15,11 @@ import org.springframework.transaction.annotation.Transactional;
 @Slf4j
 @SpringBootTest
 @Transactional
-class MyBatisMemberServiceTest {
+class MemberServiceImplTest {
     private final MemberService memberService;
 
     @Autowired
-    public MyBatisMemberServiceTest(MemberService memberService) {
+    public MemberServiceImplTest(MemberService memberService) {
         this.memberService = memberService;
     }
 
