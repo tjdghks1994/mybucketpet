@@ -4,6 +4,14 @@ let checkTagNameList = new Array();
 let checkTagValueList = new Array();
 
 /**
+ * 선택한 버킷의 수정 페이지로 이동 처리
+ */
+function goBucketUpdateForm(bucket) {
+    let bucketId = $(bucket).parent('tr').attr('bid');
+    window.location.href = contextPath + "/admin/bucket/" + bucketId;
+}
+
+/**
  * 전체 버킷 체크 버튼 활성화, 비활성화 감지
  */
 function allBucketCheckBtnOnOff() {
