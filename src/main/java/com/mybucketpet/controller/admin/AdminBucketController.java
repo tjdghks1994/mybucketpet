@@ -6,6 +6,9 @@ import com.mybucketpet.domain.bucket.Tag;
 import com.mybucketpet.service.bucket.BucketService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -25,6 +29,8 @@ import java.util.Map;
 @RequestMapping("/admin/bucket")
 public class AdminBucketController {
     private final BucketService bucketService;
+    @Value("${bucket.upload.file}")
+    private String savePath;
 
     @Autowired
     public AdminBucketController(BucketService bucketService) {
@@ -36,6 +42,7 @@ public class AdminBucketController {
      * 버킷 관리 페이지 (페이지 목록 조회) : /admin/bucket                GET, POST
      * 버킷 등록 페이지                : /admin/bucket/add            GET - 컨트롤 URI 형태
      * 버킷 수정 페이지                : /admin/bucket/{bucketId}     GET
+     * 썸네일 이미지 경로               : /admin/bucket/images/{filename} GET
      * === HTTP API 사용 ===
      * 버킷 삭제                     : /admin/bucket                 DELETE
      * 버킷 등록                     : /admin/bucket/add             POST - 컨트롤 URI 형태
@@ -135,7 +142,7 @@ public class AdminBucketController {
     }
 
     @GetMapping("/{bucketId}")
-    public String updateBucketForm(@PathVariable String bucketId, Model model) {
+    public String updateBucketForm(@PathVariable String bucketId, Model model) throws MalformedURLException {
         log.debug("bucketId = {}", bucketId);
         BucketInfo bucketInfo = bucketService.findById(Long.parseLong(bucketId));
         log.debug("bucketInfo = {}", bucketInfo);
@@ -161,5 +168,11 @@ public class AdminBucketController {
         }
 
         return new ResponseEntity<>("updateBucketSuccess", HttpStatus.OK);
+    }
+
+    @ResponseBody
+    @GetMapping("/images/{filename}")
+    public Resource showImage(@PathVariable String filename) throws MalformedURLException {
+        return new UrlResource("file:" + savePath+filename);
     }
 }

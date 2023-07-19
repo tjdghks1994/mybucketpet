@@ -141,6 +141,15 @@ table td {
     font-weight: 500;
     letter-spacing: -0.12px;
 }
+#thumbnail-img-wrapper {
+    width: 175px;
+    height: 115px;
+    display: none;
+}
+#thumbnail-img {
+    width: 175px;
+    height: 115px;
+}
 #file-append-wrapper {
     display: grid;
     width: 175px;

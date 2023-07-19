@@ -6,6 +6,14 @@ let checkTagValueList = new Array();
 let originTagValueList = new Array();
 
 /**
+ * 기존 첨부파일(썸네일) 보이기
+ */
+function initThumbnailShow() {
+    $('#file-append-wrapper').hide();
+    $('#thumbnail-img-wrapper').show();
+    $('#thumbnail-img').attr('src', contextPath+'/admin/bucket/images/' + saveFilename);
+}
+/**
  * 버킷 수정
  */
 function updateBucket() {
@@ -157,6 +165,11 @@ function initFileInput() {
         $('#bucketImageFile').val('');
         $('#file-append-name').text('');
         $('.file-remove-btn').remove();
+        // 썸네일 보여지는 영역은 숨김
+        $('#thumbnail-img-wrapper').hide();
+        $('#thumbnail-img').remove();
+        // 기존 파일 첨부 영역 보이게
+        $('#file-append-wrapper').show();
     }
 }
 /**
@@ -174,6 +187,20 @@ function uploadImageFile(file) {
     let uploadImg = file.files[0];
     let fileExtension = uploadImg.name.substring(uploadImg.name.lastIndexOf('.')+1);
     if (fileExtension == 'jpeg' || fileExtension == 'jpg' || fileExtension == 'png' || fileExtension == 'gif') {
+        // 썸네일 보이도록 처리
+        let reader = new FileReader();
+
+        reader.onload = function(event) {
+            let thumbnailImg = document.createElement("img");
+            thumbnailImg.setAttribute("id", "thumbnail-img");
+            thumbnailImg.setAttribute("src", event.target.result);
+            document.querySelector("div#thumbnail-img-wrapper").appendChild(thumbnailImg);
+        };
+        reader.readAsDataURL(uploadImg);
+        $('#thumbnail-img-wrapper').show();
+        // 기존 파일 첨부 영역은 숨김
+        $('#file-append-wrapper').hide();
+
         $('#file-append-name').text(uploadImg['name']);
         if ($('.file-remove-btn').length == 0) {
             $('.file-append-name-wrapper').append('<img class="file-remove-btn" onclick="initFileInput();"' +
@@ -333,4 +360,5 @@ $(function () {
     showTagList();
     hideTagList();
     initEditor();
+    initThumbnailShow();
 });
