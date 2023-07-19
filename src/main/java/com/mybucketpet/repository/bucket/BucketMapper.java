@@ -2,6 +2,7 @@ package com.mybucketpet.repository.bucket;
 
 import com.mybucketpet.controller.admin.BucketSearch;
 import com.mybucketpet.controller.admin.BucketSearchResult;
+import com.mybucketpet.controller.admin.BucketUpdate;
 import com.mybucketpet.controller.paging.PageMakeVO;
 import com.mybucketpet.domain.bucket.Bucket;
 import com.mybucketpet.domain.bucket.Tag;
@@ -40,7 +41,12 @@ public interface BucketMapper {
     void deleteThumbnail(Long bucketId);
     // 태그 삭제 - 삭제된 버킷 ID를 가지고 있는 태그
     void deleteTag(Long bucketId);
-
     // 추천 버킷으로 변경/해제
     void updateBucketRecommend(@Param("bucketId") Long bucketId, @Param("recommendYn") String recommendYn);
+    // 버킷 수정
+    void updateBucket(@Param("bucketId") Long bucketId, @Param("bu") BucketUpdate bucketUpdate);
+    // 썸네일 수정
+    void updateThumbnail(@Param("bucketId") Long bucketId, @Param("thumbnail") Thumbnail thumbnail);
+    // 태그 수정 - 수정의 경우 삭제된 태그 목록을 삭제 처리하고, 새로 추가된 태그 목록은 태그 추가 메서드를 사용!
+    void deleteTagList(@Param("deleteTag") List<Tag> deleteTagList, @Param("bucketId") Long bucketId);
 }

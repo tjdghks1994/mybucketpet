@@ -111,4 +111,31 @@
            SET recommend_yn = #{recommendYn}
          WHERE bucket_id = #{bucketId}
     </update>
+
+    <update id="updateBucket">
+        UPDATE mbp_bucket
+           SET bucket_title    = #{bu.bucketTitle},
+               bucket_contents = #{bu.bucketContents},
+               open_yn = #{bu.openYn},
+               recommend_yn = #{bu.recommendYn},
+               modify_date = current_date
+        WHERE bucket_id = #{bucketId}
+    </update>
+
+    <update id="updateThumbnail">
+        UPDATE mbp_thumbnail
+           SET thumbnail_filename = #{thumbnail.thumbnailFilename},
+               thumbnail_savename = #{thumbnail.thumbnailSavename}
+         WHERE bucket_id = #{bucketId}
+    </update>
+
+    <delete id="deleteTagList">
+        DELETE FROM mbp_tag
+        WHERE tag_id IN (
+            <foreach collection="deleteTag" item="deleteTag" separator=",">
+                #{deleteTag.tagId}
+            </foreach>
+        )
+          AND bucket_id = #{bucketId}
+    </delete>
 </mapper>

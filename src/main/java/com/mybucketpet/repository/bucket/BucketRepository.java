@@ -2,6 +2,7 @@ package com.mybucketpet.repository.bucket;
 
 import com.mybucketpet.controller.admin.BucketSearch;
 import com.mybucketpet.controller.admin.BucketSearchResult;
+import com.mybucketpet.controller.admin.BucketUpdate;
 import com.mybucketpet.controller.paging.PageMakeVO;
 import com.mybucketpet.domain.bucket.Bucket;
 import com.mybucketpet.domain.bucket.Tag;
@@ -26,4 +27,7 @@ public interface BucketRepository {
     void deleteThumbnail(Long bucketId);
     void deleteTag(Long bucketId);
     void updateBucketRecommend(Long bucketId, String recommendYn);
+    void updateBucket(@Param("bucketId") Long bucketId, @Param("bu") BucketUpdate bucketUpdate);
+    void updateThumbnail(@Param("bucketId") Long bucketId, @Param("thumbnail") Thumbnail thumbnail);
+    void deleteTagList(@Param("deleteTag") List<Tag> deleteTagList, @Param("bucketId") Long bucketId);
 }

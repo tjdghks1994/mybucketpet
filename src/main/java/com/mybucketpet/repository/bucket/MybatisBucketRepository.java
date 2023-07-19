@@ -2,6 +2,7 @@ package com.mybucketpet.repository.bucket;
 
 import com.mybucketpet.controller.admin.BucketSearch;
 import com.mybucketpet.controller.admin.BucketSearchResult;
+import com.mybucketpet.controller.admin.BucketUpdate;
 import com.mybucketpet.controller.paging.PageMakeVO;
 import com.mybucketpet.domain.bucket.Bucket;
 import com.mybucketpet.domain.bucket.Tag;
@@ -95,5 +96,20 @@ public class MybatisBucketRepository implements BucketRepository {
     @Override
     public void updateBucketRecommend(Long bucketId, String recommendYn) {
         bucketMapper.updateBucketRecommend(bucketId, recommendYn);
+    }
+
+    @Override
+    public void updateBucket(Long bucketId, BucketUpdate bucketUpdate) {
+        bucketMapper.updateBucket(bucketId, bucketUpdate);
+    }
+
+    @Override
+    public void updateThumbnail(Long bucketId, Thumbnail thumbnail) {
+        bucketMapper.updateThumbnail(bucketId, thumbnail);
+    }
+
+    @Override
+    public void deleteTagList(List<Tag> deleteTagList, Long bucketId) {
+        bucketMapper.deleteTagList(deleteTagList, bucketId);
     }
 }
