@@ -1,7 +1,6 @@
 package com.mybucketpet.interceptor;
 
 import com.mybucketpet.domain.member.Member;
-import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
