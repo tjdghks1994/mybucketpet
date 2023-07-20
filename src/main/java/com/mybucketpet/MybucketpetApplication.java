@@ -1,9 +1,6 @@
 package com.mybucketpet;
 
-import com.mybucketpet.config.AppConfig;
-import com.mybucketpet.config.JasyptConfig;
-import com.mybucketpet.config.MailConfig;
-import com.mybucketpet.config.SecurityConfig;
+import com.mybucketpet.config.*;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
@@ -15,7 +12,7 @@ import org.springframework.context.annotation.Import;
  * Spring Security의 PasswordEncoder만 활용하기 위해서 자동으로 설정되는 Security 설정들 제외하도록 exclude 설정
  */
 
-@Import({JasyptConfig.class, MailConfig.class, AppConfig.class, SecurityConfig.class})
+@Import({JasyptConfig.class, MailConfig.class, AppConfig.class, SecurityConfig.class, WebConfig.class})
 @SpringBootApplication(scanBasePackages = "com.mybucketpet.controller", exclude = SecurityAutoConfiguration.class)
 public class MybucketpetApplication {
 	public static void main(String[] args) {
