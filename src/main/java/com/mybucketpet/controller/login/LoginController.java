@@ -53,7 +53,9 @@ public class LoginController {
     }
 
     @PostMapping("/login")
-    public String login(@ModelAttribute LoginForm loginForm, BindingResult bindingResult) {
+    public String login(@ModelAttribute LoginForm loginForm, BindingResult bindingResult,
+                        @RequestParam(defaultValue = "/") String redirectURL,
+                        HttpServletRequest request) {
         String loginId = loginForm.getLoginId();
         String loginPw = loginForm.getLoginPw();
         log.debug("loginId = {}", loginId);
@@ -61,8 +63,11 @@ public class LoginController {
         Member loginMember = memberService.findByLoginAvailability(loginId, loginPw);
         // StringUtils.hasText() -> 값이 있을경우 true, null 이거나 공백인 경우 false 반환
         if (StringUtils.hasText(loginMember.getMemberId())) {
-            // 로그인 성공 - 메인 페이지 이동
-            return "redirect:/";
+            loginMember.setMemberPw("");
+            // 로그인 성공
+            HttpSession session = request.getSession();
+            session.setAttribute("memberInfo", loginMember);
+            return "redirect:"+redirectURL;
         }
 
         bindingResult.reject("loginFail", "이메일 주소나 비밀번호가 틀립니다.");
