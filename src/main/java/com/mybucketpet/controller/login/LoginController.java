@@ -36,14 +36,20 @@ public class LoginController {
     @GetMapping("/login")
     public String loginForm(HttpServletRequest request, Model model) {
         Map<String, ?> inputFlashMap = RequestContextUtils.getInputFlashMap(request);
+        HttpSession session = request.getSession();
         // 회원가입 완료 후 loginForm으로 오게 된 경우 바로 로그인 처리 후 메인 페이지로 이동 처리
         if (inputFlashMap != null) {
-            HttpSession session = request.getSession();
             Member member = (Member) inputFlashMap.get("member");
             member.setMemberPw("");
 
             session.setAttribute("memberInfo", member);
 
+            return "redirect:/";
+        }
+
+        Member memberInfo = (Member) session.getAttribute("memberInfo");
+        if (memberInfo != null && memberInfo.getMemberId() != null) {
+            // 이미 로그인한 사용자이므로 메인 페이지로 이동 처리
             return "redirect:/";
         }
 
