@@ -1,4 +1,4 @@
-package com.mybucketpet.controller.login;
+package com.mybucketpet.controller.login.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;

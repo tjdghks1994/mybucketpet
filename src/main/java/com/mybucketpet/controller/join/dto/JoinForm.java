@@ -1,4 +1,4 @@
-package com.mybucketpet.controller.join;
+package com.mybucketpet.controller.join.dto;
 
 import com.mybucketpet.domain.member.JoinType;
 import jakarta.validation.constraints.AssertTrue;

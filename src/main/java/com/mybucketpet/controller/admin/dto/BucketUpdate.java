@@ -1,4 +1,4 @@
-package com.mybucketpet.controller.admin;
+package com.mybucketpet.controller.admin.dto;
 
 import com.mybucketpet.domain.bucket.Tag;
 import lombok.Getter;
