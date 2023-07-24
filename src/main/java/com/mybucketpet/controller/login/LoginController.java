@@ -1,7 +1,8 @@
 package com.mybucketpet.controller.login;
 
+import com.mybucketpet.controller.login.dto.LoginForm;
+import com.mybucketpet.controller.login.dto.PasswordChangeForm;
 import com.mybucketpet.domain.member.Member;
-import com.mybucketpet.service.login.EmailService;
 import com.mybucketpet.service.member.MemberService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
@@ -64,9 +65,8 @@ public class LoginController {
                         HttpServletRequest request) {
         String loginId = loginForm.getLoginId();
         String loginPw = loginForm.getLoginPw();
-        log.debug("loginId = {}", loginId);
-        log.debug("loginPw = {}", loginPw);
         Member loginMember = memberService.findByLoginAvailability(loginId, loginPw);
+
         // StringUtils.hasText() -> 값이 있을경우 true, null 이거나 공백인 경우 false 반환
         if (StringUtils.hasText(loginMember.getMemberId())) {
             loginMember.setMemberPw("");
