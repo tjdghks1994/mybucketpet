@@ -1,10 +1,8 @@
 package com.mybucketpet.service.member;
 
-import com.mybucketpet.controller.join.JoinForm;
-import com.mybucketpet.controller.login.PasswordChangeForm;
+import com.mybucketpet.controller.join.dto.JoinForm;
+import com.mybucketpet.controller.login.dto.PasswordChangeForm;
 import com.mybucketpet.domain.member.Member;
-
-import java.util.Optional;
 
 public interface MemberService {
     // 회원 가입

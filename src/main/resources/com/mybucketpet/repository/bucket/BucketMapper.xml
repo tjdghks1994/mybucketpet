@@ -55,7 +55,7 @@
           from mbp_bucket
     </select>
 
-    <select id="findAllBucket" resultType="com.mybucketpet.controller.admin.BucketSearchResult">
+    <select id="findAllBucket" resultType="com.mybucketpet.controller.admin.dto.BucketSearchResult">
         SELECT rnum, bucket_id, bucket_title, certi_cnt, scrap_cnt, lookup_cnt, modify_date, open_yn, recommend_yn
           FROM (
             SELECT @rownum:=@rownum+1 rnum, bk.*
@@ -72,12 +72,12 @@
                   <if test="bs.recommendYn != null and bs.recommendYn != ''">
                       and bk.recommend_yn = #{bs.recommendYn}
                   </if>
-                  <if test="bs.keywordType != null and bs.keywordType != '' and bs.keywordType.equalsIgnoreCase('T')">
-                      and bk.bucket_title like concat('%',#{bs.keywordText},'%')
+                  <if test="keywordType != null and keywordType != '' and keywordType.equalsIgnoreCase('T')">
+                      and bk.bucket_title like concat('%',#{keywordText},'%')
                   </if>
-                  <if test="bs.tagList != null and bs.tagList.size != 0">
+                  <if test="tl != null and tl.size != 0">
                     and t.tag_id IN
-                    <foreach collection="bs.tagList" item="tag" separator="," open="(" close=")">
+                    <foreach collection="tl" item="tag" separator="," open="(" close=")">
                         #{tag.tagId}
                     </foreach>
                   </if>

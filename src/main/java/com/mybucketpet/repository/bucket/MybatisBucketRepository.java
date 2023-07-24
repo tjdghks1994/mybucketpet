@@ -1,13 +1,12 @@
 package com.mybucketpet.repository.bucket;
 
-import com.mybucketpet.controller.admin.BucketSearch;
-import com.mybucketpet.controller.admin.BucketSearchResult;
-import com.mybucketpet.controller.admin.BucketUpdate;
+import com.mybucketpet.controller.admin.dto.BucketSearch;
+import com.mybucketpet.controller.admin.dto.BucketSearchResult;
+import com.mybucketpet.controller.admin.dto.BucketUpdate;
 import com.mybucketpet.controller.paging.PageMakeVO;
 import com.mybucketpet.domain.bucket.Bucket;
 import com.mybucketpet.domain.bucket.Tag;
 import com.mybucketpet.domain.bucket.Thumbnail;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -74,8 +73,9 @@ public class MybatisBucketRepository implements BucketRepository {
     }
 
     @Override
-    public List<BucketSearchResult> findAllBucket(BucketSearch bucketSearch, PageMakeVO pageMakeVO) {
-        return bucketMapper.findAllBucket(bucketSearch, pageMakeVO);
+    public List<BucketSearchResult> findAllBucket(String keywordType, String keywordText,
+                                                  Bucket bucketSearch, List<Tag> tagList,  PageMakeVO pageMakeVO) {
+        return bucketMapper.findAllBucket(keywordType, keywordText, bucketSearch, tagList, pageMakeVO);
     }
 
     @Override
@@ -99,7 +99,7 @@ public class MybatisBucketRepository implements BucketRepository {
     }
 
     @Override
-    public void updateBucket(Long bucketId, BucketUpdate bucketUpdate) {
+    public void updateBucket(Long bucketId, Bucket bucketUpdate) {
         bucketMapper.updateBucket(bucketId, bucketUpdate);
     }
 

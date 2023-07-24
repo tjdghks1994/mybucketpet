@@ -1,6 +1,6 @@
 package com.mybucketpet.service.bucket;
 
-import com.mybucketpet.controller.admin.*;
+import com.mybucketpet.controller.admin.dto.*;
 import com.mybucketpet.controller.paging.PageMakeVO;
 import com.mybucketpet.domain.bucket.Bucket;
 import com.mybucketpet.domain.bucket.Tag;
@@ -87,7 +87,14 @@ public class BucketServiceImpl implements BucketService {
     }
     @Override
     public List<BucketSearchResult> findAllBucket(BucketSearch bucketSearch, PageMakeVO pageMakeVO) {
-        return bucketRepository.findAllBucket(bucketSearch, pageMakeVO);
+        String keywordType = bucketSearch.getKeywordType();
+        String keywordText = bucketSearch.getKeywordText();
+        Bucket bucket = new Bucket();
+        bucket.setOpenYn(bucketSearch.getOpenYn());
+        bucket.setRecommendYn(bucketSearch.getRecommendYn());
+        List<Tag> tagList = bucketSearch.getTagList();
+
+        return bucketRepository.findAllBucket(keywordType, keywordText, bucket, tagList, pageMakeVO);
     }
 
     @Override
@@ -125,12 +132,17 @@ public class BucketServiceImpl implements BucketService {
     @Transactional
     public void updateBucket(Long bucketId, BucketUpdate bucketUpdate, MultipartFile file) throws IOException {
         // 버킷 수정
-        bucketRepository.updateBucket(bucketId, bucketUpdate);
+        Bucket bucket = new Bucket();
+        bucket.setBucketId(bucketId);
+        bucket.setBucketTitle(bucketUpdate.getBucketTitle());
+        bucket.setBucketContents(bucketUpdate.getBucketContents());
+        bucket.setOpenYn(bucketUpdate.getOpenYn());
+        bucket.setRecommendYn(bucketUpdate.getRecommendYn());
+
+        bucketRepository.updateBucket(bucketId, bucket);
         // 첨부파일 null 값 체크 -> null이면 첨부파일을 수정하지 않았으므로 첨부파일 수정 진행 x
         // null이 아니라면 첨부파일 수정 진행 - 기존 첨부파일은 삭제 처리, 변경된 첨부파일을 저장
         if (file != null) {
-            Bucket bucket = new Bucket();
-            bucket.setBucketId(bucketId);
             // 기존 첨부파일 정보 조회
             Thumbnail findThumbnail = bucketRepository.findThumbnailByBucketId(bucket).get();
             // 변경된 파일 저장 처리

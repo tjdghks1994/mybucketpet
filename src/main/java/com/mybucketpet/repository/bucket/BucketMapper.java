@@ -1,14 +1,15 @@
 package com.mybucketpet.repository.bucket;
 
-import com.mybucketpet.controller.admin.BucketSearch;
-import com.mybucketpet.controller.admin.BucketSearchResult;
-import com.mybucketpet.controller.admin.BucketUpdate;
+import com.mybucketpet.controller.admin.dto.BucketSearch;
+import com.mybucketpet.controller.admin.dto.BucketSearchResult;
+import com.mybucketpet.controller.admin.dto.BucketUpdate;
 import com.mybucketpet.controller.paging.PageMakeVO;
 import com.mybucketpet.domain.bucket.Bucket;
 import com.mybucketpet.domain.bucket.Tag;
 import com.mybucketpet.domain.bucket.Thumbnail;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.security.core.parameters.P;
 
 import java.util.List;
 import java.util.Optional;
@@ -34,7 +35,9 @@ public interface BucketMapper {
     // 전체 버킷 수
     int getTotalBucketCount();
     // 버킷 목록 조회
-    List<BucketSearchResult> findAllBucket(@Param("bs") BucketSearch bucketSearch, @Param("page") PageMakeVO pageMakeVO);
+    List<BucketSearchResult> findAllBucket(@Param("keywordType") String keywordType, @Param("keywordText") String keywordText,
+                                           @Param("bs") Bucket bucketSearch, @Param("tl") List<Tag> tagList,
+                                           @Param("page") PageMakeVO pageMakeVO);
     // 버킷 삭제
     void deleteBucket(Long bucketId);
     // 썸네일 삭제 - 삭제된 버킷 ID를 가지고 있는 썸네일
@@ -44,7 +47,7 @@ public interface BucketMapper {
     // 추천 버킷으로 변경/해제
     void updateBucketRecommend(@Param("bucketId") Long bucketId, @Param("recommendYn") String recommendYn);
     // 버킷 수정
-    void updateBucket(@Param("bucketId") Long bucketId, @Param("bu") BucketUpdate bucketUpdate);
+    void updateBucket(@Param("bucketId") Long bucketId, @Param("bu") Bucket bucketUpdate);
     // 썸네일 수정
     void updateThumbnail(@Param("bucketId") Long bucketId, @Param("thumbnail") Thumbnail thumbnail);
     // 태그 수정 - 수정의 경우 삭제된 태그 목록을 삭제 처리하고, 새로 추가된 태그 목록은 태그 추가 메서드를 사용!

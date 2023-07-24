@@ -1,8 +1,8 @@
 package com.mybucketpet.repository.bucket;
 
-import com.mybucketpet.controller.admin.BucketSearch;
-import com.mybucketpet.controller.admin.BucketSearchResult;
-import com.mybucketpet.controller.admin.BucketUpdate;
+import com.mybucketpet.controller.admin.dto.BucketSearch;
+import com.mybucketpet.controller.admin.dto.BucketSearchResult;
+import com.mybucketpet.controller.admin.dto.BucketUpdate;
 import com.mybucketpet.controller.paging.PageMakeVO;
 import com.mybucketpet.domain.bucket.Bucket;
 import com.mybucketpet.domain.bucket.Tag;
@@ -22,12 +22,13 @@ public interface BucketRepository {
     Tag findTagNameById(Tag tag);
     List<Tag> findAllTag();
     int getTotalBucketCount();
-    List<BucketSearchResult> findAllBucket(BucketSearch bucketSearch, PageMakeVO pageMakeVO);
+    List<BucketSearchResult> findAllBucket(String keywordType, String keywordText,
+                                           Bucket bucketSearch, List<Tag> tagList, PageMakeVO pageMakeVO);
     void deleteBucket(Long bucketId);
     void deleteThumbnail(Long bucketId);
     void deleteTag(Long bucketId);
     void updateBucketRecommend(Long bucketId, String recommendYn);
-    void updateBucket(@Param("bucketId") Long bucketId, @Param("bu") BucketUpdate bucketUpdate);
-    void updateThumbnail(@Param("bucketId") Long bucketId, @Param("thumbnail") Thumbnail thumbnail);
-    void deleteTagList(@Param("deleteTag") List<Tag> deleteTagList, @Param("bucketId") Long bucketId);
+    void updateBucket(Long bucketId, Bucket bucketUpdate);
+    void updateThumbnail(Long bucketId, Thumbnail thumbnail);
+    void deleteTagList(List<Tag> deleteTagList, Long bucketId);
 }
