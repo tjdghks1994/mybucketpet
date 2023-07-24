@@ -1,7 +1,6 @@
 package com.mybucketpet.repository.bucket;
 
-import com.mybucketpet.config.AppConfig;
-import com.mybucketpet.controller.admin.BucketUpdate;
+import com.mybucketpet.controller.admin.dto.BucketUpdate;
 import com.mybucketpet.domain.bucket.Bucket;
 import com.mybucketpet.domain.bucket.Tag;
 import com.mybucketpet.domain.bucket.Thumbnail;
@@ -11,17 +10,12 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @Transactional
 @Slf4j
@@ -71,10 +65,11 @@ class MybatisBucketRepositoryTest {
         Long bucketId = 22L;
         BucketUpdate update = new BucketUpdate("updateTest", "hello~~~", "y", "y",
                 Arrays.asList(new Tag(1L)), Arrays.asList(new Tag(5L)));
+        Bucket bucket = new Bucket("updateTest", "hello~~~", "y", "y");
         Thumbnail updateThumb = new Thumbnail("스크린샷 2023-03-18 오전 4.58.26.png",
                 "2b62de4c-6e43-4a0c-846a-33da3816c649306306.png");
         // when
-        repository.updateBucket(bucketId, update);
+        repository.updateBucket(bucketId, bucket);
         repository.updateThumbnail(bucketId, updateThumb);
         repository.saveTag(update.getInsertTagList(), bucketId);
         repository.deleteTagList(update.getDeleteTagList(), bucketId);
