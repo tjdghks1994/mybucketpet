@@ -1,8 +1,10 @@
 package com.mybucketpet.controller.join;
 
 import com.mybucketpet.domain.member.Member;
+import com.mybucketpet.exception.ErrorResult;
 import com.mybucketpet.service.login.EmailService;
 import com.mybucketpet.service.member.MemberService;
+import jakarta.mail.MessagingException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
@@ -11,6 +13,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
+
+import java.io.IOException;
 
 @Slf4j
 @RestController
@@ -21,6 +25,19 @@ public class JoinApiController {
     private final EmailService emailService;
     private final MemberService memberService;
 
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ExceptionHandler(MessagingException.class)
+    public ErrorResult msExceptionHandler(MessagingException me) {
+        log.error("[MessagingExceptionHandler]", me);
+        return new ErrorResult("SendAuthCodeError", "메일을 보내는 도중 오류가 발생했습니다!");
+    }
+
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ExceptionHandler(Exception.class)
+    public ErrorResult exceptionHandler(Exception e) {
+        log.error("[ExceptionHandler]", e);
+        return new ErrorResult("ServerError", "내부 오류가 발생했습니다!");
+    }
     /**
      * HTTP URI 설계 - API
      * 회원 메일 조회 :           /members/mail/{email}                   GET
@@ -30,7 +47,7 @@ public class JoinApiController {
      */
 
     @PostMapping("/mail/{email}/auth")
-    public ResponseEntity<String> mailAuth(@PathVariable String email, HttpServletRequest request) {
+    public ResponseEntity<String> mailAuth(@PathVariable String email, HttpServletRequest request) throws MessagingException {
         log.debug("mailAuth CreateToSend Start EMAIL = {}", email);
         // 인증번호 생성 후 메일 전송 - 반환값은 생성한 인증번호
         String authCode = emailService.sendAuthCode(email);
