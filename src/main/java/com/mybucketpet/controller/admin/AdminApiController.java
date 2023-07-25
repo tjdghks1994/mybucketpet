@@ -3,6 +3,7 @@ package com.mybucketpet.controller.admin;
 import com.mybucketpet.controller.admin.dto.BucketAdd;
 import com.mybucketpet.controller.admin.dto.BucketUpdate;
 import com.mybucketpet.domain.bucket.Tag;
+import com.mybucketpet.exception.ErrorResult;
 import com.mybucketpet.service.bucket.BucketService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -31,24 +32,33 @@ public class AdminApiController {
         this.bucketService = bucketService;
     }
 
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ExceptionHandler(IOException.class)
+    public ErrorResult ioExceptionHandler(IOException ioException) {
+        log.error("[ioExceptionHandler]", ioException);
+        return new ErrorResult("FileSaveError", "파일을 저장하는데 오류가 발생했습니다.");
+    }
+
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ExceptionHandler(Exception.class)
+    public ErrorResult exceptionHandler(Exception e) {
+        log.error("[exceptionHandler]", e);
+        return new ErrorResult("ServerError", "내부 오류가 발생했습니다!");
+    }
+
     /**
      * HTTP URI 설계 - API
      * 버킷 삭제                     : /admin/bucket                 DELETE
      * 버킷 등록                     : /admin/bucket/add             POST - 컨트롤 URI 형태
      * 태그 조회(목록)                : /admin/bucket/tag             GET
-     * 버킷 추천 여부 변경             : /admin/bucket/recommend       PATCH
+     * 버킷 추천 여부 변경             : /admin/bucket/recommend       PATCH - 컨트롤 URI 형태
      * 버킷 수정                    : /admin/bucket/{bucketId}      PATCH
      */
     @PostMapping(value = "/add")
     public ResponseEntity<String> bucketAdd(@RequestPart("bucketAdd") BucketAdd bucketAdd,
-                                            @RequestPart("thumbnailImageFile") MultipartFile thumbnailImgFile) {
-        try {
-            // 버킷 저장
-            bucketService.save(bucketAdd, thumbnailImgFile);
-        } catch (IOException e) {
-            log.error("File Save Error!!", e);
-            return new ResponseEntity<>("addBucketFail", HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+                                            @RequestPart("thumbnailImageFile") MultipartFile thumbnailImgFile) throws IOException {
+        // 버킷 저장
+        bucketService.save(bucketAdd, thumbnailImgFile);
 
         return new ResponseEntity<>("addBucketOK", HttpStatus.CREATED);
     }
@@ -102,17 +112,13 @@ public class AdminApiController {
     @PatchMapping("/{bucketId}")
     public ResponseEntity<String> updateBucket(@PathVariable String bucketId,
                                                @RequestPart("bucketUpdate") BucketUpdate bucketUpdate,
-                                               @RequestPart(value = "thumbnailImageFile", required = false) MultipartFile multipartFile) {
+                                               @RequestPart(value = "thumbnailImageFile", required = false) MultipartFile multipartFile)
+                                                throws IOException {
         log.debug("update bucketId = {}", bucketId);
         log.debug("bucketUpdate = {}", bucketUpdate);
         log.debug("thumbnailImageFile = {}", multipartFile);
-        try {
-            // 버킷 수정
-            bucketService.updateBucket(Long.parseLong(bucketId), bucketUpdate, multipartFile);
-        } catch (IOException e) {
-            log.error("File Save Error!!", e);
-            return new ResponseEntity<>("updateBucketFail", HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        // 버킷 수정
+        bucketService.updateBucket(Long.parseLong(bucketId), bucketUpdate, multipartFile);
 
         return new ResponseEntity<>("updateBucketSuccess", HttpStatus.OK);
     }
