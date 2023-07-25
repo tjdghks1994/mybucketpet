@@ -29,9 +29,16 @@ function allBucketCheckBtnOnOff() {
 
 /**
  * 추천버킷으로 변경
+ * @param changeRecommendValue : 변경할추천여부값
  */
-function modifyRecommendBucket() {
-    let updateYn = confirm('선택한 버킷의 추천 여부를 변경하시겠습니까? (추천 -> 비추천, 비추천 -> 추천)');
+function modifyRecommendBucket(changeRecommendValue) {
+    let updateYn;
+    if (changeRecommendValue == 'y') {
+        updateYn = confirm('선택한 버킷을 추천버킷으로 변경하시겠습니까?');
+    } else {
+        updateYn = confirm('선택한 버킷을 추천버킷에서 해제하시겠습니까? ');
+    }
+
     if ($('.bucket-check-btn:checked').length > 0) {
         if (updateYn) {
             // 버킷 ID와 현재 추천 여부의 값을 가지고 있는 객체를 담고 있는 배열
@@ -41,6 +48,7 @@ function modifyRecommendBucket() {
                 let updateBucketInfo = new Object();
                 updateBucketInfo.bucketId = $(item).val();
                 updateBucketInfo.recommendYn = $(item).attr('rcmd-data');
+                updateBucketInfo.changeRecommendYn = changeRecommendValue;
 
                 bucketList.push(updateBucketInfo);
             });
