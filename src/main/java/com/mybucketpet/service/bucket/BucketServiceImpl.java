@@ -121,11 +121,14 @@ public class BucketServiceImpl implements BucketService {
         log.debug("updateBucketList = {}", updateBucketList);
 
         Long bucketId = Long.parseLong(updateBucketList.get("bucketId"));
-        String recommendYn = updateBucketList.get("recommendYn");
-        // 기존 추천 여부의 값을 반대로 변경
-        String changeRecommendValue = recommendYn.equalsIgnoreCase("y") ? "n" : "y";
-        // 버킷의 추천 여부 값 변경
-        bucketRepository.updateBucketRecommend(bucketId, changeRecommendValue);
+        String currentRecommendValue = updateBucketList.get("recommendYn");
+        // 클라이언트에서 전달된 변경할 추천 값
+        String changeRecommendValue = updateBucketList.get("changeRecommendYn");
+        // 현재 추천 값과 변경할 추천 값이 같지 않은 경우에만 update
+        if (!currentRecommendValue.equals(changeRecommendValue)) {
+            // 버킷의 추천 여부 값 변경
+            bucketRepository.updateBucketRecommend(bucketId, changeRecommendValue);
+        }
     }
 
     @Override
