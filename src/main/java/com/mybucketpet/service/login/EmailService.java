@@ -12,6 +12,7 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.Random;
 
@@ -25,7 +26,7 @@ public class EmailService {
     @Value("${mail.send.name}")
     private String SEND_NAME;
 
-    public String sendAuthCode(String to) {
+    public String sendAuthCode(String to) throws MessagingException {
         String authCode = RandomKey.createKey();
 
         MimeMessage message = createMessage(to, authCode);
@@ -34,7 +35,7 @@ public class EmailService {
         return authCode;
     }
 
-    private MimeMessage createMessage(String to, String authCode) {
+    private MimeMessage createMessage(String to, String authCode) throws MessagingException {
         log.debug("보내는 대상 = {}", to);
         log.debug("인증 번호 = {}", authCode);
         MimeMessage message = javaMailSender.createMimeMessage();
@@ -58,7 +59,7 @@ public class EmailService {
             message.setFrom(new InternetAddress(FULL_EMAIL, SEND_NAME));// 보내는 사람
 
         } catch (MessagingException | UnsupportedEncodingException e) {
-            throw new RuntimeException("메일을 보내는 도중 오류가 발생했습니다!", e);
+            throw new MessagingException("메일을 보내는 도중 오류가 발생했습니다!", e);
         }
 
         return message;
