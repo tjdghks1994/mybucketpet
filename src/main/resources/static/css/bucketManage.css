@@ -218,6 +218,12 @@ section {
     width: 122px;
     background: #34CC99;
     color: #FFF;
+    margin-right: 10px;
+}
+#bucket-list-btn-wrapper #recomnd-cancle-btn {
+    width: 102px;
+    background: #486FFA;
+    color: #FFF;
 }
 #bucket-list-btn-wrapper #add-btn {
     width: 82px;
@@ -227,6 +233,7 @@ section {
 }
 #bucket-list-btn-wrapper #delete-btn,
 #bucket-list-btn-wrapper #recomnd-add-btn,
+#bucket-list-btn-wrapper #recomnd-cancle-btn,
 #bucket-list-btn-wrapper #add-btn {
     height: 32px;
     border-radius: 4px;
