@@ -7,29 +7,33 @@ import com.mybucketpet.exception.ErrorResult;
 import com.mybucketpet.service.bucket.BucketService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.MessageSource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Slf4j
 @RestController
 @RequestMapping("/admin/bucket")
 public class AdminApiController {
     private final BucketService bucketService;
+    private final MessageSource messageSource;
     @Value("${bucket.upload.file}")
     private String savePath;
 
-    public AdminApiController(BucketService bucketService) {
+    public AdminApiController(BucketService bucketService, MessageSource messageSource) {
         this.bucketService = bucketService;
+        this.messageSource = messageSource;
     }
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -55,8 +59,26 @@ public class AdminApiController {
      * 버킷 수정                    : /admin/bucket/{bucketId}      PATCH
      */
     @PostMapping(value = "/add")
-    public ResponseEntity<String> bucketAdd(@RequestPart("bucketAdd") BucketAdd bucketAdd,
-                                            @RequestPart("thumbnailImageFile") MultipartFile thumbnailImgFile) throws IOException {
+    public ResponseEntity<String> bucketAdd(@Validated @RequestPart("bucketAdd") BucketAdd bucketAdd, BindingResult bindingResult,
+                                            @RequestPart(value = "thumbnailImageFile", required = false) MultipartFile thumbnailImgFile) throws IOException {
+        // 검증 추가
+        if (bindingResult.hasErrors()) {
+            log.debug("bindingResult = {}", bindingResult);
+            List<FieldError> fieldErrors = bindingResult.getFieldErrors();
+            String errorCode = Arrays.stream(fieldErrors.get(0).getCodes()).findFirst().get();
+            // bindingResult에서 반환되는 필드 에러가 발생한 코드 값을 이용해서 messageSource를 활용해 errors.properties에 등록된 값 가져오기
+            String validMessage = messageSource.getMessage(errorCode, null, Locale.KOREA);
+            
+            return new ResponseEntity<>(validMessage, HttpStatus.BAD_REQUEST);
+        }
+        // 썸네일 이미지를 첨부하지 않은 경우 검증
+        if (thumbnailImgFile == null) {
+            return new ResponseEntity<>(
+                    messageSource.getMessage("Size.multipartFile.thumbnailImage", null, Locale.KOREA),
+                    HttpStatus.BAD_REQUEST
+            );
+        }
+
         // 버킷 저장
         bucketService.save(bucketAdd, thumbnailImgFile);
 
@@ -111,12 +133,24 @@ public class AdminApiController {
 
     @PatchMapping("/{bucketId}")
     public ResponseEntity<String> updateBucket(@PathVariable String bucketId,
-                                               @RequestPart("bucketUpdate") BucketUpdate bucketUpdate,
+                                               @Validated @RequestPart("bucketUpdate") BucketUpdate bucketUpdate,
+                                               BindingResult bindingResult,
                                                @RequestPart(value = "thumbnailImageFile", required = false) MultipartFile multipartFile)
                                                 throws IOException {
         log.debug("update bucketId = {}", bucketId);
         log.debug("bucketUpdate = {}", bucketUpdate);
         log.debug("thumbnailImageFile = {}", multipartFile);
+
+        if (bindingResult.hasErrors()) {
+            log.debug("bindingResult = {}", bindingResult);
+            List<FieldError> fieldErrors = bindingResult.getFieldErrors();
+            String errorCode = Arrays.stream(fieldErrors.get(0).getCodes()).findFirst().get();
+            // bindingResult에서 반환되는 필드 에러가 발생한 코드 값을 이용해서 messageSource를 활용해 errors.properties에 등록된 값 가져오기
+            String validMessage = messageSource.getMessage(errorCode, null, Locale.KOREA);
+
+            return new ResponseEntity<>(validMessage, HttpStatus.BAD_REQUEST);
+        }
+
         // 버킷 수정
         bucketService.updateBucket(Long.parseLong(bucketId), bucketUpdate, multipartFile);
 
