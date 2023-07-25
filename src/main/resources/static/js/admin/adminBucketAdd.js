@@ -88,15 +88,15 @@ function addBucket() {
             data: formData,
             cache: false,
             success: function (result, statusText, jqXHR) {
-                if (result == 'addBucketOK' && jqXHR.status == 201) {
-                    alert('버킷 등록하였습니다.');
-                    window.location.href = contextPath + "/admin/bucket";
+                alert('버킷 등록하였습니다.');
+                window.location.href = contextPath + "/admin/bucket";
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                if (jqXHR.responseText != null || jqXHR.responseText != '' || jqXHR.responseText != undefined) {
+                    alert(jqXHR.responseText);
                 } else {
                     alert('버킷 등록에 실패하였습니다. 관리자에게 문의하세요.');
                 }
-            },
-            fail: function (jqXHR, textStatus, errorThrown) {
-                alert('버킷 등록에 실패하였습니다. 관리자에게 문의하세요.');
             }
         });
     } else {
@@ -212,7 +212,7 @@ function initTagRendering() {
                     ' id='+tagItem.tagName+'> <label for="'+ tagItem.tagName+'">'+ tagItem.tagName+'</label></li>');
             });
         },
-        fail: function (jqXHR, textStatus, errorThrown) {
+        error: function (jqXHR, textStatus, errorThrown) {
             alert('태그 목록을 가져오는데 오류가 발생했습니다. 관리자에게 문의하세요');
         }
     });

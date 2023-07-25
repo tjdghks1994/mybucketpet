@@ -77,15 +77,15 @@ function updateBucket() {
             data: formData,
             cache: false,
             success: function (result, statusText, jqXHR) {
-                if (result == "updateBucketSuccess" && jqXHR.status == 200) {
-                    alert('버킷을 수정하였습니다.');
-                    window.location.href = contextPath + "/admin/bucket";
+                alert('버킷을 수정하였습니다.');
+                window.location.href = contextPath + "/admin/bucket";
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                if (jqXHR.responseText != null || jqXHR.responseText != '' || jqXHR.responseText != undefined) {
+                    alert(jqXHR.responseText);
                 } else {
                     alert('버킷 수정에 실패하였습니다. 관리자에게 문의하세요.');
                 }
-            },
-            fail: function (jqXHR, textStatus, errorThrown) {
-                alert('버킷 수정에 실패하였습니다. 관리자에게 문의하세요.');
             }
         });
     } else {
