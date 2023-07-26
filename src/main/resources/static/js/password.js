@@ -119,41 +119,64 @@ function emailValidator() {
 }
 
 /**
- * 이메일 인증 요청
+ * 가입된 이메일 체크
  */
-async function authMailSend() {
-    try {
-        let emailStr = $('#joinEmailPrefix').val();
-        const emailSuffixVal = $('#joinEmailSuffix').val();
-        if (emailSuffixVal == '_self') {
-            let selfMailVal = $('#joinEmailSuffixSelf').val();
-            emailStr += '@';
-            emailStr += selfMailVal;
-        } else {
-            emailStr += '@';
-            emailStr += emailSuffixVal;
-        }
+function checkJoinMail() {
 
-        const response = await fetch(contextPath+"/members/mail/"+emailStr+"/auth", {
-            method: "POST",
-            headers: {
-                "Content-Type": "text/plain",
+    let emailStr = $('#joinEmailPrefix').val();
+    const emailSuffixVal = $('#joinEmailSuffix').val();
+    if (emailSuffixVal == '_self') {
+        let selfMailVal = $('#joinEmailSuffixSelf').val();
+        emailStr += '@';
+        emailStr += selfMailVal;
+    } else {
+        emailStr += '@';
+        emailStr += emailSuffixVal;
+    }
+
+    // 가입된 이메일인지 확인 필요
+    $.ajax({
+        url: contextPath + "/members/mail/" + emailStr,
+        method: 'get',
+        success: function (result, statusText, jqXHR) {
+            // 가입된 이메일
+            if (result['memberId'] != null) {
+                authMailSend(result['memberId']);
+            } else {    // 가입된 이메일이 아닌 경우
+                alert('가입된 이메일이 아닙니다. 확인 후 재시도해주세요.');
             }
-        });
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
+            if (jqXHR.responseText != null || jqXHR.responseText != '' || jqXHR.responseText != undefined) {
+                alert(jqXHR.responseText);
+            } else {
+                alert('가입된 이메일 확인에 실패하였습니다. 관리자에게 문의하세요.');
+            }
+        }
+    });
+}
 
-        // 인증코드
-        const result = response.status;
-        if (result == 201) {    // 인증번호 생성 완료 및 인증번호 발송
+/**
+ * 이메일 인증 요청
+ * @param emailStr : 회원이메일ID
+ * @returns {Promise<void>}
+ */
+function authMailSend(emailStr) {
+    $.ajax({
+        url: contextPath + "/members/mail/" + emailStr + "/auth",
+        method: "post",
+        success: function (result, statusText, jqXHR) {
             // 인증코드를 입력받기 위한 input box show
             showInputAuthCode();
-        } else { // 에러 발생
-            // 에러 문구 출력
-
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
+            if (jqXHR.responseText != null || jqXHR.responseText != '' || jqXHR.responseText != undefined) {
+                alert(jqXHR.responseText);
+            } else {
+                alert('인증코드 전송에 실패하였습니다. 관리자에게 문의하세요.');
+            }
         }
-
-    } catch (error) {
-        console.error("실패:", error);
-    }
+    });
 }
 
 /**
