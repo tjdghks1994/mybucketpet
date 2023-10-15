@@ -31,12 +31,13 @@ class BucketMapperTest {
     void findAllBucket() {
         // given
         List<Tag> tagList = Arrays.asList(new Tag(1L), new Tag(4L), new Tag(5L));
-//        BucketSearch bucketSearch = new BucketSearch("T", "test", "y", "n", tagList);
-        String keywordType = "T";
-        String keywordText = "test";
-        Bucket bucket = new Bucket();
-        bucket.setOpenYn("y");
-        bucket.setRecommendYn("n");
+        BucketSearch bucketSearch = new BucketSearch("T", "test", "y", "n", tagList);
+        String keywordType = bucketSearch.getKeywordType();
+        String keywordText = bucketSearch.getKeywordText();
+        Bucket bucket = Bucket.builder()
+                .openYn(bucketSearch.getOpenYn())
+                .recommendYn(bucketSearch.getRecommendYn())
+                .build();
 
         PageCriteria pageCriteria = new PageCriteria(1);
         int total = bucketMapper.getTotalBucketCount();
@@ -44,6 +45,6 @@ class BucketMapperTest {
         // when
         List<BucketSearchResult> allBucket = bucketMapper.findAllBucket(keywordType, keywordText, bucket, tagList, pageMakeVO);
         // then
-        Assertions.assertThat(allBucket.size()).isEqualTo(1);
+        Assertions.assertThat(allBucket.size()).isEqualTo(2);
     }
 }
