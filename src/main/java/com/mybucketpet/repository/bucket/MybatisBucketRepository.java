@@ -1,12 +1,10 @@
 package com.mybucketpet.repository.bucket;
 
-import com.mybucketpet.controller.admin.dto.BucketSearch;
 import com.mybucketpet.controller.admin.dto.BucketSearchResult;
-import com.mybucketpet.controller.admin.dto.BucketUpdate;
 import com.mybucketpet.controller.paging.PageMakeVO;
 import com.mybucketpet.domain.bucket.Bucket;
+import com.mybucketpet.domain.bucket.BucketThumbnail;
 import com.mybucketpet.domain.bucket.Tag;
-import com.mybucketpet.domain.bucket.Thumbnail;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -31,7 +29,7 @@ public class MybatisBucketRepository implements BucketRepository {
     }
 
     @Override
-    public Thumbnail saveThumbnail(Thumbnail thumbnail, Long bucketId) {
+    public BucketThumbnail saveThumbnail(BucketThumbnail thumbnail, Long bucketId) {
         bucketMapper.saveThumbnail(thumbnail, bucketId);
         return thumbnail;
     }
@@ -48,13 +46,13 @@ public class MybatisBucketRepository implements BucketRepository {
     }
 
     @Override
-    public Optional<Thumbnail> findThumbnailByBucketId(Bucket bucket) {
-        return bucketMapper.findThumbnailByBucketId(bucket);
+    public Optional<BucketThumbnail> findThumbnailByBucketId(Long bucketId) {
+        return bucketMapper.findThumbnailByBucketId(bucketId);
     }
 
     @Override
-    public List<Tag> findTagByBucketId(Bucket bucket) {
-        return bucketMapper.findTagByBucketId(bucket);
+    public List<Tag> findTagByBucketId(Long bucketId) {
+        return bucketMapper.findTagByBucketId(bucketId);
     }
 
     @Override
@@ -104,7 +102,7 @@ public class MybatisBucketRepository implements BucketRepository {
     }
 
     @Override
-    public void updateThumbnail(Long bucketId, Thumbnail thumbnail) {
+    public void updateThumbnail(Long bucketId, BucketThumbnail thumbnail) {
         bucketMapper.updateThumbnail(bucketId, thumbnail);
     }
 

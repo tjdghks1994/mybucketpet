@@ -1,24 +1,21 @@
 package com.mybucketpet.repository.bucket;
 
-import com.mybucketpet.controller.admin.dto.BucketSearch;
 import com.mybucketpet.controller.admin.dto.BucketSearchResult;
-import com.mybucketpet.controller.admin.dto.BucketUpdate;
 import com.mybucketpet.controller.paging.PageMakeVO;
 import com.mybucketpet.domain.bucket.Bucket;
+import com.mybucketpet.domain.bucket.BucketThumbnail;
 import com.mybucketpet.domain.bucket.Tag;
-import com.mybucketpet.domain.bucket.Thumbnail;
-import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 import java.util.Optional;
 
 public interface BucketRepository {
     Bucket saveBucket(Bucket bucket);
-    Thumbnail saveThumbnail(Thumbnail thumbnail, Long bucketId);
+    BucketThumbnail saveThumbnail(BucketThumbnail thumbnail, Long bucketId);
     List<Tag> saveTag(List<Tag> tagList, Long bucketId);
     Optional<Bucket> findBucketById(Long bucketId);
-    Optional<Thumbnail> findThumbnailByBucketId(Bucket bucket);
-    List<Tag> findTagByBucketId(Bucket bucket);
+    Optional<BucketThumbnail> findThumbnailByBucketId(Long bucketId);
+    List<Tag> findTagByBucketId(Long bucketId);
     Tag findTagNameById(Tag tag);
     List<Tag> findAllTag();
     int getTotalBucketCount();
@@ -29,6 +26,6 @@ public interface BucketRepository {
     void deleteTag(Long bucketId);
     void updateBucketRecommend(Long bucketId, String recommendYn);
     void updateBucket(Long bucketId, Bucket bucketUpdate);
-    void updateThumbnail(Long bucketId, Thumbnail thumbnail);
+    void updateThumbnail(Long bucketId, BucketThumbnail thumbnail);
     void deleteTagList(List<Tag> deleteTagList, Long bucketId);
 }
