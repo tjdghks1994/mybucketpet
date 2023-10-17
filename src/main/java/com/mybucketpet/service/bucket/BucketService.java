@@ -14,13 +14,13 @@ public interface BucketService {
     // 버킷 등록 - 등록 완료시 완료된 버킷의 Id 값 반환
     Long save(BucketAdd bucketAdd, MultipartFile file) throws IOException;
     // 버킷 단일 조회
-    BucketInfo findById(Long bucketId);
-    // 모든 태크 목록 조회
-    List<Tag> findAllTag();
+    BucketResponse findById(Long bucketId);
+    // 모든 태그 목록 조회
+    List<TagInfo> findAllTag();
     // 모든 버킷 수
     int getTotalBucketCount();
     // 조회 조건에 맞는 모든 버킷 목록 조회
-    List<BucketSearchResult> findAllBucket(@Param("bs") BucketSearch bucketSearch, @Param("page") PageMakeVO pageMakeVO);
+    List<BucketSearchResult> findAllBucket(BucketSearch bucketSearch, PageMakeVO pageMakeVO);
     // 버킷 삭제
     void deleteBucket(Long bucketId);
     // 버킷 추천 여부 변경
