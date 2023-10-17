@@ -34,15 +34,11 @@
     </select>
 
     <select id="findTagByBucketId" resultType="Tag">
-        select tag_id, bucket_id
-          from mbp_tag
-         where bucket_id = #{bucketId}
-    </select>
-
-    <select id="findTagNameById" resultType="Tag">
-        select tag_id, tag_name
-          from mbp_tagmanage
-         where tag_id = #{tagId}
+        select tg.tag_id, tm.tag_name
+          from mbp_tag tg
+          join mbp_tagmanage tm
+            on tg.tag_id = tm.tag_id
+         where bucket_id = #{bucketId};
     </select>
 
     <select id="findAllTag" resultType="Tag">
