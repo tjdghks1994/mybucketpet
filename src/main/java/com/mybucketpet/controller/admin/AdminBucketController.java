@@ -40,7 +40,7 @@ public class AdminBucketController {
                                    Model model) {
         log.debug("bucketSearch = {}, pageCriteria = {}", bucketSearch, pageCriteria);
         if (bucketSearch == null) {
-            bucketSearch = new BucketSearch();
+            bucketSearch = BucketSearch.builder().build();
         }
         if (pageCriteria == null) {
             pageCriteria = new PageCriteria();
@@ -64,12 +64,12 @@ public class AdminBucketController {
     }
 
     @GetMapping("/{bucketId}")
-    public String updateBucketForm(@PathVariable String bucketId, Model model) throws MalformedURLException {
+    public String updateBucketForm(@PathVariable String bucketId, Model model) {
         log.debug("bucketId = {}", bucketId);
-        BucketInfo bucketInfo = bucketService.findById(Long.parseLong(bucketId));
-        log.debug("bucketInfo = {}", bucketInfo);
+        BucketResponse bucketResponse = bucketService.findById(Long.parseLong(bucketId));
+        log.debug("bucketResponse = {}", bucketResponse);
 
-        model.addAttribute("bucketInfo", bucketInfo);
+        model.addAttribute("bucketInfo", bucketResponse);
 
         return "admin/bucket/bucket_manage_updateForm";
     }
