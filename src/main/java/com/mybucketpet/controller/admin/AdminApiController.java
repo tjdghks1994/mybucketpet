@@ -2,6 +2,7 @@ package com.mybucketpet.controller.admin;
 
 import com.mybucketpet.controller.admin.dto.BucketAdd;
 import com.mybucketpet.controller.admin.dto.BucketUpdate;
+import com.mybucketpet.controller.admin.dto.TagInfo;
 import com.mybucketpet.domain.bucket.Tag;
 import com.mybucketpet.exception.ErrorResult;
 import com.mybucketpet.service.bucket.BucketService;
@@ -86,8 +87,8 @@ public class AdminApiController {
     }
 
     @GetMapping("/tag")
-    public List<Tag> getTagList() {
-        List<Tag> allTag = bucketService.findAllTag();
+    public List<TagInfo> getTagList() {
+        List<TagInfo> allTag = bucketService.findAllTag();
         log.debug("allTag = {}", allTag);
 
         return allTag;
