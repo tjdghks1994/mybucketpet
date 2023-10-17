@@ -1,9 +1,8 @@
 package com.mybucketpet.repository.bucket;
 
-import com.mybucketpet.controller.admin.dto.BucketUpdate;
-import com.mybucketpet.domain.bucket.Bucket;
-import com.mybucketpet.domain.bucket.BucketThumbnail;
-import com.mybucketpet.domain.bucket.Tag;
+import com.mybucketpet.controller.admin.dto.*;
+import com.mybucketpet.controller.paging.PageCriteria;
+import com.mybucketpet.controller.paging.PageMakeVO;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -12,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -30,74 +28,145 @@ class MybatisBucketRepositoryTest {
     }
 
     @Test
-    @DisplayName("버킷, 썸네일, 태그 조회 및 저장 테스트")
-    void saveAndFindTest() {
+    @DisplayName("버킷 저장 및 조회 테스트")
+    void saveBucketFindBucket() {
         // given
-        Bucket bucket = Bucket.builder()
-                .bucketTitle("testTitle")
-                .bucketContents("contents test~~")
+        BucketAdd bucketAdd = BucketAdd.builder()
+                .bucketTitle("저장 테스트")
+                .bucketContents("저장할 내용")
+                .openYn("y")
+                .recommendYn("y")
+                .tagList(Arrays.asList("1", "2"))
+                .build();
+        String fileOriginName = "test.jpg";
+        String fileSaveName = "asdkfjweilfjzxocivjzxlcv.jpg";
+        // when
+        Long saveBucketId = repository.saveBucket(bucketAdd);
+        BucketInfo findBucket = repository.findBucketById(saveBucketId);
+        repository.saveThumbnail(fileOriginName, fileSaveName, saveBucketId);
+        ThumbnailInfo findThumbInfo = repository.findThumbnailByBucketId(saveBucketId);
+        List<String> saveTagList = repository.saveTag(saveBucketId, bucketAdd.getTagList());
+        // then
+        Assertions.assertThat(saveBucketId).isEqualTo(findBucket.getBucketId());
+        Assertions.assertThat(bucketAdd.getBucketTitle()).isEqualTo(findBucket.getBucketTitle());
+        Assertions.assertThat(bucketAdd.getBucketContents()).isEqualTo(findBucket.getBucketContents());
+        Assertions.assertThat(bucketAdd.getOpenYn()).isEqualTo(findBucket.getOpenYn());
+        Assertions.assertThat(bucketAdd.getRecommendYn()).isEqualTo(findBucket.getRecommendYn());
+        Assertions.assertThat(fileOriginName).isEqualTo(findThumbInfo.getThumbnailFilename());
+        Assertions.assertThat(fileSaveName).isEqualTo(findThumbInfo.getThumbnailSavename());
+        Assertions.assertThat(bucketAdd.getTagList().size()).isEqualTo(saveTagList.size());
+    }
+
+    @Test
+    @DisplayName("조회 조건이 없는 버킷 검색 테스트")
+    void noneConditionSearchBucketTest() {
+        // given
+        BucketSearch bucketSearch = BucketSearch.builder()
+                .keywordText("")
+                .keywordType("")
+                .openYn("")
+                .recommendYn("")
+                .tagList(new ArrayList<>())
+                .build();
+        int totalBucketCount = repository.getTotalBucketCount();
+        PageCriteria pageCriteria = new PageCriteria();
+        PageMakeVO pageMakeVO = new PageMakeVO(pageCriteria, totalBucketCount);
+        // when
+        List<BucketSearchResult> result = repository.findAllBucket(bucketSearch, pageMakeVO);
+        // then
+        Assertions.assertThat(totalBucketCount).isEqualTo(result.size());
+    }
+
+    @Test
+    @DisplayName("조회 조건이 있는 버킷 검색 테스트")
+    void conditionSearchBucketTest() {
+        // given
+        BucketSearch bucketSearch = BucketSearch.builder()
+                .keywordText("test")
+                .keywordType("T")
                 .openYn("y")
                 .recommendYn("n")
+                .tagList(new ArrayList<>())
                 .build();
-        BucketThumbnail thumbnail = BucketThumbnail.builder()
-                .bucketThumbnailFilename("test.png")
-                .bucketThumbnailSavename("1e1rfmsdkvai3912rk13lsdav.png")
-                .build();
-        List<Tag> tagList = new ArrayList<>();
-        tagList.add(new Tag(1L));
-        tagList.add(new Tag(2L));
-        tagList.add(new Tag(3L));
-        tagList.add(new Tag(4L));
+        int totalBucketCount = repository.getTotalBucketCount();
+        PageCriteria pageCriteria = new PageCriteria();
+        PageMakeVO pageMakeVO = new PageMakeVO(pageCriteria, totalBucketCount);
         // when
-        // 저장
-        Bucket saveBucket = repository.saveBucket(bucket);
-        BucketThumbnail saveThumbnail = repository.saveThumbnail(thumbnail, saveBucket.getBucketId());
-        List<Tag> saveTagList = repository.saveTag(tagList, saveBucket.getBucketId());
-        // 조회
-        Bucket findBucket = repository.findBucketById(saveBucket.getBucketId()).get();
-        BucketThumbnail findThumbnail = repository.findThumbnailByBucketId(findBucket.getBucketId()).get();
-        List<Tag> findTagList = repository.findTagByBucketId(findBucket.getBucketId());
-        Tag findTagFirst = repository.findTagNameById(findTagList.get(0));
-
+        List<BucketSearchResult> result = repository.findAllBucket(bucketSearch, pageMakeVO);
         // then
-        Assertions.assertThat(saveBucket.getBucketId()).isEqualTo(findBucket.getBucketId());
-        Assertions.assertThat(saveThumbnail.getBucketThumbnailId()).isEqualTo(findThumbnail.getBucketThumbnailId());
-        Assertions.assertThat(saveTagList.size()).isEqualTo(findTagList.size());
-        Assertions.assertThat(findTagFirst.getTagName()).isEqualTo("강아지");
+        Assertions.assertThat(result.size()).isEqualTo(2);
+    }
+
+    @Test
+    @DisplayName("버킷 삭제 테스트")
+    void deleteBucket() {
+        // given
+        Long bucketId = 22L;
+        // when
+        repository.deleteThumbnail(bucketId);
+        repository.deleteTag(bucketId);
+        repository.deleteBucket(bucketId);
+        // then
+        Assertions.assertThatThrownBy(() -> repository.findBucketById(bucketId)).isInstanceOf(RuntimeException.class);
+        Assertions.assertThatThrownBy(() -> repository.findThumbnailByBucketId(bucketId)).isInstanceOf(RuntimeException.class);
+    }
+
+    @Test
+    @DisplayName("버킷 추천 변경 테스트")
+    void changeRecommendBucket() {
+        // given
+        Long bucketId = 22L;
+        BucketInfo findBucket = repository.findBucketById(bucketId);
+        // when
+        repository.updateBucketRecommend(bucketId, "y");
+        BucketInfo changeBucket = repository.findBucketById(bucketId);
+        // then
+        Assertions.assertThat(findBucket.getRecommendYn()).isNotEqualTo(changeBucket.getRecommendYn());
     }
 
     @Test
     @DisplayName("버킷 수정 테스트")
-    void bucketUpdateTest() {
+    void updateBucketInfo() {
         // given
         Long bucketId = 22L;
-        BucketUpdate update = new BucketUpdate("updateTest", "hello~~~", "y", "y",
-                Arrays.asList(new Tag(1L)), Arrays.asList(new Tag(5L)));
-        Bucket bucket = Bucket.builder()
-                .bucketTitle(update.getBucketTitle())
-                .bucketContents(update.getBucketContents())
-                .openYn(update.getOpenYn())
-                .recommendYn(update.getRecommendYn())
-                .build();
-        BucketThumbnail updateThumb = BucketThumbnail.builder()
-                .bucketThumbnailFilename("스크린샷 2023-10-15 오후 11.16.26.png")
-                .bucketThumbnailSavename("2b62de4c-6e43-4a0c-846a-33da3816c649306306.png")
+        BucketInfo originalBucketResult = repository.findBucketById(bucketId);
+        List<TagInfo> originalBucketTag = repository.findTagByBucketId(bucketId);
+        BucketUpdate bucketUpdate = BucketUpdate.builder()
+                .bucketTitle("update")
+                .bucketContents("1111")
+                .openYn("n")
+                .recommendYn("y")
+                .insertTagList(new ArrayList<>(Arrays.asList("1")))
+                .deleteTagList(new ArrayList<>(Arrays.asList("4", "5")))
                 .build();
         // when
-        repository.updateBucket(bucketId, bucket);
-        repository.updateThumbnail(bucketId, updateThumb);
-        repository.saveTag(update.getInsertTagList(), bucketId);
-        repository.deleteTagList(update.getDeleteTagList(), bucketId);
-
-        Bucket findBucket = repository.findBucketById(bucketId).get();
-        BucketThumbnail findThumbnail = repository.findThumbnailByBucketId(findBucket.getBucketId()).get();
-        List<Tag> findBucketList = repository.findTagByBucketId(findBucket.getBucketId());
+        repository.updateBucket(bucketId, bucketUpdate);
+        repository.saveTag(bucketId, bucketUpdate.getInsertTagList());
+        repository.deleteTagList(bucketId, bucketUpdate.getDeleteTagList());
+        BucketInfo updateBucketResult = repository.findBucketById(bucketId);
+        List<TagInfo> updateBucketTagResult = repository.findTagByBucketId(bucketId);
         // then
-        Assertions.assertThat(findBucket.getBucketTitle()).isEqualTo(update.getBucketTitle());
-        Assertions.assertThat(findBucket.getModifyDate()).isEqualTo(LocalDate.now());
-        Assertions.assertThat(findThumbnail.getBucketThumbnailSavename()).isEqualTo(updateThumb.getBucketThumbnailSavename());
-        Assertions.assertThat(findThumbnail.getBucketThumbnailFilename()).isEqualTo(updateThumb.getBucketThumbnailFilename());
-        Assertions.assertThat(findBucketList).contains(update.getInsertTagList().get(0));
-        Assertions.assertThat(findBucketList).doesNotContain(update.getDeleteTagList().get(0));
+        Assertions.assertThat(originalBucketResult.getBucketId()).isEqualTo(updateBucketResult.getBucketId());
+        Assertions.assertThat(originalBucketResult.getBucketTitle()).isNotEqualTo(updateBucketResult.getBucketTitle());
+        Assertions.assertThat(originalBucketResult.getBucketContents()).isNotEqualTo(updateBucketResult.getBucketContents());
+        Assertions.assertThat(originalBucketResult.getOpenYn()).isNotEqualTo(updateBucketResult.getOpenYn());
+        Assertions.assertThat(originalBucketResult.getRecommendYn()).isNotEqualTo(updateBucketResult.getRecommendYn());
+        Assertions.assertThat(originalBucketTag.size()).isNotEqualTo(updateBucketTagResult.size());
+    }
+
+    @Test
+    @DisplayName("썸네일 이미지 수정 테스트")
+    void updateThumbnail() {
+        // given
+        Long bucketId = 22L;
+        ThumbnailInfo originalThumbnail = repository.findThumbnailByBucketId(bucketId);
+        String changeFileName = "zzzz.jpg";
+        String changeSaveName = "/Users/3832jrdmclasdfjasdkf39zzxcvi.jpg";
+        // when
+        repository.updateThumbnail(bucketId, changeFileName, changeSaveName);
+        ThumbnailInfo updateThumbnail = repository.findThumbnailByBucketId(bucketId);
+        // then
+        Assertions.assertThat(originalThumbnail.getThumbnailFilename()).isNotEqualTo(updateThumbnail.getThumbnailFilename());
+        Assertions.assertThat(originalThumbnail.getThumbnailSavename()).isNotEqualTo(updateThumbnail.getThumbnailSavename());
     }
 }
