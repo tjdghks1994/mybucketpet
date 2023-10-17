@@ -25,15 +25,13 @@ public interface BucketMapper {
     Optional<BucketThumbnail> findThumbnailByBucketId(Long bucketId);
     // 태그 조회
     List<Tag> findTagByBucketId(Long bucketId);
-    // 태그명 조회
-    Tag findTagNameById(Tag tag);
     // 모든 태그 목록 조회
     List<Tag> findAllTag();
     // 전체 버킷 수
     int getTotalBucketCount();
     // 버킷 목록 조회
     List<BucketSearchResult> findAllBucket(@Param("keywordType") String keywordType, @Param("keywordText") String keywordText,
-                                           @Param("bs") Bucket bucketSearch, @Param("tl") List<Tag> tagList,
+                                           @Param("bs") Bucket bucket, @Param("tl") List<Tag> tagList,
                                            @Param("page") PageMakeVO pageMakeVO);
     // 버킷 삭제
     void deleteBucket(Long bucketId);
