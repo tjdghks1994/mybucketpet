@@ -1,9 +1,9 @@
 package com.mybucketpet.controller.admin;
 
 import com.mybucketpet.controller.admin.dto.BucketAdd;
+import com.mybucketpet.controller.admin.dto.BucketRecommendInfo;
 import com.mybucketpet.controller.admin.dto.BucketUpdate;
 import com.mybucketpet.controller.admin.dto.TagInfo;
-import com.mybucketpet.domain.bucket.Tag;
 import com.mybucketpet.exception.ErrorResult;
 import com.mybucketpet.service.bucket.BucketService;
 import lombok.extern.slf4j.Slf4j;
@@ -53,11 +53,14 @@ public class AdminApiController {
 
     /**
      * HTTP URI 설계 - API
-     * 버킷 삭제                     : /admin/bucket                 DELETE
-     * 버킷 등록                     : /admin/bucket/add             POST - 컨트롤 URI 형태
-     * 태그 조회(목록)                : /admin/bucket/tag             GET
-     * 버킷 추천 여부 변경             : /admin/bucket/recommend       PATCH - 컨트롤 URI 형태
-     * 버킷 수정                    : /admin/bucket/{bucketId}      PATCH
+     * 버킷 단건 조회            /admin/buckets/{bucketId}
+     * 버킷 목록 조회            /admin/buckets
+     * 버킷 등록               /admin/buckets
+     * 버킷 수정               /admin/buckets/{bucketId}
+     * 버킷 삭제               /admin/buckets/{bucketId}
+     * 버킷 썸네일 이미지 조회     /admin/buckets/thumbnails/{filename}
+     * 버킷 태그 조회           /admin/buckets/tags
+     * 버킷 추천 여부 변경       /admin/buckets/recommends
      */
     @PostMapping(value = "/add")
     public ResponseEntity<String> bucketAdd(@Validated @RequestPart("bucketAdd") BucketAdd bucketAdd, BindingResult bindingResult,
@@ -114,15 +117,15 @@ public class AdminApiController {
 
     @PatchMapping("/recommend")
     @ResponseBody
-    public List<Long> updateBucketRecommend(@RequestBody List<Map<String, String>> updateBucketRecommendInfoList) {
+    public List<Long> updateBucketRecommend(@RequestBody List<BucketRecommendInfo> updateBucketRecommendInfoList) {
         log.debug("updateBucketRecommendInfo = {}", updateBucketRecommendInfoList);
         List<Long> failBucketList = new ArrayList<>();
-        for (Map updateBucket : updateBucketRecommendInfoList) {
+        for (BucketRecommendInfo updateBucket : updateBucketRecommendInfoList) {
             try {
                 // 버킷 추천 값 변경
                 bucketService.updateBucketRecommend(updateBucket);
             } catch (Exception e) {
-                Long bucketId = Long.parseLong((String) updateBucket.get("bucketId"));
+                Long bucketId = updateBucket.getBucketId();
                 failBucketList.add(bucketId);
                 log.error("버킷 ID = {}", bucketId);
                 log.error("버킷의 추천 값을 변경하는데 오류가 발생하였습니다.", e);
