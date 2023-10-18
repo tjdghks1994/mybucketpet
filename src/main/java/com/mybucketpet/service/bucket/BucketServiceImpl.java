@@ -2,9 +2,6 @@ package com.mybucketpet.service.bucket;
 
 import com.mybucketpet.controller.admin.dto.*;
 import com.mybucketpet.controller.paging.PageMakeVO;
-import com.mybucketpet.domain.bucket.Bucket;
-import com.mybucketpet.domain.bucket.BucketThumbnail;
-import com.mybucketpet.domain.bucket.Tag;
 import com.mybucketpet.repository.bucket.BucketRepository;
 import com.mybucketpet.service.file.FileService;
 import lombok.extern.slf4j.Slf4j;
@@ -94,13 +91,13 @@ public class BucketServiceImpl implements BucketService {
     }
 
     @Override
-    public void updateBucketRecommend(Map<String, String> updateBucketList) {
+    public void updateBucketRecommend(BucketRecommendInfo updateBucketList) {
         log.debug("updateBucketList = {}", updateBucketList);
 
-        Long bucketId = Long.parseLong(updateBucketList.get("bucketId"));
-        String currentRecommendValue = updateBucketList.get("recommendYn");
+        Long bucketId = updateBucketList.getBucketId();
+        String currentRecommendValue = updateBucketList.getRecommendYn();
         // 클라이언트에서 전달된 변경할 추천 값
-        String changeRecommendValue = updateBucketList.get("changeRecommendYn");
+        String changeRecommendValue = updateBucketList.getChangeRecommendYn();
         // 현재 추천 값과 변경할 추천 값이 같지 않은 경우에만 update
         if (!currentRecommendValue.equals(changeRecommendValue)) {
             // 버킷의 추천 여부 값 변경
