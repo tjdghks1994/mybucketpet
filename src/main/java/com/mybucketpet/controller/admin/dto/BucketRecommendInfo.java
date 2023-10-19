@@ -5,9 +5,10 @@ import lombok.*;
 @Getter
 @Builder
 @ToString
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class BucketRecommendInfo {
-    private final Long bucketId;
-    private final String recommendYn;
-    private final String changeRecommendYn;
+    private Long bucketId;
+    private String recommendYn;
+    private String changeRecommendYn;
 }
