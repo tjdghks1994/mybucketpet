@@ -5,14 +5,19 @@ import lombok.Setter;
 import lombok.ToString;
 
 @Getter
-@Setter
 @ToString
 public class ErrorResult {
-    private String code;    // 에러 코드
-    private String message; // 메시지
+    private final String message; // 메시지
 
-    public ErrorResult(String code, String message) {
-        this.code = code;
+    private ErrorResult(String message) {
         this.message = message;
+    }
+
+    public static ErrorResult from(String message) {
+        return new ErrorResult(message);
+    }
+
+    public String getMessage() {
+        return this.message;
     }
 }
