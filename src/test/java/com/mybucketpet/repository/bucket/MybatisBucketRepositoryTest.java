@@ -67,10 +67,11 @@ class MybatisBucketRepositoryTest {
                 .openYn("")
                 .recommendYn("")
                 .tagList(new ArrayList<>())
+                .pageNum(1)
+                .amount(10)
                 .build();
         int totalBucketCount = repository.getTotalBucketCount();
-        PageCriteria pageCriteria = new PageCriteria();
-        PageMakeVO pageMakeVO = new PageMakeVO(pageCriteria, totalBucketCount);
+        PageMakeVO pageMakeVO = new PageMakeVO(bucketSearch, totalBucketCount);
         // when
         List<BucketSearchResult> result = repository.findAllBucket(bucketSearch, pageMakeVO);
         // then
@@ -87,10 +88,11 @@ class MybatisBucketRepositoryTest {
                 .openYn("y")
                 .recommendYn("n")
                 .tagList(new ArrayList<>())
+                .pageNum(1)
+                .amount(10)
                 .build();
         int totalBucketCount = repository.getTotalBucketCount();
-        PageCriteria pageCriteria = new PageCriteria();
-        PageMakeVO pageMakeVO = new PageMakeVO(pageCriteria, totalBucketCount);
+        PageMakeVO pageMakeVO = new PageMakeVO(bucketSearch, totalBucketCount);
         // when
         List<BucketSearchResult> result = repository.findAllBucket(bucketSearch, pageMakeVO);
         // then
