@@ -17,5 +17,7 @@ public class BucketSearch { // 버킷 목록 조회 클래스
     private String openYn;
     private String recommendYn;
     private List<String> tagList;
+    private int pageNum;    // 현재 페이지 번호
+    private int amount;     // 1페이지당 보여줄 개수
 
 }
