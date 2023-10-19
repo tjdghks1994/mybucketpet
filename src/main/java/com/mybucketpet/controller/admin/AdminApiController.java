@@ -1,11 +1,12 @@
 package com.mybucketpet.controller.admin;
 
-import com.mybucketpet.controller.admin.dto.BucketAdd;
-import com.mybucketpet.controller.admin.dto.BucketRecommendInfo;
-import com.mybucketpet.controller.admin.dto.BucketUpdate;
-import com.mybucketpet.controller.admin.dto.TagInfo;
+import com.mybucketpet.controller.admin.dto.*;
+import com.mybucketpet.controller.paging.PageMakeVO;
 import com.mybucketpet.exception.ErrorResult;
+import com.mybucketpet.exception.bucket.BucketException;
+import com.mybucketpet.exception.bucket.SaveFailThumbnailException;
 import com.mybucketpet.service.bucket.BucketService;
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
@@ -21,11 +22,12 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.util.*;
 
 @Slf4j
 @RestController
-@RequestMapping("/admin/bucket")
+@RequestMapping("/admin/buckets")
 public class AdminApiController {
     private final BucketService bucketService;
     private final MessageSource messageSource;
@@ -37,59 +39,61 @@ public class AdminApiController {
         this.messageSource = messageSource;
     }
 
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    @ExceptionHandler(IOException.class)
-    public ErrorResult ioExceptionHandler(IOException ioException) {
-        log.error("[ioExceptionHandler]", ioException);
-        return new ErrorResult("FileSaveError", "파일을 저장하는데 오류가 발생했습니다.");
+    @ExceptionHandler(SaveFailThumbnailException.class)
+    public ResponseEntity<ErrorResult> saveThumbnailExceptionHandler(
+            final SaveFailThumbnailException saveFailThumbnailException) {
+        log.error(saveFailThumbnailException.getMessage());
+        return ResponseEntity.internalServerError()
+                .body(ErrorResult.from(saveFailThumbnailException.getMessage()));
     }
 
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    @ExceptionHandler(Exception.class)
-    public ErrorResult exceptionHandler(Exception e) {
-        log.error("[exceptionHandler]", e);
-        return new ErrorResult("ServerError", "내부 오류가 발생했습니다!");
+    @ExceptionHandler(BucketException.class)
+    public ResponseEntity<ErrorResult> bucketExceptionHandler(BucketException bucketException) {
+        log.error(bucketException.getMessage());
+        return ResponseEntity.badRequest()
+                .body(ErrorResult.from(bucketException.getMessage()));
     }
 
     /**
      * HTTP URI 설계 - API
-     * 버킷 단건 조회            /admin/buckets/{bucketId}
-     * 버킷 목록 조회            /admin/buckets
-     * 버킷 등록               /admin/buckets
-     * 버킷 수정               /admin/buckets/{bucketId}
-     * 버킷 삭제               /admin/buckets/{bucketId}
-     * 버킷 썸네일 이미지 조회     /admin/buckets/thumbnails/{filename}
-     * 버킷 태그 조회           /admin/buckets/tags
-     * 버킷 추천 여부 변경       /admin/buckets/recommends
+     * 버킷 목록 조회            /admin/buckets                          GET
+     * 버킷 등록               /admin/buckets                           POST
+     * 버킷 복수 삭제           /admin/buckets                           DELETE
+     * 버킷 단건 조회            /admin/buckets/{bucketId}               GET
+     * 버킷 수정               /admin/buckets/{bucketId}                PATCH
+     * 버킷 단건 삭제           /admin/buckets/{bucketId}                DELETE
+     * 버킷 썸네일 이미지 조회     /admin/buckets/thumbnails/{filename}     GET
+     * 버킷 태그 조회           /admin/buckets/tags                      GET
+     * 버킷 추천 여부 변경       /admin/buckets/recommends                PATCH
      */
-    @PostMapping(value = "/add")
-    public ResponseEntity<String> bucketAdd(@Validated @RequestPart("bucketAdd") BucketAdd bucketAdd, BindingResult bindingResult,
-                                            @RequestPart(value = "thumbnailImageFile", required = false) MultipartFile thumbnailImgFile) throws IOException {
-        // 검증 추가
-        if (bindingResult.hasErrors()) {
-            log.debug("bindingResult = {}", bindingResult);
-            List<FieldError> fieldErrors = bindingResult.getFieldErrors();
-            String errorCode = Arrays.stream(fieldErrors.get(0).getCodes()).findFirst().get();
-            // bindingResult에서 반환되는 필드 에러가 발생한 코드 값을 이용해서 messageSource를 활용해 errors.properties에 등록된 값 가져오기
-            String validMessage = messageSource.getMessage(errorCode, null, Locale.KOREA);
-            
-            return new ResponseEntity<>(validMessage, HttpStatus.BAD_REQUEST);
-        }
-        // 썸네일 이미지를 첨부하지 않은 경우 검증
-        if (thumbnailImgFile == null) {
-            return new ResponseEntity<>(
-                    messageSource.getMessage("Size.multipartFile.thumbnailImage", null, Locale.KOREA),
-                    HttpStatus.BAD_REQUEST
-            );
+
+    @GetMapping
+    public ResponseEntity<List<BucketSearchResult>> bucketManageList(@RequestBody BucketSearch bucketSearch) {
+        log.debug("bucketSearch = {}", bucketSearch);
+        if (bucketSearch == null) {
+            bucketSearch = BucketSearch.builder().build();
         }
 
-        // 버킷 저장
-        bucketService.save(bucketAdd, thumbnailImgFile);
+        int totalCnt = bucketService.getTotalBucketCount();
+        PageMakeVO pageMakeVO = new PageMakeVO(bucketSearch, totalCnt);
+        List<BucketSearchResult> bucketList = bucketService.findAllBucket(bucketSearch, pageMakeVO);
 
-        return new ResponseEntity<>("addBucketOK", HttpStatus.CREATED);
+        return ResponseEntity.ok(bucketList);
     }
 
-    @GetMapping("/tag")
+    @PostMapping
+    public ResponseEntity<Void> bucketAdd(
+            @Valid @RequestPart("bucketAdd") BucketAdd bucketAdd,
+            @RequestPart(value = "thumbnailImageFile", required = false) MultipartFile thumbnailImgFile) throws IOException {
+
+        // 버킷 저장
+        Long saveBucketId = bucketService.save(bucketAdd, thumbnailImgFile);
+        URI location = URI.create("/admin/buckets/" + saveBucketId);
+
+        return ResponseEntity.created(location).build();
+    }
+
+    @GetMapping("/tags")
     public List<TagInfo> getTagList() {
         List<TagInfo> allTag = bucketService.findAllTag();
         log.debug("allTag = {}", allTag);
