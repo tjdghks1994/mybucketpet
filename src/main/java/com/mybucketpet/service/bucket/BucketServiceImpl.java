@@ -2,6 +2,7 @@ package com.mybucketpet.service.bucket;
 
 import com.mybucketpet.controller.admin.dto.*;
 import com.mybucketpet.controller.paging.PageMakeVO;
+import com.mybucketpet.exception.bucket.SaveFailThumbnailException;
 import com.mybucketpet.repository.bucket.BucketRepository;
 import com.mybucketpet.service.file.FileService;
 import lombok.extern.slf4j.Slf4j;
@@ -12,7 +13,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Map;
 
 @Slf4j
 @Service
@@ -28,10 +28,15 @@ public class BucketServiceImpl implements BucketService {
 
     @Override
     @Transactional
-    public Long save(BucketAdd bucketAdd, MultipartFile file) throws IOException {
+    public Long save(BucketAdd bucketAdd, MultipartFile file)  {
         String thumbnailOriginalName = file.getOriginalFilename();
         // 파일 저장 처리
-        String thumbnailSaveFileName = fileService.saveFile(file);
+        String thumbnailSaveFileName = null;
+        try {
+            thumbnailSaveFileName = fileService.saveFile(file);
+        } catch (IOException e) {
+            throw new SaveFailThumbnailException("버킷 등록 중 썸네일 이미지 저장에 실패하였습니다.", e);
+        }
         log.debug("thumbnailOriginalName = {}", thumbnailOriginalName);
         log.debug("thumbnailSaveFileName = {}", thumbnailSaveFileName);
         // 버킷 등록

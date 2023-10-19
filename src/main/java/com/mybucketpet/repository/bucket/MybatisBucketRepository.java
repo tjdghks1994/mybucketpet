@@ -5,6 +5,8 @@ import com.mybucketpet.controller.paging.PageMakeVO;
 import com.mybucketpet.domain.bucket.Bucket;
 import com.mybucketpet.domain.bucket.BucketThumbnail;
 import com.mybucketpet.domain.bucket.Tag;
+import com.mybucketpet.exception.bucket.NotFoundBucketException;
+import com.mybucketpet.exception.bucket.NotFoundThumbnailException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -59,7 +61,7 @@ public class MybatisBucketRepository implements BucketRepository {
     @Override
     public BucketInfo findBucketById(Long bucketId) {
         Bucket findBucket = bucketMapper.findBucketById(bucketId)
-                .orElseThrow(() -> new RuntimeException("BucketAlreadyDeleted"));
+                .orElseThrow(() -> new NotFoundBucketException("버킷을 찾을 수 없습니다."));
 
         return BucketInfo.builder().bucket(findBucket).build();
     }
@@ -67,7 +69,7 @@ public class MybatisBucketRepository implements BucketRepository {
     @Override
     public ThumbnailInfo findThumbnailByBucketId(Long bucketId) {
         BucketThumbnail findThumbnail = bucketMapper.findThumbnailByBucketId(bucketId)
-                .orElseThrow(() -> new RuntimeException("BucketThumbnail does not exist!"));
+                .orElseThrow(() -> new NotFoundThumbnailException("버킷썸네일을 찾을 수 없습니다."));
 
         return ThumbnailInfo.builder().bucketThumbnail(findThumbnail).build();
     }
