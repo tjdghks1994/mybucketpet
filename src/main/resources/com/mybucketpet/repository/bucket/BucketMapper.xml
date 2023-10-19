@@ -82,8 +82,8 @@
                    ORDER BY bk.modify_date
                 ) bk, (SELECT @ROWNUM := 0) R
             ) list
-        WHERE RNUM &gt; (#{page.pageCriteria.pageNum}-1) * #{page.pageCriteria.amount}
-          AND RNUM &lt;= #{page.pageCriteria.pageNum} * #{page.pageCriteria.amount}
+        WHERE RNUM &gt; (#{page.bucketSearch.pageNum}-1) * #{page.bucketSearch.amount}
+          AND RNUM &lt;= #{page.bucketSearch.pageNum} * #{page.bucketSearch.amount}
           ORDER BY RNUM DESC;
     </select>
 
