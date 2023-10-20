@@ -1,18 +1,21 @@
 package com.mybucketpet.repository.bucket;
 
-import com.mybucketpet.controller.admin.dto.BucketSearch;
-import com.mybucketpet.controller.admin.dto.BucketSearchResult;
-import com.mybucketpet.controller.admin.dto.BucketUpdate;
+import com.mybucketpet.controller.admin.dto.*;
 import com.mybucketpet.controller.paging.PageMakeVO;
 import com.mybucketpet.domain.bucket.Bucket;
+import com.mybucketpet.domain.bucket.BucketThumbnail;
 import com.mybucketpet.domain.bucket.Tag;
-import com.mybucketpet.domain.bucket.Thumbnail;
+import com.mybucketpet.exception.bucket.NotFoundBucketException;
+import com.mybucketpet.exception.bucket.NotFoundThumbnailException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Repository
@@ -25,46 +28,68 @@ public class MybatisBucketRepository implements BucketRepository {
     }
 
     @Override
-    public Bucket saveBucket(Bucket bucket) {
+    public Long saveBucket(BucketAdd bucketAdd) {
+        Bucket bucket = Bucket.builder()
+                .bucketTitle(bucketAdd.getBucketTitle())
+                .bucketContents(bucketAdd.getBucketContents())
+                .openYn(bucketAdd.getOpenYn())
+                .recommendYn(bucketAdd.getRecommendYn())
+                .build();
+
         bucketMapper.saveBucket(bucket);
-        return bucket;
+
+        return bucket.getBucketId();
     }
 
     @Override
-    public Thumbnail saveThumbnail(Thumbnail thumbnail, Long bucketId) {
+    public Long saveThumbnail(String fileOriginalName, String fileSaveName, Long bucketId) {
+        BucketThumbnail thumbnail = BucketThumbnail.builder()
+                .bucketThumbnailFilename(fileOriginalName)
+                .bucketThumbnailSavename(fileSaveName)
+                .build();
         bucketMapper.saveThumbnail(thumbnail, bucketId);
-        return thumbnail;
+        return thumbnail.getBucketThumbnailId();
     }
 
     @Override
-    public List<Tag> saveTag(List<Tag> tagList, Long bucketId) {
+    public List<String> saveTag(Long bucketId, List<String> tagIdList) {
+        List<Tag> tagList = tagIdList.stream().map((tagId) -> new Tag(Long.valueOf(tagId))).collect(Collectors.toList());
         bucketMapper.saveTag(tagList, bucketId);
-        return tagList;
+        return tagIdList;
     }
 
     @Override
-    public Optional<Bucket> findBucketById(Long bucketId) {
-        return bucketMapper.findBucketById(bucketId);
+    public BucketInfo findBucketById(Long bucketId) {
+        Bucket findBucket = bucketMapper.findBucketById(bucketId)
+                .orElseThrow(() -> new NotFoundBucketException("버킷을 찾을 수 없습니다."));
+
+        return BucketInfo.builder().bucket(findBucket).build();
     }
 
     @Override
-    public Optional<Thumbnail> findThumbnailByBucketId(Bucket bucket) {
-        return bucketMapper.findThumbnailByBucketId(bucket);
+    public ThumbnailInfo findThumbnailByBucketId(Long bucketId) {
+        BucketThumbnail findThumbnail = bucketMapper.findThumbnailByBucketId(bucketId)
+                .orElseThrow(() -> new NotFoundThumbnailException("버킷썸네일을 찾을 수 없습니다."));
+
+        return ThumbnailInfo.builder().bucketThumbnail(findThumbnail).build();
     }
 
     @Override
-    public List<Tag> findTagByBucketId(Bucket bucket) {
-        return bucketMapper.findTagByBucketId(bucket);
+    public List<TagInfo> findTagByBucketId(Long bucketId) {
+        List<Tag> findTagList = bucketMapper.findTagByBucketId(bucketId);
+
+        return findTagList.stream()
+                .map((tag) -> TagInfo.builder().tagId(tag.getTagId()).tagName(tag.getTagName()).build())
+                .collect(Collectors.toList());
     }
 
     @Override
-    public Tag findTagNameById(Tag tag) {
-        return bucketMapper.findTagNameById(tag);
-    }
+    public List<TagInfo> findAllTag() {
+        List<Tag> allTag = bucketMapper.findAllTag();
 
-    @Override
-    public List<Tag> findAllTag() {
-        return bucketMapper.findAllTag();
+        return allTag.stream()
+                .map((tag) -> TagInfo.builder().tagId(tag.getTagId()).tagName(tag.getTagName()).build())
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -73,9 +98,15 @@ public class MybatisBucketRepository implements BucketRepository {
     }
 
     @Override
-    public List<BucketSearchResult> findAllBucket(String keywordType, String keywordText,
-                                                  Bucket bucketSearch, List<Tag> tagList,  PageMakeVO pageMakeVO) {
-        return bucketMapper.findAllBucket(keywordType, keywordText, bucketSearch, tagList, pageMakeVO);
+    public List<BucketSearchResult> findAllBucket(BucketSearch bucketSearch, PageMakeVO pageMakeVO) {
+        Bucket bucket = Bucket.builder()
+                .openYn(bucketSearch.getOpenYn())
+                .recommendYn(bucketSearch.getRecommendYn())
+                .build();
+
+        List<Tag> tagList = checkTagList(bucketSearch.getTagList());
+
+        return bucketMapper.findAllBucket(bucketSearch.getKeywordType(), bucketSearch.getKeywordText(), bucket, tagList, pageMakeVO);
     }
 
     @Override
@@ -99,17 +130,44 @@ public class MybatisBucketRepository implements BucketRepository {
     }
 
     @Override
-    public void updateBucket(Long bucketId, Bucket bucketUpdate) {
-        bucketMapper.updateBucket(bucketId, bucketUpdate);
+    public void updateBucket(Long bucketId, BucketUpdate bucketUpdate) {
+        Bucket bucket = Bucket.builder()
+                .bucketId(bucketId)
+                .bucketTitle(bucketUpdate.getBucketTitle())
+                .bucketContents(bucketUpdate.getBucketContents())
+                .openYn(bucketUpdate.getOpenYn())
+                .recommendYn(bucketUpdate.getRecommendYn())
+                .build();
+
+        bucketMapper.updateBucket(bucketId, bucket);
     }
 
     @Override
-    public void updateThumbnail(Long bucketId, Thumbnail thumbnail) {
-        bucketMapper.updateThumbnail(bucketId, thumbnail);
+    public void updateThumbnail(Long bucketId, String fileOriginalName, String fileSaveName) {
+        BucketThumbnail updateThumbnail = BucketThumbnail.builder()
+                .bucketThumbnailFilename(fileOriginalName)
+                .bucketThumbnailSavename(fileSaveName)
+                .build();
+
+        bucketMapper.updateThumbnail(bucketId, updateThumbnail);
     }
 
     @Override
-    public void deleteTagList(List<Tag> deleteTagList, Long bucketId) {
+    public void deleteTagList(Long bucketId, List<String> deleteTagIdList) {
+        List<Tag> deleteTagList = deleteTagIdList.stream().map((tagId) -> new Tag(Long.valueOf(tagId))).collect(Collectors.toList());
         bucketMapper.deleteTagList(deleteTagList, bucketId);
+    }
+
+    private List<Tag> checkTagList(List<String> tagInfoList) {
+        List<Tag> tagList = null;
+
+        if (tagInfoList != null) {
+            tagList = tagInfoList.stream()
+                    .map((tagId) -> new Tag(Long.valueOf(tagId))).collect(Collectors.toList());
+        } else {
+            tagList = new ArrayList<>();
+        }
+
+        return tagList;
     }
 }

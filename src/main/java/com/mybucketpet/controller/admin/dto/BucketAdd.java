@@ -3,32 +3,24 @@ package com.mybucketpet.controller.admin.dto;
 import com.mybucketpet.domain.bucket.Tag;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 import java.util.List;
 
 @Getter
-@Setter
+@Builder
 @ToString
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class BucketAdd {
-    @NotBlank
+    @NotBlank(message = "버킷 제목을 입력해주세요.")
     private String bucketTitle; // 버킷 제목
     private String bucketContents;  // 버킷 내용
-    @NotBlank
+    @NotBlank(message = "버킷의 공개여부를 선택해주세요.")
     private String openYn;  // 공개 여부
-    @NotBlank
+    @NotBlank(message = "버킷의 추천여부를 선택해주세요.")
     private String recommendYn; // 추천 여부
-    @Size(min = 1)
-    private List<Tag> tagList; // 태그 ID들
+    @Size(min = 1, message = "버킷의 태그는 최소 1개이상 선택해주세요.")
+    private List<String> tagList; // 태그 ID들
 
-    public BucketAdd() { }
-    public BucketAdd(String bucketTitle, String bucketContents, String openYn, String recommendYn, List<Tag> tagList) {
-        this.bucketTitle = bucketTitle;
-        this.bucketContents = bucketContents;
-        this.openYn = openYn;
-        this.recommendYn = recommendYn;
-        this.tagList = tagList;
-    }
 }

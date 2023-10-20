@@ -2,9 +2,8 @@ package com.mybucketpet.service.bucket;
 
 import com.mybucketpet.controller.admin.dto.*;
 import com.mybucketpet.controller.paging.PageMakeVO;
-import com.mybucketpet.domain.bucket.Bucket;
-import com.mybucketpet.domain.bucket.Tag;
-import com.mybucketpet.domain.bucket.Thumbnail;
+import com.mybucketpet.exception.bucket.InvalidRecommendException;
+import com.mybucketpet.exception.bucket.SaveFailThumbnailException;
 import com.mybucketpet.repository.bucket.BucketRepository;
 import com.mybucketpet.service.file.FileService;
 import lombok.extern.slf4j.Slf4j;
@@ -14,9 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 @Slf4j
 @Service
@@ -32,52 +29,45 @@ public class BucketServiceImpl implements BucketService {
 
     @Override
     @Transactional
-    public Long save(BucketAdd bucketAdd, MultipartFile file) throws IOException {
+    public Long save(BucketAdd bucketAdd, MultipartFile file)  {
         String thumbnailOriginalName = file.getOriginalFilename();
         // 파일 저장 처리
-        String thumbnailSaveFileName = fileService.saveFile(file);
+        String thumbnailSaveFileName = null;
+        try {
+            thumbnailSaveFileName = fileService.saveFile(file);
+        } catch (IOException e) {
+            throw new SaveFailThumbnailException("버킷 등록 중 썸네일 이미지 저장에 실패하였습니다.", e);
+        }
         log.debug("thumbnailOriginalName = {}", thumbnailOriginalName);
         log.debug("thumbnailSaveFileName = {}", thumbnailSaveFileName);
         // 버킷 등록
-        Bucket bucket = new Bucket(bucketAdd.getBucketTitle(), bucketAdd.getBucketContents(),
-                bucketAdd.getOpenYn(), bucketAdd.getRecommendYn());
-        Bucket saveBucket = bucketRepository.saveBucket(bucket);
+        Long saveBucketId = bucketRepository.saveBucket(bucketAdd);
         // 썸네일 등록
-        Thumbnail thumbnail = new Thumbnail(thumbnailOriginalName, thumbnailSaveFileName);
-        bucketRepository.saveThumbnail(thumbnail, saveBucket.getBucketId());
+        bucketRepository.saveThumbnail(thumbnailOriginalName, thumbnailSaveFileName, saveBucketId);
         // 태그 등록
-        bucketRepository.saveTag(bucketAdd.getTagList(), saveBucket.getBucketId());
+        bucketRepository.saveTag(saveBucketId, bucketAdd.getTagList());
 
-        return saveBucket.getBucketId();
+        return saveBucketId;
     }
 
     @Override
-    public BucketInfo findById(Long bucketId) {
+    public BucketResponse findById(Long bucketId) {
         // 버킷 조회 - 조회시 에러 발생하면 삭제된 버킷이라고 메시지를 담아 RuntimeException 발생
-        Bucket findBucket = bucketRepository.findBucketById(bucketId).orElseThrow(() -> new RuntimeException("BucketAlreadyDeleted"));
+        BucketInfo findBucket = bucketRepository.findBucketById(bucketId);
         // 썸네일 조회
-        Thumbnail findThumbnail = bucketRepository.findThumbnailByBucketId(findBucket).get();
-        // 태그 조회 - 태그 Id 값만 보유
-        List<Tag> findTagList = bucketRepository.findTagByBucketId(findBucket);
-        // 태그 목록 - 태그 Id와 태그 명을 모두 보유
-        List<Tag> tagList = new ArrayList<>();
-        for (Tag tag : findTagList) {
-            Tag findTag = bucketRepository.findTagNameById(tag);
-            tagList.add(findTag);
-        }
+        ThumbnailInfo findThumbnail = bucketRepository.findThumbnailByBucketId(bucketId);
+        // 태그 목록 조회
+        List<TagInfo> findTagList = bucketRepository.findTagByBucketId(bucketId);
 
-        BucketInfo bucketInfo = new BucketInfo(findBucket.getBucketId(), findBucket.getBucketTitle(),
-                findBucket.getBucketContents(), findBucket.getOpenYn(), findBucket.getRecommendYn(),
-                findBucket.getCertiCnt(), findBucket.getScrapCnt(), findBucket.getLookupCnt(),
-                findBucket.getModifyDate(), findThumbnail.getThumbnailFilename(),
-                findThumbnail.getThumbnailSavename(), tagList);
-        log.debug("bucketInfo = {}", bucketInfo);
-
-        return bucketInfo;
+        return BucketResponse.builder()
+                .bucketInfo(findBucket)
+                .thumbnailInfo(findThumbnail)
+                .tagList(findTagList)
+                .build();
     }
 
     @Override
-    public List<Tag> findAllTag() {
+    public List<TagInfo> findAllTag() {
         return bucketRepository.findAllTag();
     }
 
@@ -87,25 +77,15 @@ public class BucketServiceImpl implements BucketService {
     }
     @Override
     public List<BucketSearchResult> findAllBucket(BucketSearch bucketSearch, PageMakeVO pageMakeVO) {
-        String keywordType = bucketSearch.getKeywordType();
-        String keywordText = bucketSearch.getKeywordText();
-        Bucket bucket = new Bucket();
-        bucket.setOpenYn(bucketSearch.getOpenYn());
-        bucket.setRecommendYn(bucketSearch.getRecommendYn());
-        List<Tag> tagList = bucketSearch.getTagList();
-
-        return bucketRepository.findAllBucket(keywordType, keywordText, bucket, tagList, pageMakeVO);
+        return bucketRepository.findAllBucket(bucketSearch, pageMakeVO);
     }
 
     @Override
     @Transactional
     public void deleteBucket(Long bucketId) {
         // 썸네일 테이블에서 튜플 삭제 전 파일이 저장된 정보를 가져오기 위해 썸네일 데이터 조회
-        Bucket bucket = new Bucket();
-        bucket.setBucketId(bucketId);
         // 버킷과 관련된 썸네일을 조회하였는데 조회되지 않는 경우 이미썸네일이 삭제되었다는 메시지와 함께 RuntimeException 발생
-        Thumbnail findThumbnail = bucketRepository.findThumbnailByBucketId(bucket)
-                .orElseThrow(() -> new RuntimeException("ThumbnailAlreadyDeleted"));
+        ThumbnailInfo findThumbnail = bucketRepository.findThumbnailByBucketId(bucketId);
         // 썸네일 테이블에서 삭제한 버킷 Id를 포함하고 있는 튜플 삭제 처리
         bucketRepository.deleteThumbnail(bucketId);
         // 태그 테이블에서 삭제한 버킷 Id를 포함하고 있는 튜플 삭제 처리
@@ -117,37 +97,24 @@ public class BucketServiceImpl implements BucketService {
     }
 
     @Override
-    public void updateBucketRecommend(Map<String, String> updateBucketList) {
-        log.debug("updateBucketList = {}", updateBucketList);
-
-        Long bucketId = Long.parseLong(updateBucketList.get("bucketId"));
-        String currentRecommendValue = updateBucketList.get("recommendYn");
-        // 클라이언트에서 전달된 변경할 추천 값
-        String changeRecommendValue = updateBucketList.get("changeRecommendYn");
-        // 현재 추천 값과 변경할 추천 값이 같지 않은 경우에만 update
-        if (!currentRecommendValue.equals(changeRecommendValue)) {
-            // 버킷의 추천 여부 값 변경
-            bucketRepository.updateBucketRecommend(bucketId, changeRecommendValue);
+    public void updateBucketRecommend(Long bucketId, String changeRecommendValue) {
+        if ( !(changeRecommendValue.equalsIgnoreCase("y") || changeRecommendValue.equalsIgnoreCase("n")) ) {
+            throw new InvalidRecommendException("추천여부의 값은 Y/N 으로만 변경 가능합니다.");
         }
+        // 버킷의 추천 여부 값 변경
+        bucketRepository.updateBucketRecommend(bucketId, changeRecommendValue);
     }
 
     @Override
     @Transactional
     public void updateBucket(Long bucketId, BucketUpdate bucketUpdate, MultipartFile file) throws IOException {
         // 버킷 수정
-        Bucket bucket = new Bucket();
-        bucket.setBucketId(bucketId);
-        bucket.setBucketTitle(bucketUpdate.getBucketTitle());
-        bucket.setBucketContents(bucketUpdate.getBucketContents());
-        bucket.setOpenYn(bucketUpdate.getOpenYn());
-        bucket.setRecommendYn(bucketUpdate.getRecommendYn());
-
-        bucketRepository.updateBucket(bucketId, bucket);
+        bucketRepository.updateBucket(bucketId, bucketUpdate);
         // 첨부파일 null 값 체크 -> null이면 첨부파일을 수정하지 않았으므로 첨부파일 수정 진행 x
         // null이 아니라면 첨부파일 수정 진행 - 기존 첨부파일은 삭제 처리, 변경된 첨부파일을 저장
         if (file != null) {
             // 기존 첨부파일 정보 조회
-            Thumbnail findThumbnail = bucketRepository.findThumbnailByBucketId(bucket).get();
+            ThumbnailInfo findThumbnail = bucketRepository.findThumbnailByBucketId(bucketId);
             // 변경된 파일 저장 처리
             String thumbnailOriginalName = file.getOriginalFilename();
             String thumbnailSaveFileName = fileService.saveFile(file);
@@ -155,19 +122,18 @@ public class BucketServiceImpl implements BucketService {
             String thumbnailDeleteFileName = findThumbnail.getThumbnailSavename();
             fileService.deleteFile(thumbnailDeleteFileName);
             // 첨부파일 수정
-            Thumbnail updateThumbnail = new Thumbnail(thumbnailOriginalName, thumbnailSaveFileName);
-            bucketRepository.updateThumbnail(bucketId, updateThumbnail);
+            bucketRepository.updateThumbnail(bucketId, thumbnailOriginalName, thumbnailSaveFileName);
         }
         // 태그 수정의 경우 2가지 케이스
         // 1. 새롭게 추가된 태그 목록이 존재하는 경우 태그 추가 진행
         // 2. 삭제된 태그 목록이 존재하는 경우 태그 삭제 진행
-        List<Tag> insertTagList = bucketUpdate.getInsertTagList();
+        List<String> insertTagList = bucketUpdate.getInsertTagList();
         if (insertTagList.size() > 0) {
-            bucketRepository.saveTag(insertTagList, bucketId);
+            bucketRepository.saveTag(bucketId, insertTagList);
         }
-        List<Tag> deleteTagList = bucketUpdate.getDeleteTagList();
+        List<String> deleteTagList = bucketUpdate.getDeleteTagList();
         if (deleteTagList.size() > 0) {
-            bucketRepository.deleteTagList(deleteTagList, bucketId);
+            bucketRepository.deleteTagList(bucketId, deleteTagList);
         }
 
     }

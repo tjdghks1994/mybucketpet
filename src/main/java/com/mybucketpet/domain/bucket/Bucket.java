@@ -1,14 +1,13 @@
 package com.mybucketpet.domain.bucket;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 import java.time.LocalDate;
 
 @Getter
-@Setter
+@Builder
 @ToString
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class Bucket {
     private Long bucketId;  // 버킷 ID
     private String bucketTitle; // 버킷 제목
@@ -20,12 +19,4 @@ public class Bucket {
     private Long lookupCnt; // 조회 수
     private LocalDate modifyDate;   // 수정일자
 
-    public Bucket() { }
-
-    public Bucket(String bucketTitle, String bucketContents, String openYN, String recommendYN) {
-        this.bucketTitle = bucketTitle;
-        this.bucketContents = bucketContents;
-        this.openYn = openYN;
-        this.recommendYn = recommendYN;
-    }
 }

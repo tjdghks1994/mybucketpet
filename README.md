@@ -3,52 +3,62 @@
 🐶 프로젝트 소개
 
 뱐려동물을 키우는 사람들이 반려동물과 함께하는 버킷리스트를 달성하고 정보를 공유하며 소통하는 웹 사이트
+
 ***
+
 👯 프로젝트 참여 멤버
 
 양현아 : 기획, 디자인
 
 박성환 : 설계, 개발
+
 ***
 
 ⚙️ 개발 환경
-> IDE : IntelliJ
 
 > Front : thymeleaf, css, js
 
-> Back : spring boot, mybatis, Amazon RDS(MySQL)
+> Back : spring boot, mybatis, Amazon RDS (MySQL8.0)
 
 ***
-📌 [프로젝트 개발 일지 작성 (Notion)](https://polite-handball-c55.notion.site/37b7cd789a0f4a6a8427fd2bd7144fab?pvs=4)
-***
+
 🗂️ 프로젝트 구조 ( 개발 진행하면서 변동 생길 수 있음 )
 
-java/com/mybucketpet
-  
-  - config : Service, Repository와 관련된 빈들과 그외의 스프링 빈으로 별도로 등록하기 위한 설정 클래스 모음
-    
-  - controller : 컨트롤러 클래스 모음
-    
-  - domain : entity 클래스 모음
-    
-  - interceptor : spring interceptor를 구현할 클래스 모음
-    
-  - repository : DB와 연결되는 클래스 모음
-    
-  - service : 비즈니스 로직을 수행할 클래스 모음
-  
-resources
-  - com/mybucketpet/repository : Mapper인터페이스와 매핑되는 xml 파일
-  
-  - static : 정적 리소스 (css, js, img)
-  
-  - template : 동적 뷰 템플릿 (thymeleaf)
-  
-  - application.properties : 애플리케이션에서 사용할 속성 정보
-  
-  - messages.properties : MessageSource 기본 설정 파일
-  
-  - errors.properties : MessageSource를 통한 오류 메시지를 관리하기 위한 파일
+~~~
+main
+  ├─ java
+  │  └─ com
+  │     └─ mybucketpet
+  │        ├─ config
+  │        ├─ controller
+  │        ├─ domain
+  │        ├─ exception
+  │        ├─ global
+  │        ├─ interceptor
+  │        ├─ repository
+  │        ├─ service
+  │        └─ util
+  │
+  └─ resources
+     ├─ application.properties
+     ├─ com
+     │  └─ mybucketpet
+     │     └─ repository
+     ├─ errors.properties
+     ├─ messages.properties
+     ├─ static
+     │  ├─ css
+     │  ├─ img
+     │  ├─ js
+     │  └─ summernote
+     └─ templates
+
+~~~
+
+***
+🗄 테이블 구조 (ERD)
+
+<img width="1202" alt="스크린샷 2023-10-11 오후 11 26 36" src="https://github.com/tjdghks1994/wanted-pre-onboarding-backend/assets/57320084/b8402380-8c98-4f99-89cb-3cf0b948a4c5">
 
 ***
 📝 주요 기능 ( 개발 진행 중 )
@@ -85,3 +95,7 @@ resources
   - 인증관리
   - 일상관리
   - 기본설정
+
+***
+📌 [프로젝트 개발 일지 작성 (Notion)](https://polite-handball-c55.notion.site/37b7cd789a0f4a6a8427fd2bd7144fab?pvs=4)
+***
