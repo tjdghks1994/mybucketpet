@@ -2,6 +2,7 @@ package com.mybucketpet.service.bucket;
 
 import com.mybucketpet.controller.admin.dto.*;
 import com.mybucketpet.controller.paging.PageMakeVO;
+import com.mybucketpet.exception.bucket.InvalidRecommendException;
 import com.mybucketpet.exception.bucket.SaveFailThumbnailException;
 import com.mybucketpet.repository.bucket.BucketRepository;
 import com.mybucketpet.service.file.FileService;
@@ -96,18 +97,12 @@ public class BucketServiceImpl implements BucketService {
     }
 
     @Override
-    public void updateBucketRecommend(BucketRecommendInfo updateBucketList) {
-        log.debug("updateBucketList = {}", updateBucketList);
-
-        Long bucketId = updateBucketList.getBucketId();
-        String currentRecommendValue = updateBucketList.getRecommendYn();
-        // 클라이언트에서 전달된 변경할 추천 값
-        String changeRecommendValue = updateBucketList.getChangeRecommendYn();
-        // 현재 추천 값과 변경할 추천 값이 같지 않은 경우에만 update
-        if (!currentRecommendValue.equals(changeRecommendValue)) {
-            // 버킷의 추천 여부 값 변경
-            bucketRepository.updateBucketRecommend(bucketId, changeRecommendValue);
+    public void updateBucketRecommend(Long bucketId, String changeRecommendValue) {
+        if ( !(changeRecommendValue.equalsIgnoreCase("y") || changeRecommendValue.equalsIgnoreCase("n")) ) {
+            throw new InvalidRecommendException("추천여부의 값은 Y/N 으로만 변경 가능합니다.");
         }
+        // 버킷의 추천 여부 값 변경
+        bucketRepository.updateBucketRecommend(bucketId, changeRecommendValue);
     }
 
     @Override
