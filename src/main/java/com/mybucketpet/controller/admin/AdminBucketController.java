@@ -19,8 +19,6 @@ import java.util.List;
 @RequestMapping("/admin/bucket")
 public class AdminBucketController {
     private final BucketService bucketService;
-    @Value("${bucket.upload.file}")
-    private String savePath;
 
     @Autowired
     public AdminBucketController(BucketService bucketService) {
@@ -29,34 +27,9 @@ public class AdminBucketController {
 
     /**
      * HTTP URI 설계 - Form
-     * 버킷 관리 페이지 (페이지 목록 조회) : /admin/bucket                     GET, POST
      * 버킷 등록 페이지                : /admin/bucket/add                 GET - 컨트롤 URI 형태
      * 버킷 수정 페이지                : /admin/bucket/{bucketId}          GET
-     * 썸네일 이미지 경로               : /admin/bucket/images/{filename}   GET
      */
-    @RequestMapping
-    public String bucketManageList(@ModelAttribute BucketSearch bucketSearch,
-                                   @ModelAttribute PageCriteria pageCriteria,
-                                   Model model) {
-        log.debug("bucketSearch = {}, pageCriteria = {}", bucketSearch, pageCriteria);
-        if (bucketSearch == null) {
-            bucketSearch = new BucketSearch();
-        }
-        if (pageCriteria == null) {
-            pageCriteria = new PageCriteria();
-        }
-
-        int totalCnt = bucketService.getTotalBucketCount();
-        PageMakeVO pageMakeVO = new PageMakeVO(pageCriteria, totalCnt);
-        List<BucketSearchResult> bucketList = bucketService.findAllBucket(bucketSearch, pageMakeVO);
-        log.debug("bucketList = {}", bucketList);
-        log.debug("pageMakeVO = {}", pageMakeVO);
-
-        model.addAttribute("bucketList", bucketList);
-        model.addAttribute("pageMaker", pageMakeVO);
-
-        return "admin/bucket/bucket_manage";
-    }
 
     @GetMapping("/add")
     public String bucketManageAddForm() {
@@ -64,12 +37,12 @@ public class AdminBucketController {
     }
 
     @GetMapping("/{bucketId}")
-    public String updateBucketForm(@PathVariable String bucketId, Model model) throws MalformedURLException {
+    public String updateBucketForm(@PathVariable String bucketId, Model model) {
         log.debug("bucketId = {}", bucketId);
-        BucketInfo bucketInfo = bucketService.findById(Long.parseLong(bucketId));
-        log.debug("bucketInfo = {}", bucketInfo);
+        BucketResponse bucketResponse = bucketService.findById(Long.parseLong(bucketId));
+        log.debug("bucketResponse = {}", bucketResponse);
 
-        model.addAttribute("bucketInfo", bucketInfo);
+        model.addAttribute("bucketInfo", bucketResponse);
 
         return "admin/bucket/bucket_manage_updateForm";
     }

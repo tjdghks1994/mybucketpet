@@ -4,7 +4,11 @@
 function execMenu() {
     $('.admin-side-menu-sub li').on('click', function () {
         let execUrl = $(this).attr('execurl');
-        window.location = contextPath + execUrl;
+        if (execUrl == null || execUrl == undefined || execUrl == '') {
+            alert('개발 예정 입니다.');
+        } else {
+            window.location = contextPath + execUrl;
+        }
     });
 }
 

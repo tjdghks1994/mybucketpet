@@ -1,29 +1,23 @@
 package com.mybucketpet.controller.admin.dto;
 
 import com.mybucketpet.domain.bucket.Tag;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 import java.util.List;
 
-@Setter
+
 @Getter
+@Builder
 @ToString
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class BucketSearch { // 버킷 목록 조회 클래스
     private String keywordType;
     private String keywordText;
     private String openYn;
     private String recommendYn;
-    private List<Tag> tagList;
+    private List<String> tagList;
+    private int pageNum;    // 현재 페이지 번호
+    private int amount;     // 1페이지당 보여줄 개수
 
-    public BucketSearch() { }
-
-    public BucketSearch(String keywordType, String keywordText, String openYn, String recommendYn, List<Tag> tagList) {
-        this.keywordType = keywordType;
-        this.keywordText = keywordText;
-        this.openYn = openYn;
-        this.recommendYn = recommendYn;
-        this.tagList = tagList;
-    }
 }
