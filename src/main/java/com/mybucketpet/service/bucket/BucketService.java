@@ -24,7 +24,7 @@ public interface BucketService {
     // 버킷 삭제
     void deleteBucket(Long bucketId);
     // 버킷 추천 여부 변경
-    void updateBucketRecommend(BucketRecommendInfo updateBucketList);
+    void updateBucketRecommend(Long bucketId, String changeRecommendValue);
     // 버킷 수정
     void updateBucket(Long bucketId, BucketUpdate bucketUpdate, MultipartFile multipartFile) throws IOException;
 }
