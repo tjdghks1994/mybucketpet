@@ -33,6 +33,7 @@ main
   │        ├─ controller
   │        ├─ domain
   │        ├─ exception
+  │        ├─ global
   │        ├─ interceptor
   │        ├─ repository
   │        ├─ service
