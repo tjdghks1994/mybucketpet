@@ -58,7 +58,7 @@ main
 ***
 🗄 테이블 구조 (ERD)
 
-<img width="1202" alt="스크린샷 2023-10-11 오후 11 26 36" src="https://github.com/tjdghks1994/wanted-pre-onboarding-backend/assets/57320084/b8402380-8c98-4f99-89cb-3cf0b948a4c5">
+<img width="1196" alt="스크린샷 2023-10-21 오후 11 36 52" src="https://github.com/tjdghks1994/mybucketpet/assets/57320084/ff6ed4ec-5446-4eb1-a7a2-18df9930f99c">
 
 ***
 📝 주요 기능 ( 개발 진행 중 )
