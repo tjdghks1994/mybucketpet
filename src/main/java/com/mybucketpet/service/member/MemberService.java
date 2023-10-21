@@ -1,7 +1,7 @@
 package com.mybucketpet.service.member;
 
-import com.mybucketpet.controller.join.dto.JoinForm;
-import com.mybucketpet.controller.login.dto.PasswordChangeForm;
+import com.mybucketpet.controller.member.dto.JoinForm;
+import com.mybucketpet.controller.member.dto.PasswordChangeForm;
 import com.mybucketpet.domain.member.Member;
 
 public interface MemberService {

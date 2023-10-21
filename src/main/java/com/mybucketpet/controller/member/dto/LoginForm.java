@@ -1,4 +1,4 @@
-package com.mybucketpet.controller.login.dto;
+package com.mybucketpet.controller.member.dto;
 
 import lombok.Getter;
 import lombok.Setter;
