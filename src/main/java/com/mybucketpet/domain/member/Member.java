@@ -1,15 +1,14 @@
 package com.mybucketpet.domain.member;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 import java.time.LocalDate;
 import java.util.Objects;
 
 @Getter
-@Setter
+@Builder
 @ToString
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class Member {
 
     private Long memberNo;              // 회원번호
@@ -20,19 +19,9 @@ public class Member {
     private String suspendYN;           // 휴면(정지)회원 여부
     private LocalDate joinDate;         // 가입일자
     private LocalDate lastAccessDate;   // 최근접속일자
-    private JoinType joinPath;          // 가입경로
+    private JoinType joinType;          // 가입경로
     private String profileSavePath;     // 프로필 이미지 저장 경로
-
-    public Member() { }
-
-    public Member(String memberId, String memberPw, String memberNickname, String marketingYN, String suspendYN, JoinType joinPath) {
-        this.memberId = memberId;
-        this.memberPw = memberPw;
-        this.memberNickname = memberNickname;
-        this.marketingYN = marketingYN;
-        this.suspendYN = suspendYN;
-        this.joinPath = joinPath;
-    }
+    private MemberType memberType;      // 회원 유형 (관리자, 일반, 정지)
 
     @Override
     public boolean equals(Object obj) {
