@@ -5,12 +5,13 @@
 <mapper namespace="com.mybucketpet.repository.member.MemberMapper">
 
     <insert id="save" useGeneratedKeys="true" keyProperty="memberNo">
-        insert into mbp_member(member_id,member_pw,member_nickname,marketing_yn,suspend_yn,join_path)
-        values (#{memberId}, #{memberPw}, #{memberNickname}, #{marketingYN}, #{suspendYN}, #{joinPath})
+        insert into mbp_member(member_id,member_pw,member_nickname,marketing_yn,suspend_yn,join_path, member_class)
+        values (#{memberId}, #{memberPw}, #{memberNickname}, #{marketingYN}, #{suspendYN}, #{joinType}, #{memberType})
     </insert>
 
     <select id="findById" resultType="Member">
-        select member_no, member_id, member_pw, member_nickname, marketing_yn, suspend_yn, join_date, last_access_date, join_path
+        select member_no, member_id, member_pw, member_nickname, marketing_yn, suspend_yn,
+               join_date, last_access_date, join_path, profile_img_path, member_class
           from mbp_member
          where member_Id = #{memberId}
     </select>
