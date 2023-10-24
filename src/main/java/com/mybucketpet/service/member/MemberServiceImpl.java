@@ -1,8 +1,13 @@
 package com.mybucketpet.service.member;
 
 import com.mybucketpet.controller.member.dto.JoinForm;
+import com.mybucketpet.controller.member.dto.LoginForm;
 import com.mybucketpet.controller.member.dto.PasswordChangeForm;
+import com.mybucketpet.controller.member.dto.ResponseJoinInfo;
 import com.mybucketpet.domain.member.Member;
+import com.mybucketpet.domain.member.MemberType;
+import com.mybucketpet.exception.member.DuplicateMemberException;
+import com.mybucketpet.exception.member.NotMatchPasswordException;
 import com.mybucketpet.repository.member.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,38 +25,36 @@ public class MemberServiceImpl implements MemberService {
     private final PasswordEncoder passwordEncoder;
 
     @Override
-    public Member save(JoinForm member) {
-        String memberId = "";
-        // 이메일 접미사를 직접 입력한 경우
-        if (StringUtils.hasText(member.getJoinEmailSuffixSelf())) {
-            memberId = member.getJoinEmailPrefix() + "@" + member.getJoinEmailSuffix();
-        } else {
-            memberId = member.getJoinEmailPrefix() + "@" + member.getJoinEmailSuffix();
+    public ResponseJoinInfo save(JoinForm joinForm) {
+        // 중복 회원 조회
+        Optional<String> byIdDuplicate = memberRepository.findByIdDuplicate(joinForm.getJoinEmail());
+        if (byIdDuplicate.isPresent()) {
+            throw new DuplicateMemberException("이미 가입된 회원 ID 입니다.");
         }
         // 비밀번호 암호화 처리
-        String encPassword = passwordEncoder.encode(member.getJoinPassword());
-        String marketingYN = member.isMarketingUse() ? "Y" : "N";
+        String encPassword = passwordEncoder.encode(joinForm.getJoinPassword());
+        String marketingYN = joinForm.isMarketingUse() ? "Y" : "N";
 
-        Member saveMember = memberRepository.save(
-                new Member(memberId, encPassword, member.getJoinNickname(), marketingYN, "N", member.getJoinPath())
-        );
+        Member saveMember = Member.builder()
+                .memberId(joinForm.getJoinEmail())
+                .memberPw(encPassword)
+                .memberNickname(joinForm.getJoinNickname())
+                .marketingYN(marketingYN)
+                .suspendYN("N")
+                .joinType(joinForm.getJoinType())
+                .memberType(MemberType.NORMAL)
+                .build();
 
-        return saveMember;
+        return memberRepository.save(saveMember);
     }
 
     @Override
-    public Member findById(String memberId) {
-        Optional<Member> findMember = memberRepository.findById(memberId);
-        // 이미 존재하는 회원
-        if (findMember.isPresent()) {
-            // 중요 정보인 pw는 삭제 처리
-            Member member = findMember.get();
-            member.setMemberPw("");
-
-            return member;
+    public void findByIdDuplicate(String memberId) {
+        Optional<String> byIdDuplicate = memberRepository.findByIdDuplicate(memberId);
+        // 이미 존재하는 회원 ID
+        if (byIdDuplicate.isPresent()) {
+            throw new DuplicateMemberException("이미 가입된 회원 ID 입니다.");
         }
-        // 존재하지 않는 회원이라면 빈 객체 전달
-        return findMember.orElse(new Member());
     }
 
     @Override
@@ -65,22 +68,18 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public Member findByLoginAvailability(String loginId, String loginPw) {
-        Optional<Member> findLoginMember = memberRepository.findById(loginId);
+    public LoginForm findByLoginAvailability(String loginId, String loginPw) {
+        LoginForm findLoginMember = memberRepository.findById(loginId);
 
-        // 입력된 Id 멤버가 조회 되는 경우
-        if (findLoginMember.isPresent()) {
-            Member member = findLoginMember.get();
-            // passwordEncoder를 활용해서 평문과 저장되어있는 암호문이랑 비교
-            boolean matches = passwordEncoder.matches(loginPw, member.getMemberPw());
-            // 2개의 값이 동일하다고 판단되는 경우 조회한 Member 객체 반환
-            if (matches) {
-                return member;
-            }
+        // passwordEncoder를 활용해서 평문과 저장되어있는 암호문이랑 비교
+        boolean matches = passwordEncoder.matches(loginPw, findLoginMember.getLoginPw());
+        // 2개의 값이 동일하다고 판단되는 경우 로그인 성공
+        if (matches) {
+            return findLoginMember;
+        } else {
+            // 로그인 실패
+            throw new NotMatchPasswordException("비밀번호가 일치하지 않습니다.");
         }
-        // 조회된 멤버가 없다면 로그인 실패
-        // 빈 객체 멤버 반환
-        return new Member();
     }
 
     @Override
