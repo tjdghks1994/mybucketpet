@@ -1,19 +1,19 @@
 package com.mybucketpet.repository.member;
 
+import com.mybucketpet.controller.member.dto.LoginForm;
 import com.mybucketpet.domain.member.JoinType;
 import com.mybucketpet.domain.member.Member;
+import com.mybucketpet.domain.member.MemberType;
+import com.mybucketpet.exception.member.NotFoundMemberException;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.NoSuchElementException;
-import java.util.Optional;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @Slf4j
 @Transactional // @Transactional 이 테스트에 있으면 스프링은 테스트를 트랜잭션 안에서 실행하고, 테스트가 끝나면 트랜잭션을 자동으로 롤백시킨다
@@ -21,33 +21,59 @@ import static org.junit.jupiter.api.Assertions.*;
 class MyBatisMemberRepositoryTest {
     @Autowired
     MemberRepository memberRepository;
+    @Autowired
+    PasswordEncoder passwordEncoder;
 
     @Test
-    @DisplayName("회원가입 및 회원조회 테스트")
-    void saveAndFindById() {
+    @DisplayName("회원등록 테스트")
+    void save() {
         // given
-        Member member = new Member("test@naver.com", "1234", "nickname", "y", "n", JoinType.EMAIL);
+        Member member = Member.builder()
+                .memberId("hello@naver.com")
+                .memberPw(passwordEncoder.encode("hello1234!!"))
+                .memberNickname("HelloWorld")
+                .marketingYN("Y")
+                .suspendYN("N")
+                .joinType(JoinType.EMAIL)
+                .memberType(MemberType.NORMAL)
+                .build();
         // when
-        Member saveMember = memberRepository.save(member);
-        // then
-        Member findMember = memberRepository.findById(member.getMemberId()).get();
-        Assertions.assertThat(findMember).isEqualTo(saveMember);
-    }
-
-    @Test
-    @DisplayName("닉네임 조회 테스트")
-    void findByNickname() {
-        // given
-        String nickname = "testttt";
-        String nickname2 = "test2";
-        Member member = new Member("test@gmail.com", "testttttt",
-                "test2", "Y", "N", JoinType.EMAIL);
         memberRepository.save(member);
-        // when
-        Optional<String> findNickname = memberRepository.findByNickname(nickname);
-        Optional<String> findNickname2 = memberRepository.findByNickname(nickname2);
+        LoginForm findById = memberRepository.findById(member.getMemberId());
         // then
-        Assertions.assertThatThrownBy(() -> findNickname.get().equals(nickname)).isInstanceOf(NoSuchElementException.class);
-        Assertions.assertThat(findNickname2.get()).isEqualTo(nickname2);
+        Assertions.assertThat(member.getMemberId()).isEqualTo(findById.getLoginId());
+        Assertions.assertThat(member.getMemberPw()).isEqualTo(findById.getLoginPw());
     }
+
+    @Test
+    @DisplayName("회원 조회 테스트")
+    void findMember() {
+        // given
+        String findId = "testAdmin";
+        // when
+        LoginForm find = memberRepository.findById(findId);
+        // then
+        Assertions.assertThat(findId).isEqualTo(find.getLoginId());
+    }
+
+    @Test
+    @DisplayName("회원 조회 실패 테스트")
+    void fail_findMember() {
+        // given
+        String failId = "aaaa";
+        // when then
+        Assertions.assertThatThrownBy(() -> memberRepository.findById(failId))
+                .isInstanceOf(NotFoundMemberException.class);
+    }
+
+//    @Test
+//    @DisplayName("회원 중복 조회 테스트")
+//    void duplicate_member() {
+//        // given
+//        String duplicateId = "testAdmin";
+//        // when
+//        Optional<String> byIdDuplicate = memberRepository.findByIdDuplicate(duplicateId);
+//        // then
+//        Assertions.assertThat(duplicateId).isEqualTo(byIdDuplicate.get());
+//    }
 }
