@@ -3,7 +3,8 @@ package com.mybucketpet.controller.member;
 import com.mybucketpet.controller.member.dto.JoinForm;
 import com.mybucketpet.controller.member.dto.LoginForm;
 import com.mybucketpet.controller.member.dto.ResponseJoinInfo;
-import com.mybucketpet.domain.member.Member;
+import com.mybucketpet.exception.ErrorResult;
+import com.mybucketpet.exception.member.MemberException;
 import com.mybucketpet.service.member.MemberService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
@@ -11,8 +12,6 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.StringUtils;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
@@ -24,6 +23,13 @@ import java.net.URI;
 public class MemberApiController {
 
     private final MemberService memberService;
+
+    @ExceptionHandler(MemberException.class)
+    public ResponseEntity<ErrorResult> memberExceptionHandler(MemberException memberException) {
+        log.error(memberException.getMessage());
+        return ResponseEntity.badRequest()
+                .body(ErrorResult.from(memberException.getMessage()));
+    }
 
     /**
      * HTTP URI 설계 - API
